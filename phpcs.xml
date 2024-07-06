@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<ruleset name="Custom Standard">
+    <rule ref="PSR2">
+        <exclude name="Generic.Files.LineLength"/>
+        <exclude name="PSR1.Classes.ClassDeclaration.MissingNamespace"/>
+    </rule>
+
+    <!-- https://github.com/sirbrillig/phpcs-import-detection -->
+    <rule ref="ImportDetection"/>
+    <rule ref="ImportDetection.Imports.RequireImports">
+        <properties>
+            <property name="ignoreUnimportedSymbols"
+                      value="/^(dispatch|app|config|config_path|response|env|collect|optional|class_basename|__|public_path|storage_path|resource_path|base_path|redirect|view|database_path|secure_url|event|route|head|resolve|throw_if|with|abort|app_path|trans|auth|request|cache|fake|now|dump|getAttribute|tap|responseWithMessage)$/" />
+        </properties>
+    </rule>
+
+    <rule ref="Generic.Files.LineEndings">
+        <exclude name="Generic.Files.LineEndings.InvalidEOLChar"/>
+    </rule>
+
+    <exclude-pattern>\.blade\.php</exclude-pattern>
+    <exclude-pattern>vendor/*</exclude-pattern>
+
+    <file>app</file>
+    <!-- <file>bootstrap/app.php</file> -->
+    <!-- <file>config</file> -->
+    <!-- <file>database</file> -->
+    <file>resources</file>
+    <file>routes</file>
+    <!-- <file>tests</file> -->
+</ruleset>
