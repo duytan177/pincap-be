@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
+use App\Models\User;
+use App\Models\Media;
 
 class Album extends Model
 {
@@ -28,14 +30,17 @@ class Album extends Model
     {
         return $value=='0'?'PRIVATE':'PUBLIC';
     }
-    public function members(){
-        return $this->belongsToMany(User::class,"user_album")->withPivot(["invitationStatus",'albumRole'])->withTimestamps();
+    public function members()
+    {
+        return $this->belongsToMany(User::class, "user_album")->withPivot(["invitationStatus",'albumRole'])->withTimestamps();
     }
 
-    public function userOwner(){
-        return $this->belongsTo(User::class,"user_id",'id');
+    public function userOwner()
+    {
+        return $this->belongsTo(User::class, "user_id", 'id');
     }
-    public function medias(){
-        return $this->belongsToMany(Media::class,'album_media')->withTimestamps();
+    public function medias()
+    {
+        return $this->belongsToMany(Media::class, 'album_media')->withTimestamps();
     }
 }

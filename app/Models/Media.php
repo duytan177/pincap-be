@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
-use App\Enums\Album_Media\Privacy;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
+use App\Models\User;
+use App\Models\Album;
+use App\Models\Tag;
 
 class Media extends Model
 {
@@ -39,33 +40,40 @@ class Media extends Model
     ];
 
 
-    public function getTypeAttribute($value){
+    public function getTypeAttribute($value)
+    {
         return $value=='0'?'IMAGE':'VIDEO';
     }
-    public function getPrivacyAttribute($value){
+    public function getPrivacyAttribute($value)
+    {
         return $value=='0'?'PRIVATE':'PUBLIC';
     }
 
-    public function  userComments(){
-        return $this->belongsToMany(User::class,'comments')->withPivot(["content",'id'])->withTimestamps();
+    public function userComments()
+    {
+        return $this->belongsToMany(User::class, 'comments')->withPivot(["content",'id'])->withTimestamps();
     }
-    public function reactionUser(){
-        return $this->belongsToMany(User::class,"reaction_media")->withPivot(["feeling_id"])->withTimestamps();
-    }
-
-    public function albums(){
-        return $this->belongsToMany(Album::class,'album_media')->withTimestamps();
-    }
-    public function tags(){
-        return $this->belongsToMany(Tag::class,'media_tag')->withTimestamps();
+    public function reactionUser()
+    {
+        return $this->belongsToMany(User::class, "reaction_media")->withPivot(["feeling_id"])->withTimestamps();
     }
 
-    public function userOwner(){
-        return $this->belongsTo(User::class,'mediaOwner_id','id');
+    public function albums()
+    {
+        return $this->belongsToMany(Album::class, 'album_media')->withTimestamps();
+    }
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class, 'media_tag')->withTimestamps();
     }
 
-    public function mediaReported(){
-        return $this->belongsToMany(User::class,'report_media')->withTimestamps();
+    public function userOwner()
+    {
+        return $this->belongsTo(User::class, 'mediaOwner_id', 'id');
     }
 
+    public function mediaReported()
+    {
+        return $this->belongsToMany(User::class, 'report_media')->withTimestamps();
+    }
 }

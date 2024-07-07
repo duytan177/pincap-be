@@ -16,8 +16,8 @@ class PasswordReset extends Model
     /**
      * The attributes that are mass assignable.
      *
-     * @var array<int, string>
      */
+
     protected $table = "password_resets";
     protected $primaryKey = "email";
     protected $fillable = [

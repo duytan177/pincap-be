@@ -11,29 +11,27 @@ use Illuminate\Notifications\Notifiable;
 
 class UserAlbum extends Model
 {
-    use HasFactory,HasUuids,Notifiable,SoftDeletes;
+    use HasFactory, HasUuids, Notifiable, SoftDeletes;
 
-    protected $table='user_album';
+    protected $table = 'user_album';
     protected $fillable = [
         'id',
         'user_id',
         'invitation_status',
         'albumRole',
     ];
-    protected $hidden=[];
+    protected $hidden = [];
 
-    public function getInvitationStatusAttribute($value){
+    public function getInvitationStatusAttribute($value)
+    {
         $value = (int)$value;
-        switch ($value){
+        switch ($value) {
             case 0:
                 return InvitationStatus::getKey($value);
-                break;
             case 1:
                 return InvitationStatus::getKey($value);
-                break;
             case 2:
                 return InvitationStatus::getKey($value);
-                break;
         }
     }
 }

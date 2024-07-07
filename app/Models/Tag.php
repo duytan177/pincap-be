@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
+use App\Models\User;
+use App\Models\Media;
 
 class Tag extends Model
 {
@@ -20,10 +22,12 @@ class Tag extends Model
     ];
     protected $hidden=[];
 
-    public function userOwner(){
-        return $this->belongsTo(User::class,'owner_user_created_id');
+    public function userOwner()
+    {
+        return $this->belongsTo(User::class, 'owner_user_created_id');
     }
-    public function medias(){
-        return $this->belongsToMany(Media::class,'media_tag')->withTimestamps();
+    public function medias()
+    {
+        return $this->belongsToMany(Media::class, 'media_tag')->withTimestamps();
     }
 }

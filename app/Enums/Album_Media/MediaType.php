@@ -1,4 +1,4 @@
-<?php declare(strict_types=1);
+<?php
 
 namespace App\Enums\Album_Media;
 
@@ -13,6 +13,4 @@ final class MediaType extends Enum
 {
     const IMAGE = 0;
     const VIDEO = 1;
-
-
 }

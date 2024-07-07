@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
-use App\Enums\User\UserStatus;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
+use App\Models\User;
 
 class UserRelationship extends Model
 {
@@ -24,15 +24,17 @@ class UserRelationship extends Model
         'deleted_at'
     ];
 
-    public function getUserStatusAttribute($value){
+    public function getUserStatusAttribute($value)
+    {
         return $value=='0'?'BLOCK':'FOLLOW';
     }
 
-    public function followees(){
-        return $this->belongsTo(User::class,'followee_id','id');
+    public function followees()
+    {
+        return $this->belongsTo(User::class, 'followee_id', 'id');
     }
-    public function followers(){
-        return $this->belongsTo(User::class,'follower_id','id');
+    public function followers()
+    {
+        return $this->belongsTo(User::class, 'follower_id', 'id');
     }
-    
 }
