@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignUuid('user_id')->references('id')->on('users');
             $table->foreignUuid('media_id')->references('id')->on('medias');
             $table->longText("content");
-            $table->longText("imageURL")->nullable();
+            $table->longText("image_url")->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

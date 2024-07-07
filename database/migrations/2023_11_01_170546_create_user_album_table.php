@@ -19,7 +19,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->foreignUuid('user_id')->references('id')->on('users');
             $table->foreignUuid('album_id')->references('id')->on('albums');
-            $table->enum('invitationStatus',InvitationStatus::getValues())->default(InvitationStatus::INVITED);
+            $table->enum('invitation_status',InvitationStatus::getValues())->default(InvitationStatus::INVITED);
             $table->enum('albumRole',AlbumRole::getValues())->default(AlbumRole::EDIT);
             $table->timestamps();
             $table->softDeletes();

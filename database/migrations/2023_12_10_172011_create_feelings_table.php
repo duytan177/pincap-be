@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('feelings', function (Blueprint $table) {
             $table->uuid("id")->primary();
             $table->string("feeling_type");
-            $table->longText("iconURL");
+            $table->longText("icon_url");
             $table->timestamps();
             $table->softDeletes();
         });

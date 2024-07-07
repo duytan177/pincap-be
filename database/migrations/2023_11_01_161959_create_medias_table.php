@@ -16,14 +16,14 @@ return new class extends Migration
     {
         Schema::create('medias', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('mediaName');
-            $table->longText('mediaURL');
+            $table->string('media_name');
+            $table->longText('media_url');
             $table->longText('description');
             $table->enum('type',MediaType::getValues());
             $table->enum('privacy',Privacy::getValues())->default(Privacy::PUBLIC);
-            $table->boolean('isCreated')->default(false);
-            $table->boolean('isComment')->default(false);
-            $table->foreignUuid('mediaOwner_id')->references('id')->on('users');
+            $table->boolean('is_created')->default(false);
+            $table->boolean('is_comment')->default(false);
+            $table->foreignUuid('media_owner_id')->references('id')->on('users');
             $table->timestamps();
             $table->softDeletes();
         });

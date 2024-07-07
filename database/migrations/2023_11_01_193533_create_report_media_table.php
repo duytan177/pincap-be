@@ -16,7 +16,7 @@ return new class extends Migration
     {
         Schema::create('report_media', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->enum('reportState',StateReport::getValues())->default(StateReport::UNPROCESSED);
+            $table->enum('report_state',StateReport::getValues())->default(StateReport::UNPROCESSED);
             $table->foreignUuid('user_id')->references('id')->on('users');
             $table->foreignUuid('media_id')->references('id')->on('medias');
             $table->foreignUuid('reason_report_id')->nullable()->references('id')->on('reasons_report');
