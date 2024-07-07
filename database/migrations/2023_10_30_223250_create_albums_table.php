@@ -16,8 +16,8 @@ return new class extends Migration
     {
         Schema::create('albums', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('albumName');
-            $table->longText('imageCover');
+            $table->string('album_name');
+            $table->longText('image_cover');
             $table->longText('description')->nullable();
             $table->enum('privacy',Privacy::getValues())->default(Privacy::PUBLIC);
             $table->timestamps();

@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::create('tags', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('tagName')->unique();
-            $table->foreignUuid('ownerUserCreated_id')->references('id')->on('users');
+            $table->string('tag_name')->unique();
+            $table->foreignUuid('owner_user_created_id')->references('id')->on('users');
             $table->timestamps();
             $table->softDeletes();
         });

@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
+use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -47,27 +48,41 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->render(function (Exception|Error $exception, Request $request) {
             $statusCode = 400;
             $errors = [];
-            $message = 'errors.unexpected';
-            $messageCode = '';
+            $message = 'errors unexpected';
+
             switch (true) {
                 case $exception instanceof ValidationException:
                     $errorMsg = collect($exception->errors())->first();
                     $message = !empty($errorMsg) ? reset($errorMsg) : __('messages.errors.input');
                     $errors = $exception->errors();
                     $statusCode = HttpStatusCode::HTTP_UNPROCESSABLE_ENTITY;
-                    $messageCode = 'errors.input';
                     break;
+
                 case $exception instanceof AuthenticationException:
-                    $message = 'errors.session_not_found';
+                    $message = 'session not found';
                     $statusCode = HttpStatusCode::HTTP_UNAUTHORIZED;
                     break;
 
+                case $exception instanceof ModelNotFoundException:
+                    $message = 'model not found';
+                    $statusCode = HttpStatusCode::HTTP_NOT_FOUND;
+                    break;
+
                 case $exception instanceof MethodNotAllowedHttpException:
+                    $message = $exception->getMessage();
+                    $statusCode = HttpStatusCode::HTTP_METHOD_NOT_ALLOWED;
+                    break;
+
                 case $exception instanceof NotFoundHttpException:
                 case $exception instanceof AccessDeniedHttpException:
                 case $exception instanceof AuthorizationException:
-                    $message = 'errors.route_not_found';
+                    $message = $exception->getMessage();
                     $statusCode = HttpStatusCode::HTTP_NOT_FOUND;
+                    break;
+
+                case $exception instanceof TokenExpiredException:
+                    $message = $exception->getMessage();
+                    $statusCode = HttpStatusCode::HTTP_UNAUTHORIZED;
                     break;
 
                 case $exception instanceof BaseException:
@@ -76,29 +91,28 @@ return Application::configure(basePath: dirname(__DIR__))
                     break;
 
                 case $exception instanceof UnauthorizedException:
-                    $message = 'errors.unauthorized_access';
+                    $message = 'unauthorized access';
                     $statusCode = HttpStatusCode::HTTP_UNAUTHORIZED;
                     break;
 
-                case $exception instanceof ModelNotFoundException:
-                    $message = 'errors.model_not_found';
-                    $statusCode = HttpStatusCode::HTTP_NOT_FOUND;
-                    break;
-
                 case $exception instanceof TokenMismatchException:
-                    $message = 'errors.token_mismatch';
+                    $message = 'token mismatch';
                     $statusCode = 419;
                     break;
 
                 case $exception instanceof TypeError:
-                    $message = 'errors.type_error';
+                    $message = 'type error';
+                    $statusCode = HttpStatusCode::HTTP_INTERNAL_SERVER_ERROR;
+                    break;
+
+                default:
+                    $message = 'An unexpected error occurred.';
                     $statusCode = HttpStatusCode::HTTP_INTERNAL_SERVER_ERROR;
                     break;
             }
 
             if ($request->is('*')) {
                 return response()->json([
-                    'code' => $messageCode,
                     'errors' => $errors,
                     'message' => $message,
                 ], $statusCode);

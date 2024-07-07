@@ -17,9 +17,9 @@ return new class extends Migration
         Schema::create('conversation_AI', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->longText("content");
-            $table->enum('typeQA',TypeQA::getValues());
-            $table->enum('typeAI',TypeAI::getValues());
-            $table->longText("imageURL")->nullable();
+            $table->enum('type_qa',TypeQA::getValues());
+            $table->enum('type_ai',TypeAI::getValues());
+            $table->longText("image_url")->nullable();
             $table->foreignUuid("user_id")->references("id")->on("users");
             $table->timestamps();
             $table->softDeletes();
