@@ -1,4 +1,4 @@
-<?php declare(strict_types=1);
+<?php
 
 namespace App\Enums\User;
 
@@ -13,5 +13,4 @@ final class UserStatus extends Enum
 {
     const BLOCK = 0;
     const FOLLOWING = 1;
-
 }

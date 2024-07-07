@@ -10,9 +10,9 @@ use Illuminate\Notifications\Notifiable;
 
 class AlbumMedia extends Model
 {
-    use HasFactory,HasUuids,Notifiable,SoftDeletes;
+    use HasFactory, HasUuids, Notifiable, SoftDeletes;
 
-//    protected $table='album_media';
+    //    protected $table='album_media';
     public $incrementing = false;
     protected $keyType = 'string';
     protected $primaryKey = 'id';
@@ -24,9 +24,7 @@ class AlbumMedia extends Model
         'created_at',
         'updated_at'
     ];
-    protected $hidden=[
+    protected $hidden = [
         'deleted_at'
     ];
-
-
 }

@@ -59,7 +59,7 @@ return Application::configure(basePath: dirname(__DIR__))
                     break;
 
                 case $exception instanceof AuthenticationException:
-                    $message = 'session not found';
+                    $message = $exception->getMessage();
                     $statusCode = HttpStatusCode::HTTP_UNAUTHORIZED;
                     break;
 
@@ -91,22 +91,22 @@ return Application::configure(basePath: dirname(__DIR__))
                     break;
 
                 case $exception instanceof UnauthorizedException:
-                    $message = 'unauthorized access';
+                    $message = $exception->getMessage();
                     $statusCode = HttpStatusCode::HTTP_UNAUTHORIZED;
                     break;
 
                 case $exception instanceof TokenMismatchException:
-                    $message = 'token mismatch';
+                    $message = $exception->getMessage();
                     $statusCode = 419;
                     break;
 
                 case $exception instanceof TypeError:
-                    $message = 'type error';
+                    $message = $exception->getMessage();
                     $statusCode = HttpStatusCode::HTTP_INTERNAL_SERVER_ERROR;
                     break;
 
                 default:
-                    $message = 'An unexpected error occurred.';
+                    $message = $exception->getMessage();
                     $statusCode = HttpStatusCode::HTTP_INTERNAL_SERVER_ERROR;
                     break;
             }

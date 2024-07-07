@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
+use App\Models\User;
+use App\Models\Media;
 
 class Comment extends Model
 {
@@ -31,6 +33,4 @@ class Comment extends Model
     {
         return $this->belongsTo(Media::class, 'media_id');
     }
-
-
 }

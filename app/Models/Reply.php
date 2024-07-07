@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
+use App\Models\User;
+use App\Models\Comment;
 
 class Reply extends Model
 {
@@ -19,12 +21,13 @@ class Reply extends Model
         'image_url'
     ];
 
-    public function userReply(){
-        return $this->belongsTo(User::class,'user_id');
+    public function userReply()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function replyComment(){
+    public function replyComment()
+    {
         return $this->belongsTo(Comment::class, 'comment_id');
     }
-
 }

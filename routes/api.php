@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\LogoutController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/health-check', function () {
@@ -8,7 +9,10 @@ Route::get('/health-check', function () {
 });
 
 
-Route::middleware(["auth:sanctum", "check.status"])->group(function () {
+Route::middleware(["auth:api"])->group(function () {
+    Route::prefix("/auth")->group(function () {
+        Route::post("/logout", LogoutController::class);
+    });
 });
 
 Route::group([], function () {

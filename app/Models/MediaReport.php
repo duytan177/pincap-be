@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
+use App\Models\User;
+use App\Models\Media;
+use App\Models\ReportReason;
 
 class MediaReport extends Model
 {
@@ -27,18 +30,22 @@ class MediaReport extends Model
 
     ];
 
-    public function getStateAttribute($value){
+    public function getStateAttribute($value)
+    {
         return $value=='0'?StateReport::getKey(0):StateReport::getKey(1);
     }
-    public function reasonReport(){
-        return $this->belongsTo(ReportReason::class,'report_reason_id','id');
+    public function reasonReport()
+    {
+        return $this->belongsTo(ReportReason::class, 'report_reason_id', 'id');
     }
 
-    public function userReport(){
-            return $this->belongsTo(User::class,'user_id','id');
+    public function userReport()
+    {
+            return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
-    public function reportMedia(){
-        return $this->belongsTo(Media::class,'media_id','id');
+    public function reportMedia()
+    {
+        return $this->belongsTo(Media::class, 'media_id', 'id');
     }
 }

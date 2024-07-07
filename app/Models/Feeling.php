@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
+use App\Models\ReactionMedia;
 
 class Feeling extends Model
 {
@@ -17,7 +18,8 @@ class Feeling extends Model
         'icon_url'
     ];
 
-    public function reactionMedia(){
-        return $this->hasMany(ReactionMedia::class,'feeling_id','id');
+    public function reactionMedia()
+    {
+        return $this->hasMany(ReactionMedia::class, 'feeling_id', 'id');
     }
 }
