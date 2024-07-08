@@ -9,7 +9,6 @@ use Illuminate\Http\Response as HttpStatusCode;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Session\TokenMismatchException;
 use Illuminate\Validation\ValidationException;
-use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Validation\UnauthorizedException;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -31,7 +30,6 @@ return Application::configure(basePath: dirname(__DIR__))
         //
         $middleware->use([
             \Illuminate\Http\Middleware\HandleCors::class,
-            // StartSession::class
         ]);
         $middleware->alias([
             'auth' => \App\Http\Middleware\Authenticate::class,
