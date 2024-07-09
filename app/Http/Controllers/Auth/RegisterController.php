@@ -6,8 +6,6 @@ use App\Http\Controllers\Auth\Shared\AuthHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Models\User;
-use Illuminate\Auth\Events\Registered;
-use Illuminate\Http\Request;
 
 class RegisterController extends Controller
 {
@@ -16,7 +14,8 @@ class RegisterController extends Controller
         $registerData = $request->validated();
         $dataDefault = [
             "avatar" => config("common.avatar_default"),
-            "background" => config("common.background_default")
+            "background" => config("common.background_default"),
+            AuthHelper::createVerificationToken(),
         ];
         $registerData = array_merge($registerData, $dataDefault);
 
@@ -25,6 +24,5 @@ class RegisterController extends Controller
         AuthHelper::sendEmailVerify($user);
 
         return responseWithMessage("Register successfully");
-
     }
 }
