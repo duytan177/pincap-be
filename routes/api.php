@@ -3,6 +3,8 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\ResendVerifyUserController;
+use App\Http\Controllers\Auth\VerifyUserController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/health-check', function () {
@@ -20,5 +22,7 @@ Route::group([], function () {
     Route::prefix('/auth')->group(function () {
         Route::post('/login', LoginController::class);
         Route::post('/register', RegisterController::class);
+        Route::get('/verify-email/{token}', VerifyUserController::class);
+        Route::get('/resend-verify-email', ResendVerifyUserController::class);
     });
 });

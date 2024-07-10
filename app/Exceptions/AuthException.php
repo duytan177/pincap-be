@@ -15,4 +15,9 @@ class AuthException extends BaseException
     {
         return self::code("Email has not been verified", [], 403);
     }
+
+    public static function tokenExpired()
+    {
+        return self::code("Token has expired", [], 401);
+    }
 }
