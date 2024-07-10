@@ -15,8 +15,8 @@ class RegisterController extends Controller
         $dataDefault = [
             "avatar" => config("common.avatar_default"),
             "background" => config("common.background_default"),
-            AuthHelper::createVerificationToken(),
         ];
+
         $registerData = array_merge($registerData, $dataDefault);
 
         $user = User::create($registerData);
