@@ -5,6 +5,7 @@ return [
         'paths' => [
             'login' => '/login',
             'register' => '/register',
+            'forgot_password' => '/forgot-password'
         ],
     ],
     'app' => [
