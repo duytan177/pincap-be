@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\Auth\ForgotPassword\ForgotPasswordController;
+use App\Http\Controllers\Auth\ForgotPassword\RedirectController;
+use App\Http\Controllers\Auth\ForgotPassword\ResetPasswordController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\RegisterController;
@@ -24,5 +27,8 @@ Route::group([], function () {
         Route::post('/register', RegisterController::class);
         Route::get('/verify-email/{token}', VerifyUserController::class);
         Route::get('/resend-verify-email', ResendVerifyUserController::class);
+        Route::get("/redirect-forgot-password/{token}", RedirectController::class);
+        Route::post("/forgot-password", ForgotPasswordController::class);
+        Route::post("/reset-password", ResetPasswordController::class);
     });
 });
