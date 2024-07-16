@@ -45,7 +45,8 @@
                 <p>Hi <b>{{ $name }}</b>,</p>
                 <p>You recently requested to reset your password. To reset your password, please click the button below:
                 </p>
-                <a href="{{ url(config('common.path_forgot_password') . $token) }}" class="verify-button">Reset
+                <a href="{{ config('app.url') . config('common.path_forgot_password') . $token }}"
+                    class="verify-button">Reset
                     Password</a>
                 <p>This link will expire in 60 minutes.</p>
                 <p>If you didn't request this, you can ignore this email.</p>

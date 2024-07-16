@@ -44,7 +44,7 @@
                 <p>Hi <b>{{ $user->name }}</b>,</p>
                 <p>Thank you for registering with us22.</p>
                 <p>Please click the button below to verify your email address:</p>
-                <a href="{{ url(config('common.path_verify_email') . $user->verification_token) }}"
+                <a href="{{ config('app.url') . config('common.path_verify_email') . $user->verification_token }}"
                     class="verify-button">Verify Email</a>
                 <p>This link will expire in 5 minutes.</p>
                 <p>If you didn't request this, you can ignore this email.</p>
