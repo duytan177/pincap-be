@@ -32,9 +32,9 @@ class VerifyUserController extends Controller
         // Generate JWT token
         $token = JWTAuth::fromUser($user);
 
-        if(strpos($request->userAgent(),"Mobile")){
+        if (strpos($request->userAgent(), "Mobile")) {
             $domainFELogin = config("frontend.app.domain") . config("frontend.app.paths.login");
-        }else {
+        } else {
             $domainFELogin = config("frontend.web.domain") . config("frontend.web.paths.login");
         }
 

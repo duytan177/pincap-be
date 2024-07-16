@@ -15,3 +15,4 @@ parameters:
     excludePaths:
         - app/Console/Commands/Develop/stubs
     ignoreErrors:
+        - '#Call to an undefined method Laravel\\Socialite\\Contracts\\Provider::stateless#'
