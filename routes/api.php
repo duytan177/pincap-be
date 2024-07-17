@@ -10,6 +10,7 @@ use App\Http\Controllers\Auth\OAuth2\Google\HandleCallbackController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResendVerifyUserController;
 use App\Http\Controllers\Auth\VerifyUserController;
+use App\Http\Controllers\Users\Profiles\GetMyProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/health-check', function () {
@@ -20,6 +21,10 @@ Route::get('/health-check', function () {
 Route::middleware(["auth:api"])->group(function () {
     Route::prefix("/auth")->group(function () {
         Route::post("/logout", LogoutController::class);
+    });
+
+    Route::prefix("/users")->group(function () {
+        Route::get("/my-profile", GetMyProfileController::class);
     });
 });
 
