@@ -16,3 +16,4 @@ parameters:
         - app/Console/Commands/Develop/stubs
     ignoreErrors:
         - '#Call to an undefined method Laravel\\Socialite\\Contracts\\Provider::stateless#'
+        - '#Call to an undefined method Tymon\\JWTAuth\\Contracts\\JWTSubject::\w+#'
