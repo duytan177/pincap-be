@@ -32,6 +32,6 @@ class SendRegistrationEmail implements ShouldQueue
      */
     public function handle(): void
     {
-        Mail::to($this->user->email)->send(new RegisterMail($this->user));
+        Mail::to($this->user->getAttribute("email"))->send(new RegisterMail($this->user));
     }
 }
