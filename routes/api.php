@@ -10,6 +10,7 @@ use App\Http\Controllers\Auth\OAuth2\Google\HandleCallbackController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResendVerifyUserController;
 use App\Http\Controllers\Auth\VerifyUserController;
+use App\Http\Controllers\Users\Profiles\GetMyFollowerOrFolloweeController;
 use App\Http\Controllers\Users\Profiles\GetMyProfileController;
 use App\Http\Controllers\Users\Profiles\UpdateMyProfileController;
 use Illuminate\Support\Facades\Route;
@@ -25,6 +26,9 @@ Route::middleware(["auth:api"])->group(function () {
     });
 
     Route::prefix("/users")->group(function () {
+        Route::prefix("/follows")->group(function () {
+            Route::get("/", GetMyFollowerOrFolloweeController::class);
+        });
         Route::prefix("/my-profile")->group(function () {
             Route::get("/", GetMyProfileController::class);
             Route::post("/", UpdateMyProfileController::class);
