@@ -12,6 +12,7 @@ use App\Http\Controllers\Auth\ResendVerifyUserController;
 use App\Http\Controllers\Auth\VerifyUserController;
 use App\Http\Controllers\Users\Profiles\GetMyFollowerOrFolloweeController;
 use App\Http\Controllers\Users\Profiles\GetMyProfileController;
+use App\Http\Controllers\Users\Profiles\GetProfileUserByIdController;
 use App\Http\Controllers\Users\Profiles\UpdateMyProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -48,5 +49,11 @@ Route::group([], function () {
 
         Route::get("/google/url", GetUrlRedirectController::class);
         Route::get("/google/callback", HandleCallbackController::class);
+    });
+
+    Route::prefix("/users")->group(function () {
+        Route::prefix("/profiles")->group(function () {
+            Route::get("/{id}", GetProfileUserByIdController::class);
+        });
     });
 });
