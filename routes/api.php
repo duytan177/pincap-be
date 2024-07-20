@@ -14,6 +14,7 @@ use App\Http\Controllers\Users\Profiles\GetMyFollowerOrFolloweeController;
 use App\Http\Controllers\Users\Profiles\GetMyProfileController;
 use App\Http\Controllers\Users\Profiles\GetProfileUserByIdController;
 use App\Http\Controllers\Users\Profiles\UpdateMyProfileController;
+use App\Http\Controllers\Users\Relationships\GetFollowerOrFollweeByIdController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/health-check', function () {
@@ -53,7 +54,10 @@ Route::group([], function () {
 
     Route::prefix("/users")->group(function () {
         Route::prefix("/profiles")->group(function () {
-            Route::get("/{id}", GetProfileUserByIdController::class);
+            Route::get("/{userId}", GetProfileUserByIdController::class);
+        });
+        Route::prefix("/relationships")->group(function () {
+            Route::get("/{userId}", GetFollowerOrFollweeByIdController::class);
         });
     });
 });

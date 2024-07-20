@@ -1,10 +1,9 @@
 <?php
 
-namespace App\Http\Resources\Users\Profiles;
+namespace App\Http\Resources\Users\Relationships;
 
 use App\Components\Resources\BaseResource;
 use Illuminate\Http\Request;
-use Tymon\JWTAuth\Facades\JWTAuth;
 
 class FollowResource extends BaseResource
 {
@@ -24,7 +23,8 @@ class FollowResource extends BaseResource
     public function toArray(Request $request): array
     {
         $data = $this->resource->only(self::$attributes);
-        $userCurrent = JWTAuth::user();
+        $userCurrent = $request->user;
+
         $relationship = $request->input("relationship");
         if ($relationship === "followers") {
             $followeesIds = $userCurrent->getAttribute('followees')->pluck('id')->toArray();
