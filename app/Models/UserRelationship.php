@@ -19,6 +19,8 @@ class UserRelationship extends Model
         'followee_id',
         'follower_id',
         'user_status',
+        'created_at',
+        'updated_at'
     ];
     protected $hidden=[
         'deleted_at'

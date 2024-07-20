@@ -14,6 +14,7 @@ use App\Http\Controllers\Users\Profiles\GetMyFollowerOrFolloweeController;
 use App\Http\Controllers\Users\Profiles\GetMyProfileController;
 use App\Http\Controllers\Users\Profiles\GetProfileUserByIdController;
 use App\Http\Controllers\Users\Profiles\UpdateMyProfileController;
+use App\Http\Controllers\Users\Relationships\FollowOrBlockController;
 use App\Http\Controllers\Users\Relationships\GetFollowerOrFollweeByIdController;
 use Illuminate\Support\Facades\Route;
 
@@ -28,8 +29,9 @@ Route::middleware(["auth:api"])->group(function () {
     });
 
     Route::prefix("/users")->group(function () {
-        Route::prefix("/follows")->group(function () {
+        Route::prefix("/relationships")->group(function () {
             Route::get("/", GetMyFollowerOrFolloweeController::class);
+            Route::post("/", FollowOrBlockController::class);
         });
         Route::prefix("/my-profile")->group(function () {
             Route::get("/", GetMyProfileController::class);
