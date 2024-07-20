@@ -11,6 +11,6 @@ use BenSampo\Enum\Enum;
  */
 final class UserStatus extends Enum
 {
-    const BLOCK = 0;
-    const FOLLOWING = 1;
+    const BLOCK = "0";
+    const FOLLOWING = "1";
 }
