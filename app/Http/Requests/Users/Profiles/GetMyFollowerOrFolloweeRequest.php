@@ -25,4 +25,11 @@ class GetMyFollowerOrFolloweeRequest extends FormRequest
             "relationship" => "required|in:followers,followees"
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            "relationship.in" => ":attribute field must be either 'followers' or 'followees'."
+        ];
+    }
 }

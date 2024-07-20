@@ -61,8 +61,8 @@ return Application::configure(basePath: dirname(__DIR__))
                     $statusCode = HttpStatusCode::HTTP_UNAUTHORIZED;
                     break;
 
-                case $exception instanceof ModelNotFoundException:
-                    $message = 'model not found';
+                case $exception->getPrevious() instanceof ModelNotFoundException:
+                    $message = "model not found";
                     $statusCode = HttpStatusCode::HTTP_NOT_FOUND;
                     break;
 
