@@ -120,7 +120,7 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
 
     public function mediaOwner()
     {
-        return $this->hasMany(Media::class, 'mediaOwner_id', 'id');
+        return $this->hasMany(Media::class, 'media_owner_id', 'id');
     }
 
     public function tags()
