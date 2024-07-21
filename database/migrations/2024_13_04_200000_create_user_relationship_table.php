@@ -19,9 +19,6 @@ return new class extends Migration {
             $table->enum('user_status', UserStatus::getValues())->default(UserStatus::FOLLOWING);
             $table->timestamps();
             $table->softDeletes();
-
-            // Đảm bảo cặp follower_id và followee_id là duy nhất
-            $table->unique(['followee_id', 'follower_id']);
         });
     }
 
