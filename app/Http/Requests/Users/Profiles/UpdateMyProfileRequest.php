@@ -27,8 +27,8 @@ class UpdateMyProfileRequest extends FormRequest
             "email" => "required|email",
             'phone' => 'required|string|max:20',
             "password" => "nullable|confirmed|min:8",
-            'avatar' => 'nullable|image|max:4096',
-            'background' => 'nullable|image|max:4096',
+            'avatar' => 'nullable|image|max:25600',
+            'background' => 'nullable|image|max:25600',
         ];
     }
 }

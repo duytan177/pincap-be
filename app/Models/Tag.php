@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use App\Models\User;
 use App\Models\Media;
+use Ramsey\Uuid\Uuid;
 
 class Tag extends Model
 {
@@ -20,6 +21,18 @@ class Tag extends Model
         'tag_name',
         'owner_user_created_id',
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            if (empty($model->id)) {
+                $model->id = Uuid::uuid4()->toString();
+            }
+        });
+    }
+
     protected $hidden=[];
 
     public function userOwner()

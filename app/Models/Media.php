@@ -10,18 +10,27 @@ use Illuminate\Notifications\Notifiable;
 use App\Models\User;
 use App\Models\Album;
 use App\Models\Tag;
+use Ramsey\Uuid\Uuid;
+use Illuminate\Database\Eloquent\Builder;
 
 class Media extends Model
 {
     use HasFactory,HasUuids,Notifiable,SoftDeletes;
 
-    protected static function booted()
+    protected static function boot()
     {
-        // Sắp xếp theo created_at mới nhất
-        static::addGlobalScope(function ($query) {
-            $query->orderBy('created_at', 'desc');
+        parent::boot();
+
+        static::creating(function ($model) {
+            if (empty($model->id)) {
+                $model->id = Uuid::uuid4()->toString();
+            }
+        });
+        static::addGlobalScope('order', function (Builder $builder) {
+            $builder->orderBy('created_at', 'desc'); // 'asc' để sắp xếp tăng dần, 'desc' để sắp xếp giảm dần
         });
     }
+
 
     protected $table='medias';
     protected $fillable = [

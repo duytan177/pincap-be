@@ -11,6 +11,6 @@ use BenSampo\Enum\Enum;
  */
 final class MediaType extends Enum
 {
-    const IMAGE = 0;
-    const VIDEO = 1;
+    const IMAGE = "0";
+    const VIDEO = "1";
 }

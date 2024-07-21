@@ -15,6 +15,7 @@ use App\Models\Media;
 use App\Models\Album;
 use App\Models\Tag;
 use App\Models\Notification;
+use Ramsey\Uuid\Uuid;
 
 class User extends Authenticatable implements JWTSubject, MustVerifyEmail
 {
@@ -24,6 +25,11 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
     {
         parent::boot();
 
+        static::creating(function ($model) {
+            if (empty($model->id)) {
+                $model->id = Uuid::uuid4()->toString();
+            }
+        });
         static::addGlobalScope('order', function (Builder $builder) {
             $builder->orderBy('created_at', 'desc'); // 'asc' để sắp xếp tăng dần, 'desc' để sắp xếp giảm dần
         });
@@ -103,12 +109,12 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
 
     public function followers()
     {
-        return $this->belongsToMany(User::class, "user_relationship", 'followee_id', 'follower_id')->withPivot(["user_status"])->withTimestamps();
+        return $this->belongsToMany(User::class, "user_relationship", 'followee_id', 'follower_id')->withPivot(["user_status"])->withTimestamps()->wherePivot("user_status", "=", "1");
     }
 
     public function followees()
     {
-        return $this->belongsToMany(User::class, "user_relationship", 'follower_id', 'followee_id')->withPivot(["user_status"])->withTimestamps();
+        return $this->belongsToMany(User::class, "user_relationship", 'follower_id', 'followee_id')->withPivot(["user_status"])->withTimestamps()->wherePivot("user_status", "=", "1");
     }
 
 
