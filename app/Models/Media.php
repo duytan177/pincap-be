@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\Album_Media\MediaType;
+use App\Enums\Album_Media\Privacy;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -15,7 +17,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 class Media extends Model
 {
-    use HasFactory,HasUuids,Notifiable,SoftDeletes;
+    use HasFactory, HasUuids, Notifiable, SoftDeletes;
 
     protected static function boot()
     {
@@ -32,7 +34,7 @@ class Media extends Model
     }
 
 
-    protected $table='medias';
+    protected $table = 'medias';
     protected $fillable = [
         'id',
         'media_name',
@@ -44,23 +46,37 @@ class Media extends Model
         'is_comment',
         'media_owner_id',
     ];
-    protected $hidden=[
+    protected $hidden = [
         'deleted_at'
     ];
 
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'is_created' => "boolean",
+            "is_comment" => "boolean"
+        ];
+    }
 
     public function getTypeAttribute($value)
     {
-        return $value=='0'?'IMAGE':'VIDEO';
+        return MediaType::getKey($value);
     }
+
     public function getPrivacyAttribute($value)
     {
-        return $value=='0'?'PRIVATE':'PUBLIC';
+        return Privacy::getKey($value);
     }
+
 
     public function userComments()
     {
-        return $this->belongsToMany(User::class, 'comments')->withPivot(["content",'id'])->withTimestamps();
+        return $this->belongsToMany(User::class, 'comments')->withPivot(["content", 'id'])->withTimestamps();
     }
     public function reactionUser()
     {

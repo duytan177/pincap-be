@@ -11,6 +11,6 @@ use BenSampo\Enum\Enum;
  */
 final class Privacy extends Enum
 {
-    const PRIVATE = 0;
-    const PUBLIC = 1;
+    const PRIVATE = "0";
+    const PUBLIC = "1";
 }

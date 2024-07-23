@@ -43,7 +43,7 @@ class CreateMediaController extends Controller
             $this->attachTagtoMedia($mediaData["tags_name"], $mediaId, $userId);
         }
 
-        return responseWithMessage("Created media successfully");
+        return response()->json(["message" => "Created media successfully"], 201);
     }
 
     private function handleMediaFile($file)

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Medias;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Medias\MediaCollection;
+use App\Http\Resources\Medias\Media\MediaCollection;
 use App\Models\Media;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;

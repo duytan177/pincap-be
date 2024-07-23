@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Resources\Medias;
+namespace App\Http\Resources\Medias\Media;
 
 use App\Components\Resources\BaseCollection;
 
