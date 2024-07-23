@@ -12,6 +12,7 @@ use App\Http\Controllers\Auth\ResendVerifyUserController;
 use App\Http\Controllers\Auth\VerifyUserController;
 use App\Http\Controllers\Medias\CreateMediaController;
 use App\Http\Controllers\Medias\GetAllMediaController;
+use App\Http\Controllers\Medias\GetDetailMediaByIdController;
 use App\Http\Controllers\Medias\GetMyMediaController;
 use App\Http\Controllers\Users\Profiles\GetMyFollowerOrFolloweeController;
 use App\Http\Controllers\Users\Profiles\GetMyProfileController;
@@ -43,9 +44,11 @@ Route::middleware(["auth:api"])->group(function () {
             Route::post("/", UpdateMyProfileController::class);
         });
     });
+
     Route::prefix("/medias")->group(function () {
         Route::get("/my-media", GetMyMediaController::class);
         Route::post("/", CreateMediaController::class);
+        Route::get("{mediaId}/auth", GetDetailMediaByIdController::class);
     });
 });
 
@@ -74,5 +77,6 @@ Route::group([], function () {
 
     Route::prefix("/medias")->group(function () {
         Route::get("/all", GetAllMediaController::class);
+        Route::get("{mediaId}", GetDetailMediaByIdController::class);
     });
 });

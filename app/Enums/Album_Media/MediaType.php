@@ -5,10 +5,10 @@ namespace App\Enums\Album_Media;
 use BenSampo\Enum\Enum;
 
 /**
- * @method static static OptionOne()
- * @method static static OptionTwo()
- * @method static static OptionThree()
+ * @method static static IMAGE()
+ * @method static static VIDEO()
  */
+
 final class MediaType extends Enum
 {
     const IMAGE = "0";

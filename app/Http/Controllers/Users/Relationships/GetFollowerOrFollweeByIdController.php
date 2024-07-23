@@ -12,7 +12,7 @@ class GetFollowerOrFollweeByIdController extends Controller
     public function __invoke($userId, GetMyFollowerOrFolloweeRequest $requests)
     {
         $relationship = $requests->input("relationship");
-        $user = User::findOrFail($userId);
+        $user = User::with("followers")->findOrFail($userId);
         $requests->merge(["user" => $user]);
         $followRelationship = $user->getAttribute($relationship);
         return new FollowCollection($followRelationship);

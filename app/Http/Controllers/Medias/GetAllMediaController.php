@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Medias;
 
 use App\Enums\Album_Media\Privacy;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Medias\MediaCollection;
+use App\Http\Resources\Medias\Media\MediaCollection;
 use App\Models\Media;
 use Illuminate\Http\Request;
 
