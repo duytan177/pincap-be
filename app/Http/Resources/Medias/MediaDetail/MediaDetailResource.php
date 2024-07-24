@@ -37,7 +37,7 @@ class MediaDetailResource extends BaseResource
             $request->merge(["relationship" => "followers"]);
             $data["ownerUser"] = new ProfilesFollowResource($user);
             $data["numberUserFollowers"] = $user->getAttribute("followers_count");
-        }else{
+        } else {
             $data["ownerUser"] = new FollowResource($user);
             $data["numberUserFollowers"] = $user->getAttribute("followers_count");
         }

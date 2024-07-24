@@ -15,6 +15,7 @@ use App\Models\Media;
 use App\Models\Album;
 use App\Models\Tag;
 use App\Models\Notification;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Ramsey\Uuid\Uuid;
 
 class User extends Authenticatable implements JWTSubject, MustVerifyEmail
@@ -107,7 +108,7 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
         return $this->belongsToMany(Album::class, "user_album")->withPivot(["invitationStatus", 'albumRole'])->wherePivot("invitationStatus", "1")->withTimestamps();
     }
 
-    public function followers()
+    public function followers() : BelongsToMany
     {
         return $this->belongsToMany(User::class, "user_relationship", 'followee_id', 'follower_id')->withPivot(["user_status"])->withTimestamps()->wherePivot("user_status", "=", "1");
     }

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AlbumMedia\GetPrivacyController;
 use App\Http\Controllers\Auth\ForgotPassword\ForgotPasswordController;
 use App\Http\Controllers\Auth\ForgotPassword\RedirectController;
 use App\Http\Controllers\Auth\ForgotPassword\ResetPasswordController;
@@ -47,8 +48,12 @@ Route::middleware(["auth:api"])->group(function () {
 
     Route::prefix("/medias")->group(function () {
         Route::get("/my-media", GetMyMediaController::class);
-        Route::post("/", CreateMediaController::class);
         Route::get("{mediaId}/auth", GetDetailMediaByIdController::class);
+        Route::post("/", CreateMediaController::class);
+    });
+
+    Route::prefix("/albums")->group(function () {
+        Route::get("medias/privacy", GetPrivacyController::class);
     });
 });
 
