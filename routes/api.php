@@ -12,6 +12,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResendVerifyUserController;
 use App\Http\Controllers\Auth\VerifyUserController;
 use App\Http\Controllers\Medias\CreateMediaController;
+use App\Http\Controllers\Medias\DeleteMediaByIdController;
 use App\Http\Controllers\Medias\GetAllMediaController;
 use App\Http\Controllers\Medias\GetDetailMediaByIdController;
 use App\Http\Controllers\Medias\GetMyMediaController;
@@ -52,6 +53,7 @@ Route::middleware(["auth:api"])->group(function () {
         Route::get("{mediaId}/auth", GetDetailMediaByIdController::class);
         Route::post("/", CreateMediaController::class);
         Route::put("/{mediaId}", UpdateMediaController::class);
+        Route::delete("/", DeleteMediaByIdController::class);
     });
 
     Route::prefix("/albums")->group(function () {
