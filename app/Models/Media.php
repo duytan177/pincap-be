@@ -14,6 +14,7 @@ use App\Models\Album;
 use App\Models\Tag;
 use Ramsey\Uuid\Uuid;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Media extends Model
 {
@@ -87,7 +88,7 @@ class Media extends Model
     {
         return $this->belongsToMany(Album::class, 'album_media')->withTimestamps();
     }
-    public function tags()
+    public function tags() : BelongsToMany
     {
         return $this->belongsToMany(Tag::class, 'media_tag')->withTimestamps();
     }

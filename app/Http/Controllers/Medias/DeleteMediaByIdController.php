@@ -3,12 +3,12 @@
 namespace App\Http\Controllers\Medias;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Medias\DeleteMediaRequest;
 use App\Models\Media;
-use Illuminate\Http\Request;
 
 class DeleteMediaByIdController extends Controller
 {
-    public function __invoke(Request $request)
+    public function __invoke(DeleteMediaRequest $request)
     {
         $ids = $request->input('ids');
 
