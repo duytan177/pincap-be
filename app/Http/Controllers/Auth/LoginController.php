@@ -15,7 +15,7 @@ class LoginController extends Controller
         $credentials = $request->validated();
 
         $user = User::where('email', $credentials['email'])->first();
-        if (!$user || !$user->hasVerifiedEmail()) {
+        if ($user && !$user->hasVerifiedEmail()) {
             throw AuthException::emailNotVerified();
         }
 

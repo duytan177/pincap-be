@@ -15,6 +15,7 @@ use App\Http\Controllers\Medias\CreateMediaController;
 use App\Http\Controllers\Medias\GetAllMediaController;
 use App\Http\Controllers\Medias\GetDetailMediaByIdController;
 use App\Http\Controllers\Medias\GetMyMediaController;
+use App\Http\Controllers\Medias\UpdateMediaController;
 use App\Http\Controllers\Users\Profiles\GetMyFollowerOrFolloweeController;
 use App\Http\Controllers\Users\Profiles\GetMyProfileController;
 use App\Http\Controllers\Users\Profiles\GetProfileUserByIdController;
@@ -50,6 +51,7 @@ Route::middleware(["auth:api"])->group(function () {
         Route::get("/my-media", GetMyMediaController::class);
         Route::get("{mediaId}/auth", GetDetailMediaByIdController::class);
         Route::post("/", CreateMediaController::class);
+        Route::put("/{mediaId}", UpdateMediaController::class);
     });
 
     Route::prefix("/albums")->group(function () {
