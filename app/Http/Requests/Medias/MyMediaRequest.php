@@ -4,7 +4,7 @@ namespace App\Http\Requests\Medias;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class SearchMediaRequest extends FormRequest
+class MyMediaRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,8 +22,7 @@ class SearchMediaRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "per_page" => "nullable|integer|min:1",
-            "page" => "nullable|integer|min:1"
+            "is_created" => "nullable|boolean"
         ];
     }
 }
