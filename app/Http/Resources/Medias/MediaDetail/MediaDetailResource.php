@@ -3,14 +3,14 @@
 namespace App\Http\Resources\Medias\MediaDetail;
 
 use App\Components\Resources\BaseResource;
-use App\Http\Resources\Users\Profiles\FollowResource as ProfilesFollowResource;
-use App\Http\Resources\Users\Relationships\FollowResource;
+use App\Http\Resources\Users\Profiles\FollowResource;
 use App\Models\User;
+use App\Traits\SharedTrait;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class MediaDetailResource extends BaseResource
 {
+    use SharedTrait;
     private static $attributes = [
         'id',
         'media_name',
@@ -33,14 +33,12 @@ class MediaDetailResource extends BaseResource
 
         $user = User::withCount('followers')->find($this->resource->media_owner_id);
 
-        if ((Auth::check())) {
+        if ($this->getBearerToken($request)) {
             $request->merge(["relationship" => "followers"]);
-            $data["ownerUser"] = new ProfilesFollowResource($user);
-            $data["numberUserFollowers"] = $user->getAttribute("followers_count");
-        } else {
-            $data["ownerUser"] = new FollowResource($user);
-            $data["numberUserFollowers"] = $user->getAttribute("followers_count");
         }
+
+        $data["ownerUser"] = new FollowResource($user);
+        $data["numberUserFollowers"] = $user->getAttribute("followers_count");
 
         return $data;
     }

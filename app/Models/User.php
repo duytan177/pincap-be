@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\User\UserStatus;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -108,14 +109,20 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
         return $this->belongsToMany(Album::class, "user_album")->withPivot(["invitationStatus", 'albumRole'])->wherePivot("invitationStatus", "1")->withTimestamps();
     }
 
-    public function followers() : BelongsToMany
+    public function followers(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, "user_relationship", 'followee_id', 'follower_id')->withPivot(["user_status"])->withTimestamps()->wherePivot("user_status", "=", "1");
+        return $this->belongsToMany(User::class, "user_relationship", 'followee_id', 'follower_id')->withPivot(["user_status"])->withTimestamps()->wherePivot("user_status", "=", UserStatus::FOLLOWING);
     }
 
     public function followees()
     {
-        return $this->belongsToMany(User::class, "user_relationship", 'follower_id', 'followee_id')->withPivot(["user_status"])->withTimestamps()->wherePivot("user_status", "=", "1");
+        return $this->belongsToMany(User::class, "user_relationship", 'follower_id', 'followee_id')->withPivot(["user_status"])->withTimestamps()->wherePivot("user_status", "=", UserStatus::FOLLOWING);
+    }
+
+    public function blockedUsers(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, "user_relationship", 'follower_id', 'followee_id')->withPivot(["user_status"])->withTimestamps()->wherePivot("user_status", "=", UserStatus::BLOCK)->wherePivotNull('deleted_at');
+        ;
     }
 
 

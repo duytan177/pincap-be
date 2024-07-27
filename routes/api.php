@@ -25,6 +25,7 @@ use App\Http\Controllers\Users\Profiles\UpdateMyProfileController;
 use App\Http\Controllers\Users\Relationships\FollowOrBlockController;
 use App\Http\Controllers\Users\Relationships\GetFollowerOrFollweeByIdController;
 use App\Http\Controllers\Users\Relationships\UnFollowOrUnBlockController;
+use App\Http\Controllers\Users\SearchUserOrTagNameController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/health-check', function () {
@@ -51,7 +52,6 @@ Route::middleware(["auth:api"])->group(function () {
 
     Route::prefix("/medias")->group(function () {
         Route::get("/my-media", GetMyMediaController::class);
-        Route::get("{mediaId}/auth", GetDetailMediaByIdController::class);
         Route::post("/", CreateMediaController::class);
         Route::put("/{mediaId}", UpdateMediaController::class);
         Route::delete("/", DeleteMediaByIdController::class);
@@ -83,6 +83,8 @@ Route::group([], function () {
         Route::prefix("/relationships")->group(function () {
             Route::get("/{userId}", GetFollowerOrFollweeByIdController::class);
         });
+
+        Route::get("/search", SearchUserOrTagNameController::class);
     });
 
     Route::prefix("/medias")->group(function () {

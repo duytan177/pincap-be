@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Users\Relationships;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Users\Profiles\GetMyFollowerOrFolloweeRequest;
-use App\Http\Resources\Users\Relationships\FollowCollection;
+use App\Http\Resources\Users\Profiles\FollowCollection;
 use App\Models\User;
 
 class GetFollowerOrFollweeByIdController extends Controller

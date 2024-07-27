@@ -28,6 +28,7 @@ class UpdateMediaRequest extends FormRequest
             "description" => "required|string",
             "privacy" => ["required", Rule::in(Privacy::getValues())],
             "is_comment" => "required|boolean",
+            "is_created" => "nullable|boolean",
             "tags_name" => "nullable|array",
             "tags_name.*" => "nullable|string|max:255",
             "album_id" => "nullable|exists:albums,id"
