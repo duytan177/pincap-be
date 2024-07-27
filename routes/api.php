@@ -11,6 +11,7 @@ use App\Http\Controllers\Auth\OAuth2\Google\HandleCallbackController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResendVerifyUserController;
 use App\Http\Controllers\Auth\VerifyUserController;
+use App\Http\Controllers\Medias\DownloadMediaController;
 use App\Http\Controllers\Medias\CreateMediaController;
 use App\Http\Controllers\Medias\DeleteMediaByIdController;
 use App\Http\Controllers\Medias\GetAllMediaController;
@@ -91,5 +92,6 @@ Route::group([], function () {
         Route::get("/all", GetAllMediaController::class);
         Route::get("/search/{tagId}", SearchMediaByTagIdController::class);
         Route::get("{mediaId}", GetDetailMediaByIdController::class);
+        Route::post("downloads", DownloadMediaController::class);
     });
 });
