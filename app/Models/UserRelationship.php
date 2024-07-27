@@ -26,6 +26,13 @@ class UserRelationship extends Model
         'deleted_at'
     ];
 
+    protected function casts()
+    {
+        return [
+            "deleted_at" => "dates"
+        ];
+    }
+
     public function getUserStatusAttribute($value)
     {
         return $value=='0'?'BLOCK':'FOLLOW';
