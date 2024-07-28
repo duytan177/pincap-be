@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AlbumMedia\GetPrivacyController;
 use App\Http\Controllers\Albums\CreateAlbumController;
+use App\Http\Controllers\Albums\UpdateAlbumController;
 use App\Http\Controllers\Auth\ForgotPassword\ForgotPasswordController;
 use App\Http\Controllers\Auth\ForgotPassword\RedirectController;
 use App\Http\Controllers\Auth\ForgotPassword\ResetPasswordController;
@@ -62,6 +63,7 @@ Route::middleware(["auth:api"])->group(function () {
     Route::prefix("/albums")->group(function () {
         Route::get("medias/privacy", GetPrivacyController::class);
         Route::post("/", CreateAlbumController::class);
+        Route::put("/{albumId}", UpdateAlbumController::class);
     });
 });
 
