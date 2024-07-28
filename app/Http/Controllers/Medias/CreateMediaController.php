@@ -7,13 +7,13 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\Medias\Shared\MediaHandle;
 use App\Http\Requests\Medias\CreateMediaRequest;
 use App\Models\Media;
-use App\Traits\S3UploadTrait;
+use App\Traits\AWSS3Trait;
 use Ramsey\Uuid\Guid\Guid;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class CreateMediaController extends Controller
 {
-    use S3UploadTrait;
+    use AWSS3Trait;
 
     const IMAGE = "IMAGE";
     const VIDEO = "VIDEO";

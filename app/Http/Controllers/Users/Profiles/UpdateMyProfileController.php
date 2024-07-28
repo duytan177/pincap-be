@@ -6,12 +6,12 @@ use App\Exceptions\Users\ProfileException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Users\Profiles\UpdateMyProfileRequest;
 use App\Models\User;
-use App\Traits\S3UploadTrait;
+use App\Traits\AWSS3Trait;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class UpdateMyProfileController extends Controller
 {
-    use S3UploadTrait;
+    use AWSS3Trait;
 
     const AVATAR = 'avatar';
     const BACKGROUND = 'background';

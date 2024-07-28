@@ -6,8 +6,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use App\Enums\Album_Media\InvitationStatus;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      *
@@ -18,9 +17,9 @@ return new class extends Migration
         Schema::create('user_album', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('user_id')->references('id')->on('users');
-            $table->foreignUuid('album_id')->references('id')->on('albums');
-            $table->enum('invitation_status',InvitationStatus::getValues())->default(InvitationStatus::INVITED);
-            $table->enum('albumRole',AlbumRole::getValues())->default(AlbumRole::EDIT);
+            $table->foreignUuid('album_id')->references('id')->on('albums')->onDelete("cascade");
+            $table->boolean('invitation_status')->default(false);
+            $table->enum('album_role', AlbumRole::getValues())->default(AlbumRole::EDIT);
             $table->timestamps();
             $table->softDeletes();
         });

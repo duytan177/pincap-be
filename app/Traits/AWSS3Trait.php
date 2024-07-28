@@ -4,7 +4,7 @@ namespace App\Traits;
 
 use Illuminate\Support\Facades\Storage;
 
-trait S3UploadTrait
+trait AWSS3Trait
 {
     public function uploadToS3($file, $type)
     {

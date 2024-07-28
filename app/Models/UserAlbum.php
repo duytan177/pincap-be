@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Enums\Album_Media\InvitationStatus;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -18,20 +17,14 @@ class UserAlbum extends Model
         'id',
         'user_id',
         'invitation_status',
-        'albumRole',
+        'album_role',
     ];
     protected $hidden = [];
 
-    public function getInvitationStatusAttribute($value)
+    protected function casts()
     {
-        $value = (int)$value;
-        switch ($value) {
-            case 0:
-                return InvitationStatus::getKey($value);
-            case 1:
-                return InvitationStatus::getKey($value);
-            case 2:
-                return InvitationStatus::getKey($value);
-        }
+        return [
+            "invitation_status" => "boolean"
+        ];
     }
 }
