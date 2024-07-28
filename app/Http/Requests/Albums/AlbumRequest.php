@@ -25,12 +25,7 @@ class AlbumRequest extends FormRequest
     {
         return [
             "album_name" => "required|string",
-            'image' => [
-                'nullable',
-                'file',
-                'mimes:jpeg,png,jpg,gif,svg,mp4,mov,ogg,qt',
-                'max:25600' // 25 MB
-            ],
+            'image_cover' => 'nullable|string|exists:medias,media_url',
             "description" => "nullable|string",
             "privacy" => ["nullable", Rule::in(Privacy::getValues())],
         ];
