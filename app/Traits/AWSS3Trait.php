@@ -2,7 +2,6 @@
 
 namespace App\Traits;
 
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 
 trait AWSS3Trait
@@ -24,5 +23,4 @@ trait AWSS3Trait
         $path = ltrim($path, '/');
         Storage::disk('s3')->delete($path);
     }
-
 }
