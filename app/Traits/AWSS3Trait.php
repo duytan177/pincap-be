@@ -2,9 +2,10 @@
 
 namespace App\Traits;
 
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 
-trait S3UploadTrait
+trait AWSS3Trait
 {
     public function uploadToS3($file, $type)
     {
@@ -23,4 +24,5 @@ trait S3UploadTrait
         $path = ltrim($path, '/');
         Storage::disk('s3')->delete($path);
     }
+
 }
