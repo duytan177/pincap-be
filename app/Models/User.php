@@ -33,7 +33,7 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
             }
         });
         static::addGlobalScope('order', function (Builder $builder) {
-            $builder->orderBy('created_at', 'desc'); // 'asc' để sắp xếp tăng dần, 'desc' để sắp xếp giảm dần
+            $builder->orderBy('users.created_at', 'desc'); // 'asc' để sắp xếp tăng dần, 'desc' để sắp xếp giảm dần
         });
     }
     public function getJWTIdentifier()
@@ -106,7 +106,7 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
     }
     public function albums()
     {
-        return $this->belongsToMany(Album::class, "user_album")->withPivot(["invitationStatus", 'albumRole'])->wherePivot("invitationStatus", "1")->withTimestamps();
+        return $this->belongsToMany(Album::class, "user_album")->withPivot(["invitation_status", 'album_role'])->wherePivot("invitation_status", true)->withTimestamps();
     }
 
     public function followers(): BelongsToMany
