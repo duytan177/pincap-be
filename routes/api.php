@@ -30,6 +30,7 @@ use App\Http\Controllers\Users\Relationships\FollowOrBlockController;
 use App\Http\Controllers\Users\Relationships\GetFollowerOrFollweeByIdController;
 use App\Http\Controllers\Users\Relationships\UnFollowOrUnBlockController;
 use App\Http\Controllers\Users\SearchUserOrTagNameController;
+use App\Http\Controllers\Users\SearchUsersController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/health-check', function () {
@@ -92,6 +93,8 @@ Route::group([], function () {
         });
 
         Route::get("/search", SearchUserOrTagNameController::class);
+
+        Route::get('/find', SearchUsersController::class);
     });
 
     Route::prefix("/medias")->group(function () {
