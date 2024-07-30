@@ -3,7 +3,6 @@
 namespace App\Http\Resources\Albums;
 
 use App\Components\Resources\BaseResource;
-use App\Enums\Album_Media\AlbumRole;
 use Illuminate\Http\Request;
 
 class AlbumResource extends BaseResource
@@ -23,8 +22,6 @@ class AlbumResource extends BaseResource
      */
     public function toArray(Request $request): array
     {
-        $data = $this->resource->only(self::$attributes);
-        $data["albumRole"] = AlbumRole::getKey($this->resource->members[0]->pivot->album_role);
-        return $data;
+        return $this->resource->only(self::$attributes);
     }
 }
