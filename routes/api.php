@@ -23,6 +23,7 @@ use App\Http\Controllers\Medias\GetDetailMediaByIdController;
 use App\Http\Controllers\Medias\GetMyMediaController;
 use App\Http\Controllers\Medias\SearchMediaByTagIdController;
 use App\Http\Controllers\Medias\UpdateMediaController;
+use App\Http\Controllers\Users\Reports\GetListReportReasonController;
 use App\Http\Controllers\Users\Profiles\GetMyFollowerOrFolloweeController;
 use App\Http\Controllers\Users\Profiles\GetMyProfileController;
 use App\Http\Controllers\Users\Profiles\GetProfileUserByIdController;
@@ -94,8 +95,11 @@ Route::group([], function () {
             Route::get("/{userId}", GetFollowerOrFollweeByIdController::class);
         });
 
-        Route::get("/search", SearchUserOrTagNameController::class);
+        Route::prefix("report-reasons")->group(function () {
+            Route::get("/", GetListReportReasonController::class);
+        });
 
+        Route::get("/search", SearchUserOrTagNameController::class);
         Route::get('/find', SearchUsersController::class);
     });
 
