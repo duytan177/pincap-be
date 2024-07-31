@@ -21,6 +21,7 @@ use App\Http\Controllers\Medias\DeleteMediaByIdController;
 use App\Http\Controllers\Medias\GetAllMediaController;
 use App\Http\Controllers\Medias\GetDetailMediaByIdController;
 use App\Http\Controllers\Medias\GetMyMediaController;
+use App\Http\Controllers\Medias\ReportMediaController;
 use App\Http\Controllers\Medias\SearchMediaByTagIdController;
 use App\Http\Controllers\Medias\UpdateMediaController;
 use App\Http\Controllers\Users\Reports\GetListReportReasonController;
@@ -62,6 +63,10 @@ Route::middleware(["auth:api"])->group(function () {
         Route::post("/", CreateMediaController::class);
         Route::put("/{mediaId}", UpdateMediaController::class);
         Route::delete("/", DeleteMediaByIdController::class);
+
+        Route::prefix("report")->group(function () {
+            Route::post("/", ReportMediaController::class);
+        });
     });
 
     Route::prefix("/albums")->group(function () {
