@@ -32,6 +32,7 @@ use App\Http\Controllers\Users\Profiles\UpdateMyProfileController;
 use App\Http\Controllers\Users\Relationships\FollowOrBlockController;
 use App\Http\Controllers\Users\Relationships\GetFollowerOrFollweeByIdController;
 use App\Http\Controllers\Users\Relationships\UnFollowOrUnBlockController;
+use App\Http\Controllers\Users\Reports\ReportUserController;
 use App\Http\Controllers\Users\SearchUserOrTagNameController;
 use App\Http\Controllers\Users\SearchUsersController;
 use Illuminate\Support\Facades\Route;
@@ -55,6 +56,10 @@ Route::middleware(["auth:api"])->group(function () {
         Route::prefix("/my-profile")->group(function () {
             Route::get("/", GetMyProfileController::class);
             Route::post("/", UpdateMyProfileController::class);
+        });
+
+        Route::prefix("report")->group(function () {
+            Route::post("/", ReportUserController::class);
         });
     });
 
