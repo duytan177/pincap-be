@@ -32,6 +32,12 @@ class Album extends Model
     {
         return $value == '0' ? 'PRIVATE' : 'PUBLIC';
     }
+
+    public function allUser(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, "user_album")->withPivot(["invitation_status", 'album_role'])->withTimestamps();
+    }
+
     public function members(): BelongsToMany
     {
         return $this->belongsToMany(User::class, "user_album")->withPivot(["invitation_status", 'album_role'])->withTimestamps()->wherePivot("album_role", "!=", AlbumRole::OWNER);
@@ -41,8 +47,8 @@ class Album extends Model
     {
         return $this->belongsToMany(User::class, "user_album")->withPivot(["invitation_status", 'album_role'])->withTimestamps()->wherePivot("album_role", AlbumRole::OWNER);
     }
-    public function medias()
+    public function medias() : BelongsToMany
     {
-        return $this->belongsToMany(Media::class, 'album_media')->withTimestamps();
+        return $this->belongsToMany(Media::class, 'album_media')->where("is_created", true)->withTimestamps();
     }
 }

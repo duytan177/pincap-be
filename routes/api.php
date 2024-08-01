@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AlbumMedia\GetPrivacyController;
 use App\Http\Controllers\Albums\CreateAlbumController;
+use App\Http\Controllers\Albums\GetDetailAlbumByIdController;
 use App\Http\Controllers\Albums\GetMyAlbumController;
 use App\Http\Controllers\Albums\GetMyAlbumRoleMemberController;
 use App\Http\Controllers\Albums\UpdateAlbumController;
@@ -118,5 +119,9 @@ Route::group([], function () {
         Route::get("/search/{tagId}", SearchMediaByTagIdController::class);
         Route::get("{mediaId}", GetDetailMediaByIdController::class);
         Route::post("downloads", DownloadMediaController::class);
+    });
+
+    Route::prefix("/albums")->group(function () {
+        Route::get("{albumId}", GetDetailAlbumByIdController::class);
     });
 });
