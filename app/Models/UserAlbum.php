@@ -16,6 +16,7 @@ class UserAlbum extends Model
     protected $fillable = [
         'id',
         'user_id',
+        'album_id',
         'invitation_status',
         'album_role',
     ];

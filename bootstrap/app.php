@@ -102,11 +102,6 @@ return Application::configure(basePath: dirname(__DIR__))
                     $message = $exception->getMessage();
                     $statusCode = HttpStatusCode::HTTP_INTERNAL_SERVER_ERROR;
                     break;
-
-                default:
-                    $message = $exception->getMessage();
-                    $statusCode = HttpStatusCode::HTTP_INTERNAL_SERVER_ERROR;
-                    break;
             }
 
             if ($request->is('*')) {
