@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AlbumMedia\GetPrivacyController;
+use App\Http\Controllers\Albums\AddMemberIntoAlbumController;
 use App\Http\Controllers\Albums\CreateAlbumController;
 use App\Http\Controllers\Albums\GetDetailAlbumByIdController;
 use App\Http\Controllers\Albums\GetMyAlbumController;
@@ -81,6 +82,7 @@ Route::middleware(["auth:api"])->group(function () {
         Route::get("/my-album-member", GetMyAlbumRoleMemberController::class);
         Route::post("/", CreateAlbumController::class);
         Route::put("/{albumId}", UpdateAlbumController::class);
+        Route::post("/{albumId}/invite/{userId}", AddMemberIntoAlbumController::class);
     });
 });
 
