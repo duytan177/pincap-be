@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::create('album_media', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('album_id')->references('id')->on('albums');
-            $table->foreignUuid('media_id')->references('id')->on('medias');
+            $table->foreignUuid('album_id')->references('id')->on('albums')->onDelete("cascade");
+            $table->foreignUuid('media_id')->references('id')->on('medias')->onDelete("cascade");
             $table->timestamps();
             $table->softDeletes();
         });
