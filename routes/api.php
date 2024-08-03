@@ -3,6 +3,7 @@
 use App\Http\Controllers\AlbumMedia\GetPrivacyController;
 use App\Http\Controllers\Albums\AddMemberIntoAlbumController;
 use App\Http\Controllers\Albums\CreateAlbumController;
+use App\Http\Controllers\Albums\DeleteAlbumController;
 use App\Http\Controllers\Albums\GetDetailAlbumByIdController;
 use App\Http\Controllers\Albums\GetMyAlbumController;
 use App\Http\Controllers\Albums\GetMyAlbumRoleMemberController;
@@ -83,6 +84,7 @@ Route::middleware(["auth:api"])->group(function () {
         Route::post("/", CreateAlbumController::class);
         Route::put("/{albumId}", UpdateAlbumController::class);
         Route::post("/{albumId}/invite/{userId}", AddMemberIntoAlbumController::class);
+        Route::delete("/{albumId}", DeleteAlbumController::class);
     });
 });
 
