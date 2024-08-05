@@ -27,6 +27,7 @@ use App\Http\Controllers\Medias\GetMyMediaController;
 use App\Http\Controllers\Medias\ReportMediaController;
 use App\Http\Controllers\Medias\SearchMediaByTagIdController;
 use App\Http\Controllers\Medias\UpdateMediaController;
+use App\Http\Controllers\Reactions\Feelings\GetAllFeelingController;
 use App\Http\Controllers\Users\Reports\GetListReportReasonController;
 use App\Http\Controllers\Users\Profiles\GetMyFollowerOrFolloweeController;
 use App\Http\Controllers\Users\Profiles\GetMyProfileController;
@@ -127,5 +128,9 @@ Route::group([], function () {
 
     Route::prefix("/albums")->group(function () {
         Route::get("{albumId}", GetDetailAlbumByIdController::class);
+    });
+
+    Route::prefix("/reactions")->group(function () {
+        Route::get("/feelings", GetAllFeelingController::class);
     });
 });
