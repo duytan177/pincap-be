@@ -28,6 +28,7 @@ use App\Http\Controllers\Medias\ReportMediaController;
 use App\Http\Controllers\Medias\SearchMediaByTagIdController;
 use App\Http\Controllers\Medias\UpdateMediaController;
 use App\Http\Controllers\Reactions\Feelings\GetAllFeelingController;
+use App\Http\Controllers\Reactions\Medias\ToggleReactionMediaController;
 use App\Http\Controllers\Users\Reports\GetListReportReasonController;
 use App\Http\Controllers\Users\Profiles\GetMyFollowerOrFolloweeController;
 use App\Http\Controllers\Users\Profiles\GetMyProfileController;
@@ -86,6 +87,12 @@ Route::middleware(["auth:api"])->group(function () {
         Route::put("/{albumId}", UpdateAlbumController::class);
         Route::post("/{albumId}/invite/{userId}", AddMemberIntoAlbumController::class);
         Route::delete("/{albumId}", DeleteAlbumController::class);
+    });
+
+    Route::prefix("/reactions")->group(function () {
+        Route::prefix("/medias")->group(function () {
+            Route::post("/", ToggleReactionMediaController::class);
+        });
     });
 });
 
