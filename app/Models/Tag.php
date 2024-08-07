@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use App\Models\User;
 use App\Models\Media;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Ramsey\Uuid\Uuid;
 
 class Tag extends Model
@@ -39,8 +40,13 @@ class Tag extends Model
     {
         return $this->belongsTo(User::class, 'owner_user_created_id');
     }
-    public function medias()
+    public function medias() : BelongsToMany
     {
         return $this->belongsToMany(Media::class, 'media_tag')->withTimestamps();
+    }
+
+    public function latestMedia() : BelongsToMany
+    {
+        return $this->belongsToMany(Media::class, 'media_tag')->withTimestamps()->latest('created_at')->take(1);
     }
 }
