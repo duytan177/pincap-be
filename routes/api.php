@@ -29,6 +29,7 @@ use App\Http\Controllers\Medias\SearchMediaByTagIdController;
 use App\Http\Controllers\Medias\UpdateMediaController;
 use App\Http\Controllers\Reactions\Feelings\GetAllFeelingController;
 use App\Http\Controllers\Reactions\Medias\ToggleReactionMediaController;
+use App\Http\Controllers\Tags\GetAllTagController;
 use App\Http\Controllers\Users\Reports\GetListReportReasonController;
 use App\Http\Controllers\Users\Profiles\GetMyFollowerOrFolloweeController;
 use App\Http\Controllers\Users\Profiles\GetMyProfileController;
@@ -139,5 +140,9 @@ Route::group([], function () {
 
     Route::prefix("/reactions")->group(function () {
         Route::get("/feelings", GetAllFeelingController::class);
+    });
+
+    Route::prefix("/tags")->group(function () {
+        Route::get("/", GetAllTagController::class);
     });
 });
