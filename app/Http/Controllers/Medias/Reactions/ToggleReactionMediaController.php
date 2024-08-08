@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Reactions\Medias;
+namespace App\Http\Controllers\Medias\Reactions;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Reactions\Medias\ToggleReactionMediaRequest;

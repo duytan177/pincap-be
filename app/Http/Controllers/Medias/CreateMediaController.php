@@ -15,9 +15,6 @@ class CreateMediaController extends Controller
 {
     use AWSS3Trait;
 
-    const IMAGE = "IMAGE";
-    const VIDEO = "VIDEO";
-
     public function __invoke(CreateMediaRequest $request)
     {
         $mediaData = $request->validated();

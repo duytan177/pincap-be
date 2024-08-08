@@ -6,6 +6,10 @@ use Illuminate\Support\Facades\Storage;
 
 trait AWSS3Trait
 {
+    const IMAGE = "IMAGE";
+    const VIDEO = "VIDEO";
+    const COMMENT = "comment";
+
     public function uploadToS3($file, $type)
     {
         $fileName = time() . "-" . $file->getClientOriginalName();

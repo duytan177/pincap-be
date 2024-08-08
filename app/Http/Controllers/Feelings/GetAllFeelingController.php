@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Reactions\Feelings;
+namespace App\Http\Controllers\Feelings;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Reactions\Feelings\FeelingCollection;
