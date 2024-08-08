@@ -27,8 +27,9 @@ use App\Http\Controllers\Medias\GetMyMediaController;
 use App\Http\Controllers\Medias\ReportMediaController;
 use App\Http\Controllers\Medias\SearchMediaByTagIdController;
 use App\Http\Controllers\Medias\UpdateMediaController;
-use App\Http\Controllers\Reactions\Feelings\GetAllFeelingController;
-use App\Http\Controllers\Reactions\Medias\ToggleReactionMediaController;
+use App\Http\Controllers\Feelings\GetAllFeelingController;
+use App\Http\Controllers\Medias\Reactions\CommentMediaController;
+use App\Http\Controllers\Medias\Reactions\ToggleReactionMediaController;
 use App\Http\Controllers\Tags\GetAllTagController;
 use App\Http\Controllers\Users\Reports\GetListReportReasonController;
 use App\Http\Controllers\Users\Profiles\GetMyFollowerOrFolloweeController;
@@ -78,6 +79,9 @@ Route::middleware(["auth:api"])->group(function () {
         Route::prefix("report")->group(function () {
             Route::post("/", ReportMediaController::class);
         });
+
+        Route::post("/reactions", ToggleReactionMediaController::class);
+        Route::post("/comment", CommentMediaController::class);
     });
 
     Route::prefix("/albums")->group(function () {
@@ -88,12 +92,6 @@ Route::middleware(["auth:api"])->group(function () {
         Route::put("/{albumId}", UpdateAlbumController::class);
         Route::post("/{albumId}/invite/{userId}", AddMemberIntoAlbumController::class);
         Route::delete("/{albumId}", DeleteAlbumController::class);
-    });
-
-    Route::prefix("/reactions")->group(function () {
-        Route::prefix("/medias")->group(function () {
-            Route::post("/", ToggleReactionMediaController::class);
-        });
     });
 });
 
@@ -138,9 +136,7 @@ Route::group([], function () {
         Route::get("{albumId}", GetDetailAlbumByIdController::class);
     });
 
-    Route::prefix("/reactions")->group(function () {
-        Route::get("/feelings", GetAllFeelingController::class);
-    });
+    Route::get("/feelings", GetAllFeelingController::class);
 
     Route::prefix("/tags")->group(function () {
         Route::get("/", GetAllTagController::class);
