@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Reactions\Medias;
+namespace App\Http\Requests\Medias\Reactions;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -24,7 +24,6 @@ class ToggleReactionMediaRequest extends FormRequest
         return [
             "mediaId" => "required|exists:medias,id",
             "feelingId" => "required|exists:feelings,id",
-
         ];
     }
 }
