@@ -32,6 +32,7 @@ use App\Http\Controllers\Medias\Reactions\CommentMediaController;
 use App\Http\Controllers\Medias\Reactions\ReplyCommentController;
 use App\Http\Controllers\Medias\Reactions\ToggleReactionCommentController;
 use App\Http\Controllers\Medias\Reactions\ToggleReactionMediaController;
+use App\Http\Controllers\Medias\Reactions\ToggleReactionReplyController;
 use App\Http\Controllers\Tags\GetAllTagController;
 use App\Http\Controllers\Users\Reports\GetListReportReasonController;
 use App\Http\Controllers\Users\Profiles\GetMyFollowerOrFolloweeController;
@@ -87,7 +88,11 @@ Route::middleware(["auth:api"])->group(function () {
         Route::prefix("comment")->group(function () {
             Route::post("/", CommentMediaController::class);
             Route::post("/reactions", ToggleReactionCommentController::class);
-            Route::post("/reply", ReplyCommentController::class);
+
+            Route::prefix("reply")->group(function () {
+                Route::post("/", ReplyCommentController::class);
+                Route::post("/reactions", ToggleReactionReplyController::class);
+            });
         });
     });
 
