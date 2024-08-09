@@ -29,6 +29,7 @@ use App\Http\Controllers\Medias\SearchMediaByTagIdController;
 use App\Http\Controllers\Medias\UpdateMediaController;
 use App\Http\Controllers\Feelings\GetAllFeelingController;
 use App\Http\Controllers\Medias\Reactions\CommentMediaController;
+use App\Http\Controllers\Medias\Reactions\ToggleReactionCommentController;
 use App\Http\Controllers\Medias\Reactions\ToggleReactionMediaController;
 use App\Http\Controllers\Tags\GetAllTagController;
 use App\Http\Controllers\Users\Reports\GetListReportReasonController;
@@ -81,7 +82,11 @@ Route::middleware(["auth:api"])->group(function () {
         });
 
         Route::post("/reactions", ToggleReactionMediaController::class);
-        Route::post("/comment", CommentMediaController::class);
+
+        Route::prefix("comment")->group(function () {
+            Route::post("/", CommentMediaController::class);
+            Route::post("/reactions", ToggleReactionCommentController::class);
+        });
     });
 
     Route::prefix("/albums")->group(function () {
