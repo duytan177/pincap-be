@@ -9,6 +9,7 @@ trait AWSS3Trait
     const IMAGE = "IMAGE";
     const VIDEO = "VIDEO";
     const COMMENT = "comment";
+    const REPLY = "reply";
 
     public function uploadToS3($file, $type)
     {
