@@ -81,7 +81,7 @@ class Media extends Model
 
     public function userComments()
     {
-        return $this->belongsToMany(User::class, 'comments')->withPivot(["content", 'id'])->withTimestamps();
+        return $this->belongsToMany(User::class, 'comments')->withPivot(["content", 'id', "image_url"])->withTimestamps();
     }
     public function reactionUser()
     {
@@ -92,7 +92,7 @@ class Media extends Model
     {
         return $this->belongsToMany(Album::class, 'album_media')->withTimestamps();
     }
-    public function tags() : BelongsToMany
+    public function tags(): BelongsToMany
     {
         return $this->belongsToMany(Tag::class, 'media_tag')->withTimestamps();
     }

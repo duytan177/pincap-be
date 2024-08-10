@@ -10,7 +10,7 @@ class GetDetailMediaByIdController extends Controller
 {
     public function __invoke($mediaId)
     {
-        $media = Media::findOrFail($mediaId);
+        $media = Media::with(["userComments"])->findOrFail($mediaId);
         return new MediaDetailResource($media);
     }
 }
