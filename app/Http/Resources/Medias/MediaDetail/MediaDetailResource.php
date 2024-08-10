@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Medias\MediaDetail;
 
 use App\Components\Resources\BaseResource;
+use App\Http\Resources\Medias\Comments\CommentCollection;
 use App\Http\Resources\Users\Profiles\FollowResource;
 use App\Models\User;
 use App\Traits\SharedTrait;
@@ -20,6 +21,7 @@ class MediaDetailResource extends BaseResource
         'privacy',
         'is_created',
         'is_comment',
+        "userComments"
     ];
 
     /**
@@ -39,7 +41,7 @@ class MediaDetailResource extends BaseResource
 
         $data["ownerUser"] = new FollowResource($user);
         $data["numberUserFollowers"] = $user->getAttribute("followers_count");
-
+        $data["userComments"] =  CommentCollection::make($this->resource->userComments);
         return $data;
     }
 }
