@@ -8,10 +8,21 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use App\Models\User;
 use App\Models\Media;
+use Illuminate\Database\Eloquent\Builder;
 
 class Comment extends Model
 {
     use HasFactory, HasUuids, Notifiable;
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::addGlobalScope('order', function (Builder $builder) {
+            $builder->orderBy('created_at', 'desc');
+        });
+    }
+
     protected $fillable = [
         'id',
         'user_id',

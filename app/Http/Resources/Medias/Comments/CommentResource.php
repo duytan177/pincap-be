@@ -3,12 +3,11 @@
 namespace App\Http\Resources\Medias\Comments;
 
 use App\Components\Resources\BaseResource;
-use App\Http\Resources\Users\Profiles\FollowResource;
-use App\Models\User;
 use Illuminate\Http\Request;
 
 class CommentResource extends BaseResource
-{    private static $attributes = [
+{
+    private static $attributes = [
         "id",
         "first_name",
         "last_name",
