@@ -23,6 +23,6 @@ class GetMyMediaController extends Controller
             ["is_created", $isCreated]
         ])->paginate($perPage, ['*'], 'page', $page);
 
-        return new MediaCollection($medias);
+        return MediaCollection::make($medias);
     }
 }

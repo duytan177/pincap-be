@@ -15,6 +15,6 @@ class GetFollowerOrFollweeByIdController extends Controller
         $user = User::with("followers")->findOrFail($userId);
         $requests->merge(["user" => $user]);
         $followRelationship = $user->getAttribute($relationship);
-        return new FollowCollection($followRelationship);
+        return FollowCollection::make($followRelationship);
     }
 }

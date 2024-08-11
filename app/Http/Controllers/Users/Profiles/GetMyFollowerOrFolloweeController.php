@@ -13,6 +13,6 @@ class GetMyFollowerOrFolloweeController extends Controller
     {
         $relationship = $requests->input("relationship");
         $followRelationship = JWTAuth::user()->getAttribute($relationship);
-        return new FollowCollection($followRelationship);
+        return FollowCollection::make($followRelationship);
     }
 }

@@ -28,6 +28,7 @@ use App\Http\Controllers\Medias\ReportMediaController;
 use App\Http\Controllers\Medias\SearchMediaByTagIdController;
 use App\Http\Controllers\Medias\UpdateMediaController;
 use App\Http\Controllers\Feelings\GetAllFeelingController;
+use App\Http\Controllers\Medias\GetCommentsOfMediaDetailByIdController;
 use App\Http\Controllers\Medias\Reactions\CommentMediaController;
 use App\Http\Controllers\Medias\Reactions\ReplyCommentController;
 use App\Http\Controllers\Medias\Reactions\ToggleReactionCommentController;
@@ -141,6 +142,7 @@ Route::group([], function () {
         Route::get("/all", GetAllMediaController::class);
         Route::get("/search/{tagId}", SearchMediaByTagIdController::class);
         Route::get("{mediaId}", GetDetailMediaByIdController::class);
+        Route::get("/{mediaId}/comments", GetCommentsOfMediaDetailByIdController::class);
         Route::post("downloads", DownloadMediaController::class);
     });
 

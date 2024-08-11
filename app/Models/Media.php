@@ -79,10 +79,11 @@ class Media extends Model
     }
 
 
-    public function userComments()
+    public function userComments(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'comments')->withPivot(["content", 'id', "image_url"])->withTimestamps();
+        return $this->belongsToMany(User::class, 'comments')->withPivot(["content", 'id', "image_url"])->withTimestamps()->orderBy('created_at');
     }
+
     public function reactionUser()
     {
         return $this->belongsToMany(User::class, "reaction_media")->withPivot(["feeling_id"])->withTimestamps();
