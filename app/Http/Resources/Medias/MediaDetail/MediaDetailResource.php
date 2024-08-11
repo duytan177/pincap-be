@@ -39,7 +39,7 @@ class MediaDetailResource extends BaseResource
             $request->merge(["relationship" => "followers"]);
         }
 
-        $data["ownerUser"] = new FollowResource($user);
+        $data["ownerUser"] = FollowResource::make($user);
         $data["numberUserFollowers"] = $user->getAttribute("followers_count");
         $data["userComments"] =  CommentCollection::make($this->resource->userComments);
         return $data;

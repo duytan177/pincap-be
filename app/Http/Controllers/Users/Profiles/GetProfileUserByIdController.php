@@ -11,6 +11,6 @@ class GetProfileUserByIdController extends Controller
     public function __invoke($id)
     {
         $user = User::findOrFail($id);
-        return new ProfileResource($user);
+        return ProfileResource::make($user);
     }
 }

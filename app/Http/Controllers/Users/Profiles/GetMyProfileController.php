@@ -11,6 +11,6 @@ class GetMyProfileController extends Controller
     public function __invoke()
     {
         $user = JWTAuth::user();
-        return new ProfileResource($user);
+        return ProfileResource::make($user);
     }
 }

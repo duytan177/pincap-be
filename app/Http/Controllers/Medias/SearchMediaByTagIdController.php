@@ -22,6 +22,6 @@ class SearchMediaByTagIdController extends Controller
             $query->where('tag_id', $tagId);
         })->paginate($perPage, ['*'], 'page', $page);
 
-        return new MediaCollection($medias);
+        return MediaCollection::make($medias);
     }
 }
