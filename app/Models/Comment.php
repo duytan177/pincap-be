@@ -9,6 +9,7 @@ use Illuminate\Notifications\Notifiable;
 use App\Models\User;
 use App\Models\Media;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Comment extends Model
 {
@@ -42,5 +43,10 @@ class Comment extends Model
     public function commentsMedia()
     {
         return $this->belongsTo(Media::class, 'media_id');
+    }
+
+    public function replies(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'replies')->withPivot(["content", 'id', "image_url"])->withTimestamps()->orderBy('created_at');
     }
 }
