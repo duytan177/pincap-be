@@ -29,6 +29,7 @@ use App\Http\Controllers\Medias\SearchMediaByTagIdController;
 use App\Http\Controllers\Medias\UpdateMediaController;
 use App\Http\Controllers\Feelings\GetAllFeelingController;
 use App\Http\Controllers\Medias\GetCommentsOfMediaDetailByIdController;
+use App\Http\Controllers\Medias\GetListMediaByUserIdController;
 use App\Http\Controllers\Medias\GetReplyCommentByIdController;
 use App\Http\Controllers\Medias\Reactions\CommentMediaController;
 use App\Http\Controllers\Medias\Reactions\ReplyCommentController;
@@ -140,6 +141,7 @@ Route::group([], function () {
     });
 
     Route::prefix("/medias")->group(function () {
+        Route::get("/", GetListMediaByUserIdController::class);
         Route::get("/all", GetAllMediaController::class);
         Route::get("/search/{tagId}", SearchMediaByTagIdController::class);
         Route::get("{mediaId}", GetDetailMediaByIdController::class);
