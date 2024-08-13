@@ -40,7 +40,7 @@ class Album extends Model
 
     public function members(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, "user_album")->withPivot(["invitation_status", 'album_role'])->withTimestamps()->wherePivot("album_role", "!=", AlbumRole::OWNER);
+        return $this->belongsToMany(User::class, "user_album")->withPivot(["invitation_status", 'album_role'])->withTimestamps()->wherePivot("album_role", "!=", AlbumRole::OWNER)->wherePivot("invitation_status", "=", true);
     }
 
     public function userOwner(): BelongsToMany

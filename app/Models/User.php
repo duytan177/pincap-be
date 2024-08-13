@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\Album_Media\AlbumRole;
 use App\Enums\User\UserStatus;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -106,7 +107,7 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
     }
     public function albums()
     {
-        return $this->belongsToMany(Album::class, "user_album")->withPivot(["invitation_status", 'album_role'])->wherePivot("invitation_status", true)->withTimestamps();
+        return $this->belongsToMany(Album::class, "user_album")->withPivot(["invitation_status", 'album_role'])->wherePivot("invitation_status", true)->withTimestamps()->wherePivot("album_role", "=", AlbumRole::OWNER);
     }
 
     public function followers(): BelongsToMany

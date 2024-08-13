@@ -4,6 +4,7 @@ use App\Http\Controllers\AlbumMedia\GetPrivacyController;
 use App\Http\Controllers\Albums\AddMemberIntoAlbumController;
 use App\Http\Controllers\Albums\CreateAlbumController;
 use App\Http\Controllers\Albums\DeleteAlbumController;
+use App\Http\Controllers\Albums\GetAlbumByUserIdController;
 use App\Http\Controllers\Albums\GetDetailAlbumByIdController;
 use App\Http\Controllers\Albums\GetMyAlbumController;
 use App\Http\Controllers\Albums\GetMyAlbumRoleMemberController;
@@ -151,7 +152,8 @@ Route::group([], function () {
     });
 
     Route::prefix("/albums")->group(function () {
-        Route::get("{albumId}", GetDetailAlbumByIdController::class);
+        Route::get("/", GetAlbumByUserIdController::class);
+        Route::get("/{albumId}", GetDetailAlbumByIdController::class);
     });
 
     Route::get("/feelings", GetAllFeelingController::class);
