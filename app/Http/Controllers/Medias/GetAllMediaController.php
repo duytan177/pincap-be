@@ -21,7 +21,7 @@ class GetAllMediaController extends Controller
         $medias = $this->applyBlockedUsersFilter(
             Media::where([
                 ["is_created", true],
-                ["privacy", Privacy::getValue("PUBLIC")],
+                ["privacy", Privacy::PUBLIC],
             ]),
             $this->getBlockedUserIds($request)
         )->paginate($perPage, ['*'], 'page', $page);
