@@ -15,6 +15,7 @@ use App\Models\Tag;
 use Ramsey\Uuid\Uuid;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Facades\DB;
 
 class Media extends Model
 {
@@ -89,6 +90,15 @@ class Media extends Model
         return $this->belongsToMany(User::class, "reaction_media")->withPivot(["feeling_id"])->withTimestamps();
     }
 
+    public function reactionCounts()
+    {
+        return DB::table('reaction_media')
+        ->select('feeling_id', DB::raw('count(*) as count'))
+        ->where('media_id', $this->id)
+        ->groupBy('feeling_id')
+        ->get();
+    }
+
     public function albums()
     {
         return $this->belongsToMany(Album::class, 'album_media')->withTimestamps();
@@ -106,5 +116,10 @@ class Media extends Model
     public function mediaReported()
     {
         return $this->belongsToMany(User::class, 'report_media')->withTimestamps();
+    }
+
+    public function feelings()
+    {
+        return $this->belongsTo(Feeling::class, 'feeling_id', 'id');
     }
 }

@@ -23,11 +23,6 @@ class ReactionMedia extends Model
     ];
     protected $hidden = [];
 
-    public function reaction()
-    {
-        return $this->belongsTo(Feeling::class, 'feeling_id', 'id');
-    }
-
     public function userReaction()
     {
         return $this->belongsTo(User::class, 'user_id', 'id');

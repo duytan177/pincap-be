@@ -21,7 +21,7 @@ class MediaDetailResource extends BaseResource
         'privacy',
         'is_created',
         'is_comment',
-        "userComments"
+        "userComments",
     ];
 
     /**
@@ -42,6 +42,8 @@ class MediaDetailResource extends BaseResource
         $data["ownerUser"] = FollowResource::make($user);
         $data["numberUserFollowers"] = $user->getAttribute("followers_count");
         $data["userComments"] = CommentResource::make($this->resource->userComments->first());
+        // $data["reactionCounts"] = $this->resource->reactionCounts();
+
         return $data;
     }
 }
