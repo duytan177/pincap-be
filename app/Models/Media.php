@@ -12,9 +12,11 @@ use Illuminate\Notifications\Notifiable;
 use App\Models\User;
 use App\Models\Album;
 use App\Models\Tag;
+use App\Models\Feeling;
 use Ramsey\Uuid\Uuid;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Facades\DB;
 
 class Media extends Model
 {
@@ -106,5 +108,13 @@ class Media extends Model
     public function mediaReported()
     {
         return $this->belongsToMany(User::class, 'report_media')->withTimestamps();
+    }
+
+    public function feelings() : BelongsToMany
+    {
+        return $this->belongsToMany(Feeling::class, "reaction_media")
+            ->withPivot(["feeling_id"])
+            ->groupBy(['feeling_id', "media_id"])
+            ->select('feeling_id as id', 'feeling_type', 'icon_url', DB::raw('COUNT(*) as total'));
     }
 }

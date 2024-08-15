@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use App\Models\User;
-use App\Models\Feeling;
 use App\Models\Media;
 
 class ReactionMedia extends Model
@@ -22,11 +21,6 @@ class ReactionMedia extends Model
         'feeling_id'
     ];
     protected $hidden = [];
-
-    public function reaction()
-    {
-        return $this->belongsTo(Feeling::class, 'feeling_id', 'id');
-    }
 
     public function userReaction()
     {
