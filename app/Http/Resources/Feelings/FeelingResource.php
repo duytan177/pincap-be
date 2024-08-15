@@ -10,7 +10,8 @@ class FeelingResource extends BaseResource
     private static $attributes = [
         'id',
         'feeling_type',
-        "icon_url"
+        "icon_url",
+        "total"
     ];
 
     /**
