@@ -11,7 +11,6 @@ class FeelingResource extends BaseResource
         'id',
         'feeling_type',
         "icon_url",
-        "total"
     ];
 
     /**

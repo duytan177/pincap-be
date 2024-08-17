@@ -10,7 +10,9 @@ class GetDetailMediaByIdController extends Controller
 {
     public function __invoke($mediaId)
     {
-        $media = Media::with(['userComments', "feelings"])->findOrFail($mediaId);
+        $media = Media::withCount(["reactionUser", "feelings"])
+                ->with(['comments.userComment', "feelings", "comments.feelings", "comments.allFeelings"])
+                ->findOrFail($mediaId);
 
         return MediaDetailResource::make($media);
     }

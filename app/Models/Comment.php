@@ -8,7 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use App\Models\User;
 use App\Models\Media;
+use App\Models\Feeling;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Comment extends Model
@@ -35,7 +37,7 @@ class Comment extends Model
         'deleted_at'
     ];
 
-    public function userComments()
+    public function userComment() : BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
     }
@@ -48,5 +50,19 @@ class Comment extends Model
     public function replies(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'replies')->withPivot(["content", 'id', "image_url"])->withTimestamps()->orderBy('created_at');
+    }
+
+    public function feelings(): BelongsToMany
+    {
+        return $this->belongsToMany(Feeling::class, "reaction_comments")
+                ->groupBy(['feeling_id', "comment_id"])
+                ->select('feeling_id as id', 'feeling_type', 'icon_url')
+                ->orderByRaw('COUNT(*) DESC')
+                ->take(3);
+    }
+
+    public function allFeelings(): BelongsToMany
+    {
+        return $this->belongsToMany(Feeling::class, "reaction_comments");
     }
 }

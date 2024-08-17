@@ -17,7 +17,10 @@ use App\Models\Media;
 use App\Models\Album;
 use App\Models\Tag;
 use App\Models\Notification;
+use App\Models\ReactionComment;
+use App\Models\Feeling;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Ramsey\Uuid\Uuid;
 
 class User extends Authenticatable implements JWTSubject, MustVerifyEmail
@@ -143,5 +146,20 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
     public function notifications()
     {
         return $this->hasMany(Notification::class, "receiver_id");
+    }
+
+    public function feelings(): HasManyThrough
+    {
+        return $this->hasManyThrough(
+            Feeling::class,
+            ReactionComment::class,
+            'user_id', // Khóa ngoại trên bảng comments
+            'id', // Khóa ngoại trên bảng feelings (primary key)
+            'id', // Khóa chính trên bảng users
+            'feeling_id'  // Local key trên bảng reaction_comments
+        );
+            // -
+            // ->orderByRaw('COUNT(*) DESC')
+            // ->take(3);
     }
 }
