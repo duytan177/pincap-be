@@ -3,7 +3,6 @@
 namespace App\Http\Resources\Users\Profiles;
 
 use App\Components\Resources\BaseResource;
-use App\Http\Resources\Users\Shared\UserSharedResource;
 use App\Traits\SharedTrait;
 use Illuminate\Http\Request;
 
@@ -29,14 +28,10 @@ class FollowResource extends BaseResource
         $data = $this->resource->only(self::$attributes);
         $relationship = $request->input("relationship");
 
-        if ($token = $this->getBearerToken($request)) {
-            $userCurrent = $this->getUserFromToken($token);
-        } else {
-            $userCurrent = $request->user;
-        }
+        $userCurrent = $request->user();
 
-        if ($relationship === "followers" && $userCurrent->getAttribute("id") != $this->resource->id) {
-            $data['isFollowing'] = UserSharedResource::checkIsFollowing($userCurrent, $this->resource->id);
+        if ($relationship === "followers" && $userCurrent && $userCurrent->getAttribute("id") != $this->resource->id) {
+            $data['isFollowing'] = $this->resource->followers->contains('id', $userCurrent->getAttribute("id"));
         }
         return $data;
     }

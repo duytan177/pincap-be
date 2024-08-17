@@ -11,8 +11,23 @@ class GetMyFollowerOrFolloweeController extends Controller
 {
     public function __invoke(GetMyFollowerOrFolloweeRequest $requests)
     {
+        $perPage = $requests->input("per_page");
+        $page = $requests->input("page");
         $relationship = $requests->input("relationship");
-        $followRelationship = JWTAuth::user()->getAttribute($relationship);
+        $user = JWTAuth::user();
+
+        $followRelationship = $user->$relationship();
+
+        if ($relationship === "followers") {
+            $followRelationship->with([
+                'followers' => function ($query) use ($user) {
+                    $query->where('follower_id', $user->getAttribute('id'));
+                }
+            ]);
+        }
+
+        $followRelationship = $followRelationship->paginate($perPage, ['*'], 'page', $page);
+
         return FollowCollection::make($followRelationship);
     }
 }

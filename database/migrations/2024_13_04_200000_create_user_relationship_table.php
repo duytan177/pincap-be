@@ -18,7 +18,6 @@ return new class extends Migration {
             $table->foreignUuid("follower_id")->references("id")->on("users");
             $table->enum('user_status', UserStatus::getValues())->default(UserStatus::FOLLOWING);
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 

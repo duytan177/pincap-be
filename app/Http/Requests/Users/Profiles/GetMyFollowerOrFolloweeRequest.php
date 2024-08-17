@@ -22,6 +22,8 @@ class GetMyFollowerOrFolloweeRequest extends FormRequest
     public function rules(): array
     {
         return [
+            "per_page" => "nullable|integer|min:1",
+            "page" => "nullable|integer|min:1",
             "relationship" => "required|in:followers,followees"
         ];
     }
