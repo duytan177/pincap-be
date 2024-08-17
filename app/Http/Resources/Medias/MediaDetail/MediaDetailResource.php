@@ -23,7 +23,8 @@ class MediaDetailResource extends BaseResource
         'is_created',
         'is_comment',
         "userComments",
-        "feelings"
+        "feelings",
+        "reaction_user_count"
     ];
 
     /**
@@ -43,7 +44,7 @@ class MediaDetailResource extends BaseResource
 
         $data["ownerUser"] = FollowResource::make($user);
         $data["numberUserFollowers"] = $user->getAttribute("followers_count");
-        $data["userComments"] = CommentResource::make($this->resource->userComments->first());
+        $data["userComments"] = CommentResource::make($this->resource->comments->first());
         $data["feelings"] = FeelingCollection::make($this->resource->feelings);
 
         return $data;

@@ -3,15 +3,17 @@
 namespace App\Http\Resources\Medias\Comments;
 
 use App\Components\Resources\BaseResource;
+use App\Http\Resources\Feelings\FeelingCollection;
 use Illuminate\Http\Request;
 
 class CommentResource extends BaseResource
 {
     private static $attributes = [
         "id",
-        "first_name",
-        "last_name",
-        "avatar",
+        "content",
+        "image_url",
+        "created_at",
+        "feelings",
     ];
 
     /**
@@ -23,9 +25,10 @@ class CommentResource extends BaseResource
     {
         $data = $this->resource->only(self::$attributes);
 
-        $data["content"] = $this->resource->pivot->content;
-        $data["image"] = $this->resource->pivot->image_url;
-        $data["created_at"] = $this->resource->pivot->created_at;
+        $data["feelings_count"] = count($this->resource->allFeelings);
+        $data["name"] = $this->resource->userComment->first_name ." ". $this->resource->userComment->last_name;
+        $data["user_id"] = $this->resource->userComment->id;
+        $data["feelings"] = FeelingCollection::make($this->resource->feelings);
 
         return $data;
     }
