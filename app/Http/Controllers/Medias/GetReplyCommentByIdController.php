@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Medias;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PaginateRequest;
 use App\Http\Resources\Medias\Comments\CommentCollection;
-use App\Models\Comment;
+use App\Models\Reply;
 
 class GetReplyCommentByIdController extends Controller
 {
@@ -14,8 +14,9 @@ class GetReplyCommentByIdController extends Controller
         $perPage = $request->input("per_page");
         $page = $request->input("page");
 
-        $comment = Comment::with(["replies"])->findOrFail($commentId);
-        $replies = $comment->replies()->paginate($perPage, ['*'], 'page', $page);
+        $replies = Reply::withCount("feelings")
+            ->with(["feelings", "userComment", "allFeelings"])
+            ->where("comment_id", $commentId)->paginate($perPage, ['*'], 'page', $page);
 
         return CommentCollection::make($replies);
     }

@@ -15,7 +15,7 @@ class GetCommentsOfMediaDetailByIdController extends Controller
         $page = $request->input("page");
 
         $comments = Comment::withCount("feelings")
-            ->with(["feelings", "userComment", "allFeelings"])
+            ->with(["feelings", "userComment", "allFeelings", "replies"])
             ->where("media_id", $mediaId)->paginate($perPage, ['*'], 'page', $page);
 
         return CommentCollection::make($comments);
