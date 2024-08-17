@@ -26,9 +26,13 @@ class CommentResource extends BaseResource
         $data = $this->resource->only(self::$attributes);
 
         $data["feelings_count"] = count($this->resource->allFeelings);
-        $data["name"] = $this->resource->userComment->first_name ." ". $this->resource->userComment->last_name;
+        $data["name"] = $this->resource->userComment->first_name . " " . $this->resource->userComment->last_name;
         $data["user_id"] = $this->resource->userComment->id;
         $data["feelings"] = FeelingCollection::make($this->resource->feelings);
+
+        if (isset($this->resource->replies)) {
+            $data["replies_count"] = $this->resource->replies->count();
+        }
 
         return $data;
     }
