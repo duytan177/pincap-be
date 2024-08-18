@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Http\Resources\Medias\Media;
+namespace App\Http\Resources\Users\Information;
 
 use App\Components\Resources\BaseResource;
 use Illuminate\Http\Request;
 
-class MediaResource extends BaseResource
+class SenderResource extends BaseResource
 {
     private static $attributes = [
         'id',
-        'media_url',
-        'media_name',
-        "description",
-        "type"
+        'first_name',
+        "last_name",
+        "avatar",
+        "role",
     ];
 
     /**

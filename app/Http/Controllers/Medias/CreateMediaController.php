@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Medias;
 
 use App\Enums\Album_Media\MediaType;
+use App\Events\MediaCreatedEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Medias\Shared\MediaHandle;
 use App\Http\Requests\Medias\CreateMediaRequest;
@@ -36,6 +37,10 @@ class CreateMediaController extends Controller
 
         if (isset($mediaData["tags_name"])) {
             MediaHandle::attachTagtoMedia($mediaData["tags_name"], $mediaId, $userId);
+        }
+
+        if ($mediaNew->getAttribute("is_created")) {
+            event(new MediaCreatedEvent($mediaNew));
         }
 
         return response()->json(["message" => "Created media successfully"], 201);

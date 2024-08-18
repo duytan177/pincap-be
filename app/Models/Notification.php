@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\Notifications\NotificationType;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -22,10 +23,16 @@ class Notification extends Model
         "link",
         'sender_id',
         'receiver_id',
+        'notification_type'
     ];
     protected $hidden = [
         'deleted_at'
     ];
+
+    public function getNotificationTypeAttribute($value)
+    {
+        return NotificationType::getKey($value);
+    }
 
     public function sender()
     {

@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Events\MediaCreatedEvent;
+use App\Listeners\MediaCreatedListener;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
 class EventServiceProvider extends ServiceProvider
@@ -11,9 +13,9 @@ class EventServiceProvider extends ServiceProvider
      *
      */
     protected $listen = [
-        // Registered::class => [
-        //   SendVerificationEmail::class,
-        // ],
+        MediaCreatedEvent::class => [
+          MediaCreatedListener::class,
+        ],
     ];
 
     /**

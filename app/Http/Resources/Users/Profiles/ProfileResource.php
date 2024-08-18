@@ -16,6 +16,8 @@ class ProfileResource extends BaseResource
         "background",
         "phone",
         "role",
+        "followers_count",
+        "followees_count"
     ];
 
     /**
@@ -27,8 +29,9 @@ class ProfileResource extends BaseResource
     {
         $data = $this->resource->only(self::$attributes);
 
-        $data["countFollowers"] = $this->resource->followers->count();
-        $data["countFollowees"] = $this->resource->followees->count();
+        if (($userAuth = $request->user()) && $userAuth->getAttribute("id") != $this->resource->id) {
+            $data["isFollowing"] = $this->resource->followers->contains("id", $userAuth->getAttribute("id"));
+        }
 
         return $data;
     }
