@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\Notifications\NotificationType;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -16,8 +17,9 @@ return new class extends Migration
             $table->text("title");
             $table->longText("content");
             $table->boolean("is_read")->default(false);
-            $table->foreignUuid('sender_id')->references('id')->on('users');
-            $table->foreignUuid('receiver_id')->references('id')->on('users');
+            $table->foreignUuid('sender_id')->nullable()->references('id')->on('users');
+            $table->foreignUuid('receiver_id')->nullable()->references('id')->on('users');
+            $table->enum('notification_type', NotificationType::getValues());
             $table->timestamps();
             $table->softDeletes();
         });
