@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Users\Relationships;
 
 use App\Enums\User\UserStatus;
+use App\Events\UserFollowedEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Users\Relationships\FollowOrBlockRequest;
 use App\Models\UserRelationship;
@@ -19,7 +20,11 @@ class FollowOrBlockController extends Controller
 
         $this->followOrBlock($followerId, $followeeId, $status);
 
-        return responseWithMessage(strtolower($status)." successfully");
+        if ($status == UserStatus::getKey("1")) {
+            event(new UserFollowedEvent($followeeId, $followerId));
+        }
+
+        return responseWithMessage(strtolower($status) . " successfully");
     }
 
     private function followOrBlock($followerId, $followeeId, $status)
