@@ -29,26 +29,31 @@ class UserFollowedListener implements ShouldQueue
      */
     public function handle(UserFollowedEvent $event): void
     {
-        $followerId = $event->followerId;
+        $follower = $event->follower;
+        $followerId = $follower->getAttribute("id");
         $followeeId = $event->followeeId;
         $followee = User::find($followeeId);
-        $link = "link";
+        $followerName = $follower->getAttribute('first_name').' '.$follower->getAttribute('last_name');
+        $title = "A user is following you";
+        $content = "$followerName has started following you. Check out their profile!";
+        $link = config("frontend.paths.user_detail") . '/' . $followerId;
         $notificationType = NotificationType::USER_FOLLOWED;
-
+        $notificationId = Uuid::uuid4()->toString();
 
         $notifications = [
-            "title" => "test",
-            "content" => "content",
-            "link" => "link",
+            'id' => $notificationId,
+            "title" => $title,
+            "content" => $content,
+            "link" => $link,
             "sender_id" => $followeeId,
             "receiver_id" => $followerId,
             "notification_type" => $notificationType
         ];
 
         event(new NotificationEvent(
-            Uuid::uuid4()->toString(),
-            "test",
-            "ghello",
+            $notificationId,
+            $title,
+            $content,
             $link,
             SenderResource::make($followee),
             [$followerId],

@@ -37,7 +37,7 @@ class MediaCreatedListener implements ShouldQueue
         $followerIds = $user->followers->pluck("id")->toArray();
         $notificationType = NotificationType::MEDIA_CREATED;
         $now = Carbon::now();
-        $link = "test";
+        $link = config("frontend.paths.media_detail") . '/' . $media->getAttribute("id");
 
         $notifications = [];
 

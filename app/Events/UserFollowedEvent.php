@@ -10,13 +10,13 @@ class UserFollowedEvent
     use Dispatchable, SerializesModels;
 
     public $followeeId;
-    public $followerId;
+    public $follower;
     /**
      * Create a new event instance.
      */
-    public function __construct($followeeId, $followerId)
+    public function __construct($followeeId, $follower)
     {
         $this->followeeId = $followeeId;
-        $this->followerId = $followerId;
+        $this->follower = $follower;
     }
 }

@@ -16,12 +16,13 @@ class FollowOrBlockController extends Controller
         $requestData = $request->validated();
         $followeeId = $requestData["followeeId"];
         $status = $requestData["status"];
-        $followerId = JWTAuth::user()->getAttribute("id");
+        $follower = JWTAuth::user();
+        $followerId = $follower->getAttribute("id");
 
         $this->followOrBlock($followerId, $followeeId, $status);
 
         if ($status == UserStatus::getKey("1")) {
-            event(new UserFollowedEvent($followeeId, $followerId));
+            event(new UserFollowedEvent($followeeId, $follower));
         }
 
         return responseWithMessage(strtolower($status) . " successfully");

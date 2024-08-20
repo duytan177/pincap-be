@@ -73,7 +73,7 @@ class Media extends Model
 
     public function getTypeAttribute($value)
     {
-        return MediaType::getKey($value);
+        return $value ? MediaType::getKey($value) : $value;
     }
 
     public function getPrivacyAttribute($value)
