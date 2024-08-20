@@ -5,7 +5,7 @@ return [
         'paths' => [
             'login' => '/login',
             'register' => '/register',
-            'forgot_password' => '/forgot-password'
+            'forgot_password' => '/forgot-password',
         ],
     ],
     'app' => [
@@ -16,4 +16,9 @@ return [
             'forgot_password' => '/forgot-password'
         ],
     ],
+
+    'paths' => [
+        'media_detail' => env('MEDIA_DETAIL_URL', '/medias'),
+        'user_detail' => env('USER_DETAUL_URL', '/profile')
+    ]
 ];
