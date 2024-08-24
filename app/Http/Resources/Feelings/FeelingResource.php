@@ -20,6 +20,10 @@ class FeelingResource extends BaseResource
      */
     public function toArray(Request $request): array
     {
-        return $this->resource->only(self::$attributes);
+        $data = $this->resource->only(self::$attributes);
+        if (isset($this->resource->total)) {
+            $data["total"] = $this->resource->total;
+        }
+        return $data;
     }
 }

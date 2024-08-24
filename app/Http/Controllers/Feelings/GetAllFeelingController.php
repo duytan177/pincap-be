@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Feelings;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Reactions\Feelings\FeelingCollection;
+use App\Http\Resources\Feelings\FeelingCollection;
 use App\Models\Feeling;
 
 class GetAllFeelingController extends Controller
