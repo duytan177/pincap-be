@@ -99,7 +99,7 @@ return Application::configure(basePath: dirname(__DIR__))
                     break;
 
                 case $exception instanceof TypeError:
-                    $message = $exception->getMessage();
+                    $message = "INTERNAL SERVER ERROR";
                     $statusCode = HttpStatusCode::HTTP_INTERNAL_SERVER_ERROR;
                     break;
             }
