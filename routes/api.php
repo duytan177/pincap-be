@@ -33,6 +33,7 @@ use App\Http\Controllers\Medias\GetCommentsOfMediaDetailByIdController;
 use App\Http\Controllers\Medias\GetListMediaByUserIdController;
 use App\Http\Controllers\Medias\GetReplyCommentByIdController;
 use App\Http\Controllers\Medias\Reactions\CommentMediaController;
+use App\Http\Controllers\Medias\Reactions\GetAllUserFeelingMediaController;
 use App\Http\Controllers\Medias\Reactions\GetDetailFeelingMediaController;
 use App\Http\Controllers\Medias\Reactions\GetFeelingOfMediaController;
 use App\Http\Controllers\Medias\Reactions\ReplyCommentController;
@@ -153,8 +154,11 @@ Route::group([], function () {
 
         Route::prefix("/{mediaId}")->group(function () {
             Route::get("/", GetDetailMediaByIdController::class);
-            Route::get("/feelings", GetFeelingOfMediaController::class);
-            Route::get("/feelings/{feelingId}", GetDetailFeelingMediaController::class);
+            Route::prefix("/feelings")->group(function () {
+                Route::get("/", GetFeelingOfMediaController::class);
+                Route::get("/users", GetAllUserFeelingMediaController::class);
+                Route::get("/{feelingId}", GetDetailFeelingMediaController::class);
+            });
         });
     });
 
