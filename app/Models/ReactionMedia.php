@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use App\Models\User;
 use App\Models\Media;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ReactionMedia extends Model
 {
@@ -22,12 +23,12 @@ class ReactionMedia extends Model
     ];
     protected $hidden = [];
 
-    public function userReaction()
+    public function userReaction(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
-    public function reactionMedia()
+    public function reactionMedia(): BelongsTo
     {
         return $this->belongsTo(Media::class, 'media_id', 'id');
     }

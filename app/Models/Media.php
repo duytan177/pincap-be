@@ -112,7 +112,7 @@ class Media extends Model
         return $this->belongsToMany(User::class, 'report_media')->withTimestamps();
     }
 
-    public function allFeelings()
+    public function allFeelings(): BelongsToMany
     {
         return $this->belongsToMany(Feeling::class, "reaction_media")
             ->withPivot(["feeling_id"])
@@ -121,7 +121,8 @@ class Media extends Model
                 'feeling_id as id',
                 'feeling_type',
                 'icon_url',
-                DB::raw("COUNT(feeling_id) as total"))
+                DB::raw("COUNT(feeling_id) as total")
+            )
             ->orderBy("total", "desc");
     }
 
