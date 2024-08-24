@@ -33,6 +33,7 @@ use App\Http\Controllers\Medias\GetCommentsOfMediaDetailByIdController;
 use App\Http\Controllers\Medias\GetListMediaByUserIdController;
 use App\Http\Controllers\Medias\GetReplyCommentByIdController;
 use App\Http\Controllers\Medias\Reactions\CommentMediaController;
+use App\Http\Controllers\Medias\Reactions\GetFeelingOfMediaController;
 use App\Http\Controllers\Medias\Reactions\ReplyCommentController;
 use App\Http\Controllers\Medias\Reactions\ToggleReactionCommentController;
 use App\Http\Controllers\Medias\Reactions\ToggleReactionMediaController;
@@ -145,10 +146,14 @@ Route::group([], function () {
         Route::get("/", GetListMediaByUserIdController::class);
         Route::get("/all", GetAllMediaController::class);
         Route::get("/search/{tagId}", SearchMediaByTagIdController::class);
-        Route::get("{mediaId}", GetDetailMediaByIdController::class);
         Route::get("/{mediaId}/comments", GetCommentsOfMediaDetailByIdController::class);
         Route::get("/comments/{commentId}/replies", GetReplyCommentByIdController::class);
         Route::post("downloads", DownloadMediaController::class);
+
+        Route::prefix("/{mediaId}")->group(function () {
+            Route::get("/", GetDetailMediaByIdController::class);
+            Route::get("/feelings", GetFeelingOfMediaController::class);
+        });
     });
 
     Route::prefix("/albums")->group(function () {
