@@ -20,7 +20,7 @@ use App\Models\Notification;
 use App\Models\ReactionComment;
 use App\Models\Feeling;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Ramsey\Uuid\Uuid;
 
 class User extends Authenticatable implements JWTSubject, MustVerifyEmail
@@ -148,9 +148,9 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
         return $this->hasMany(Notification::class, "receiver_id");
     }
 
-    public function feelings(): HasManyThrough
+    public function feelings(): HasOneThrough
     {
-        return $this->hasManyThrough(
+        return $this->hasOneThrough(
             Feeling::class,
             ReactionComment::class,
             'user_id', // Khóa ngoại trên bảng comments
@@ -158,8 +158,5 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
             'id', // Khóa chính trên bảng users
             'feeling_id'  // Local key trên bảng reaction_comments
         );
-            // -
-            // ->orderByRaw('COUNT(*) DESC')
-            // ->take(3);
     }
 }
