@@ -125,8 +125,7 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
 
     public function blockedUsers(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, "user_relationship", 'follower_id', 'followee_id')->withPivot(["user_status"])->withTimestamps()->wherePivot("user_status", "=", UserStatus::BLOCK)->wherePivotNull('deleted_at');
-        ;
+        return $this->belongsToMany(User::class, "user_relationship", 'followee_id', 'follower_id')->withPivot(["user_status"])->withTimestamps()->wherePivot("user_status", "=", UserStatus::BLOCK);
     }
     public function mediaOwner()
     {

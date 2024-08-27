@@ -35,7 +35,7 @@ class UserFeelingResource extends BaseResource
             $data['is_following'] = $isFollowing;
         }
 
-        if (isset($userReaction->feelings)) {
+        if (isset($this->resource->feelings)) {
             $data["feeling"] = FeelingResource::make($userReaction->feelings);
         }
 

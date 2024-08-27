@@ -14,6 +14,7 @@ class CommentResource extends BaseResource
         "image_url",
         "created_at",
         "feelings",
+        'all_feelings_count'
     ];
 
     /**
@@ -25,8 +26,18 @@ class CommentResource extends BaseResource
     {
         $data = $this->resource->only(self::$attributes);
 
-        $data["feelings_count"] = count($this->resource->allFeelings);
+        if ($data["all_feelings_count"] === null && $data["all_feelings_count"] !== 0) {
+            $data["all_feelings_count"] = $this->resource->allFeelings->count();
+        }
+
         $data["name"] = $this->resource->userComment->first_name . " " . $this->resource->userComment->last_name;
+        $currentUser = $request->user();
+
+        if ($currentUser) {
+            $isFollowing = $this->resource->userComment->followers->contains($currentUser->getAttribute("id"));
+            $data['is_following'] = $isFollowing;
+        }
+
         $data["user_id"] = $this->resource->userComment->id;
         $data["feelings"] = FeelingCollection::make($this->resource->feelings);
 
