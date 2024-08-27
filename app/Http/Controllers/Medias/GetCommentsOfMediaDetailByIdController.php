@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\PaginateRequest;
 use App\Http\Resources\Medias\Comments\CommentCollection;
 use App\Models\Comment;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class GetCommentsOfMediaDetailByIdController extends Controller
 {
@@ -13,10 +14,18 @@ class GetCommentsOfMediaDetailByIdController extends Controller
     {
         $perPage = $request->input("per_page");
         $page = $request->input("page");
+        $userId = null;
+        if ($token = $request->bearerToken()) {
+            $userId = JWTAuth::setToken($token)->authenticate()->getAttribute("id");
+        }
 
-        $comments = Comment::withCount("feelings")
-            ->with(["feelings", "userComment", "allFeelings", "replies"])
-            ->where("media_id", $mediaId)->paginate($perPage, ['*'], 'page', $page);
+        $comments = Comment::withCount("allFeelings")
+            ->with(["feelings", "userComment.followers", "replies"])
+            ->where("media_id", $mediaId)
+            ->whereDoesntHave('userComment.blockedUsers', function ($query) use ($userId) {
+                $query->where('follower_id', $userId);
+            })
+            ->paginate($perPage, ['*'], 'page', $page);
 
         return CommentCollection::make($comments);
     }

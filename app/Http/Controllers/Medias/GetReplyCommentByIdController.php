@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\PaginateRequest;
 use App\Http\Resources\Medias\Comments\CommentCollection;
 use App\Models\Reply;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class GetReplyCommentByIdController extends Controller
 {
@@ -14,8 +15,16 @@ class GetReplyCommentByIdController extends Controller
         $perPage = $request->input("per_page");
         $page = $request->input("page");
 
-        $replies = Reply::withCount("feelings")
-            ->with(["feelings", "userComment", "allFeelings"])
+        $userId = null;
+        if ($token = $request->bearerToken()) {
+            $userId = JWTAuth::setToken($token)->authenticate()->getAttribute("id");
+        }
+
+        $replies = Reply::withCount("allFeelings")
+            ->with(["feelings", "userComment.followers"])
+            ->whereDoesntHave('userComment.blockedUsers', function ($query) use ($userId) {
+                $query->where('follower_id', $userId);
+            })
             ->where("comment_id", $commentId)->paginate($perPage, ['*'], 'page', $page);
 
         return CommentCollection::make($replies);
