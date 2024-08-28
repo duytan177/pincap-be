@@ -15,13 +15,21 @@ class GetAllUserFeelingMediaController extends Controller
         $perPage = $request->input("per_page", 15);
         $page = $request->input("page", 1);
         $media = Media::findOrFail($mediaId);
-
-        $reactionUser = $media->reactionUser()->with("feelings")->paginate($perPage, ['*'], 'page', $page);
+        $reactionUser = $media->reactionUser();
+        $userId = null;
 
         if ($token = $request->bearerToken()) {
-            JWTAuth::setToken($token)->authenticate();
-            $reactionUser->load("followers");
+            $userId = JWTAuth::setToken($token)->authenticate()->getAttribute("id");
+            $reactionUser->with("followers");
         }
+
+        $reactionUser = $reactionUser
+            ->with("feelings")
+            ->whereDoesntHave('blockedUsers', function ($query) use ($userId) {
+                $query->where('follower_id', $userId);
+            })
+            ->paginate($perPage, ['*'], 'page', $page);
+
 
         return UserFeelingCollection::make($reactionUser);
     }

@@ -19,6 +19,8 @@ class GetMyAlbumRoleMemberController extends Controller
 
         $albums = Album::whereHas("members", function ($query) use ($userId) {
             $query->where("user_id", $userId);
+        })->whereDoesntHave('members.blockedUsers', function ($query) use ($userId) {
+            $query->where('follower_id', $userId);
         })->paginate($perPage, ['*'], 'page', $page);
 
         return AlbumCollection::make($albums);

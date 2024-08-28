@@ -7,6 +7,7 @@ use App\Http\Requests\Users\SearchUserOrTagNameRequest;
 use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class SearchUserOrTagNameController extends Controller
 {
@@ -15,7 +16,14 @@ class SearchUserOrTagNameController extends Controller
         $target = $request->input('target');
         $textSearch = '%' . $target . '%';
 
-        $users = User::select("id", DB::raw("CONCAT(first_name, ' ', last_name) as name"), 'avatar')
+        $userId = null;
+        if ($token = $request->bearerToken()) {
+            $userId = JWTAuth::setToken($token)->authenticate()->getAttribute("id");
+        }
+
+        $users = User::whereDoesntHave('blockedUsers', function ($query) use ($userId) {
+            $query->where('follower_id', $userId);
+        })->select("id", DB::raw("CONCAT(first_name, ' ', last_name) as name"), 'avatar')
             ->where("first_name", "like", $textSearch)
             ->orWhere("last_name", "like", $textSearch)
             ->get();
@@ -24,7 +32,7 @@ class SearchUserOrTagNameController extends Controller
             ->where("tag_name", "like", $textSearch)
             ->get();
 
-        $dataSorted =  $users->concat($tags)->sortBy("name")->values();
+        $dataSorted = $users->concat($tags)->sortBy("name")->values();
 
         return $dataSorted;
     }
