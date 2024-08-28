@@ -14,9 +14,9 @@ class GetDetailFeelingMediaController extends Controller
     {
         $perPage = $request->input("per_page");
         $page = $request->input("page");
-
+        $userId = null;
         if ($token = $request->bearerToken()) {
-            JWTAuth::setToken($token)->authenticate();
+            $userId = JWTAuth::setToken($token)->authenticate()->getAttribute("id");
         }
 
         $query = ReactionMedia::where([
@@ -29,7 +29,9 @@ class GetDetailFeelingMediaController extends Controller
         } else {
             $query->with('userReaction');
         }
-
+        $query->whereDoesntHave('userReaction.blockedUsers', function ($query) use ($userId) {
+            $query->where('follower_id', $userId);
+        });
         $reactionMedia = $query->paginate($perPage, ['*'], 'page', $page);
         return UserFeelingCollection::make($reactionMedia);
     }

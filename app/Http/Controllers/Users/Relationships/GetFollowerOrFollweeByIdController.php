@@ -17,13 +17,18 @@ class GetFollowerOrFollweeByIdController extends Controller
         $relationship = $request->input("relationship");
 
         $user = User::findOrFail($userId);
-
-        $followRelationship = $user->$relationship()->paginate($perPage, ['*'], 'page', $page);
-
+        $followRelationship = $user->$relationship();
+        $userAuthId = null;
         if ($relationship == "followers" && $token = $request->bearerToken()) {
-            JWTAuth::setToken($token)->authenticate();
-            $followRelationship->load("followers");
+            $userAuthId = JWTAuth::setToken($token)->authenticate()->getAttribute('id');
+            $followRelationship->with("followers");
         }
+
+        $followRelationship = $followRelationship
+            ->whereDoesntHave('blockedUsers', function ($query) use ($userAuthId) {
+                $query->where('follower_id', $userAuthId);
+            })
+            ->paginate($perPage, ['*'], 'page', $page);
 
         return FollowCollection::make($followRelationship);
     }
