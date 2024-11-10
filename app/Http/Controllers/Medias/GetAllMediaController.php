@@ -24,7 +24,18 @@ class GetAllMediaController extends Controller
                 ["privacy", Privacy::PUBLIC],
             ]),
             $this->getBlockedUserIds($request)
-        )->paginate($perPage, ['*'], 'page', $page);
+        );
+
+        if ($this->getBearerToken($request)) {
+            $userId = $request->user()->getAttribute("id");
+            $medias = $medias->with([
+                "reactions" => function ($query) use ($userId) {
+                    $query->where("user_id", $userId)->limit(1);
+                }
+            ]);
+        }
+
+        $medias = $medias->paginate($perPage, ['*'], 'page', $page);
 
         return new MediaCollection($medias);
     }

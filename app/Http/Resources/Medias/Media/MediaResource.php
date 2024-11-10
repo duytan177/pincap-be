@@ -3,10 +3,14 @@
 namespace App\Http\Resources\Medias\Media;
 
 use App\Components\Resources\BaseResource;
+use App\Traits\SharedTrait;
 use Illuminate\Http\Request;
+
+use function PHPUnit\Framework\isEmpty;
 
 class MediaResource extends BaseResource
 {
+    use SharedTrait;
     private static $attributes = [
         'id',
         'media_url',
@@ -22,6 +26,14 @@ class MediaResource extends BaseResource
      */
     public function toArray(Request $request): array
     {
-        return $this->resource->only(self::$attributes);
+        $data = $this->resource->only(self::$attributes);
+
+        if($this->getBearerToken($request) && !$this->resource->reactions->isEmpty()){
+            $data["reaction"]["id"] = $this->resource->reactions[0]->id;
+            $data["reaction"]["feeling_id"] = $this->resource->reactions[0]->feeling_id;
+        }else{
+            $data["reaction"] = null;
+        }
+        return $data;
     }
 }

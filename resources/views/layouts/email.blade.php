@@ -42,7 +42,7 @@
         <div class="card">
             <div class="card-content">
                 <p>Hi <b>{{ $user->name }}</b>,</p>
-                <p>Thank you for registering with us22.</p>
+                <p>Thank you for registering with us.</p>
                 <p>Please click the button below to verify your email address:</p>
                 <a href="{{ config('app.url') . config('common.path_verify_email') . $user->verification_token }}"
                     class="verify-button">Verify Email</a>
