@@ -14,6 +14,7 @@ use App\Models\Album;
 use App\Models\Tag;
 use App\Models\Feeling;
 use App\Models\Comment;
+use App\Models\ReactionMedia;
 use Ramsey\Uuid\Uuid;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -74,7 +75,7 @@ class Media extends Model
 
     public function getTypeAttribute($value)
     {
-        return $value ? MediaType::getKey($value) : $value;
+        return $value === null ? null : MediaType::getKey(value: $value);
     }
 
     public function getPrivacyAttribute($value)
@@ -139,5 +140,10 @@ class Media extends Model
     public function comments(): HasMany
     {
         return $this->hasMany(Comment::class, 'media_id', 'id');
+    }
+
+    public function reactions(): HasMany
+    {
+        return $this->hasMany(ReactionMedia::class, "media_id", "id");
     }
 }
