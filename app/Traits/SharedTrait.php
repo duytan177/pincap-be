@@ -31,6 +31,6 @@ trait SharedTrait
 
     public function getUserFromToken($token)
     {
-        return JWTAuth::setToken($token)->toUser();
+        return $token ? JWTAuth::setToken($token)->toUser() : null;
     }
 }
