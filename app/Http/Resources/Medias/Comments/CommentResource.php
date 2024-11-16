@@ -39,6 +39,7 @@ class CommentResource extends BaseResource
         }
 
         $data["user_id"] = $this->resource->userComment->id;
+        $data["avatar"] = $this->resource->userComment->avatar;
         $data["feelings"] = FeelingCollection::make($this->resource->feelings);
 
         if (isset($this->resource->replies)) {
