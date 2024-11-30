@@ -14,5 +14,6 @@ return [
         'background' => "Background",
         'icon' => "Icon",
         'logo' => "Logo",
-    ]
+    ],
+    "api_key_prodia" => env("API_KEY_PRODIA")
 ];
