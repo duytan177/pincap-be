@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AlbumMedia\GetPrivacyController;
+use App\Http\Controllers\Albums\AddMediasToAlbumController;
 use App\Http\Controllers\Albums\AddMemberIntoAlbumController;
 use App\Http\Controllers\Albums\CreateAlbumController;
 use App\Http\Controllers\Albums\DeleteAlbumController;
@@ -8,6 +9,7 @@ use App\Http\Controllers\Albums\GetAlbumByUserIdController;
 use App\Http\Controllers\Albums\GetDetailAlbumByIdController;
 use App\Http\Controllers\Albums\GetMyAlbumController;
 use App\Http\Controllers\Albums\GetMyAlbumRoleMemberController;
+use App\Http\Controllers\Albums\RemoveMediasFromAlbumController;
 use App\Http\Controllers\Albums\UpdateAlbumController;
 use App\Http\Controllers\Auth\ForgotPassword\ForgotPasswordController;
 use App\Http\Controllers\Auth\ForgotPassword\RedirectController;
@@ -106,6 +108,8 @@ Route::middleware(["auth:api"])->group(function () {
     });
 
     Route::prefix("/albums")->group(function () {
+        Route::post("/add-medias", AddMediasToAlbumController::class);
+        Route::delete("/remove-medias", RemoveMediasFromAlbumController::class);
         Route::get("/medias/privacy", GetPrivacyController::class);
         Route::get("/my-album", GetMyAlbumController::class);
         Route::get("/my-album-member", GetMyAlbumRoleMemberController::class);
