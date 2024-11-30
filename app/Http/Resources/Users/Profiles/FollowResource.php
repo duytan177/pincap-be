@@ -26,7 +26,7 @@ class FollowResource extends BaseResource
     public function toArray(Request $request): array
     {
         $data = $this->resource->only(self::$attributes);
-        $relationship = $request->input("relationship");
+        $relationship = $request->input("relationship", "followers");
 
         $userCurrent = $this->getUserFromToken($this->getBearerToken($request));
 
