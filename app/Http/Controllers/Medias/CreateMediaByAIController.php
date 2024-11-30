@@ -5,13 +5,14 @@ namespace App\Http\Controllers\Medias;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Medias\CreateMediaRequest;
 use App\Traits\AWSS3Trait;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 
 class CreateMediaByAIController extends Controller
 {
     use AWSS3Trait;
 
-    public function __invoke(CreateMediaRequest $request)
+    public function __invoke(Request $request)
     {
         try {
             $imageUrl = $request->input("imageUrl");

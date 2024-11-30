@@ -86,7 +86,7 @@ Route::middleware(["auth:api"])->group(function () {
     Route::prefix("/medias")->group(function () {
         Route::get("/my-media", GetMyMediaController::class);
         Route::post("/", CreateMediaController::class);
-        Route::post("/AI", CreateMediaByAIController::class);
+        Route::post("/ai", CreateMediaByAIController::class);
         Route::put("/{mediaId}", UpdateMediaController::class);
         Route::delete("/", DeleteMediaByIdController::class);
 
