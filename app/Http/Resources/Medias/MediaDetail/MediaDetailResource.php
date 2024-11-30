@@ -38,16 +38,8 @@ class MediaDetailResource extends BaseResource
 
         $user = User::withCount('followers')->find($this->resource->media_owner_id);
 
-        if ($this->getBearerToken($request)) {
-            $request->merge(["relationship" => "followers"]);
-        }
-
-        if($this->getBearerToken($request) && !$this->resource->reactions->isEmpty()){
-            $data["reaction"]["id"] = $this->resource->reactions[0]->id;
-            $data["reaction"]["feeling_id"] = $this->resource->reactions[0]->feeling_id;
-        }else{
-            $data["reaction"] = null;
-        }
+        [$request, $result]= $this->checkReactionOfUserCurrent($request);
+        $data += $result;
 
         $data["ownerUser"] = FollowResource::make($user);
         $data["numberUserFollowers"] = $user->getAttribute("followers_count");

@@ -33,4 +33,23 @@ trait SharedTrait
     {
         return $token ? JWTAuth::setToken($token)->toUser() : null;
     }
+
+    public function checkReactionOfUserCurrent($request) {
+        $token = $this->getBearerToken($request);
+        $data = [];
+        if ($token) {
+            $request->merge(["relationship" => "followers"]);
+        }
+
+        if($token && !$this->resource->reactions->isEmpty() && $this->resource->reactions->contains("user_id", $this->getUserFromToken($token)->id)){
+            $data["reaction"]["id"] = $this->resource->reactions[0]->id;
+            $data["reaction"]["feeling_id"] = $this->resource->reactions[0]->feeling_id;
+        }else{
+            $data["reaction"] = null;
+        }
+
+        return [
+            $request , $data
+        ];
+    }
 }

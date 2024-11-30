@@ -28,12 +28,9 @@ class MediaResource extends BaseResource
     {
         $data = $this->resource->only(self::$attributes);
 
-        if($this->getBearerToken($request) && !$this->resource->reactions->isEmpty()){
-            $data["reaction"]["id"] = $this->resource->reactions[0]->id;
-            $data["reaction"]["feeling_id"] = $this->resource->reactions[0]->feeling_id;
-        }else{
-            $data["reaction"] = null;
-        }
+        [$request, $result]= $this->checkReactionOfUserCurrent($request);
+        $data += $result;
+
         return $data;
     }
 }
