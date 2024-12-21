@@ -38,9 +38,6 @@ class Media extends Model
             $builder->orderBy('created_at', 'desc'); // 'asc' để sắp xếp tăng dần, 'desc' để sắp xếp giảm dần
         });
 
-        static::addGlobalScope('filterIsCreatedTrue', function (Builder $builder) {
-            $builder->where('is_created', true);
-        });
     }
 
 

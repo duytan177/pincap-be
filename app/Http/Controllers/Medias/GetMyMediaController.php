@@ -18,7 +18,7 @@ class GetMyMediaController extends Controller
         $perPage = $request->input('per_page', 15);
         $page = $request->input('page', 1);
 
-        $medias = Media::where([
+        $medias = Media::with('reactions')->where([
             ['media_owner_id', $userId],
             ["is_created", $isCreated]
         ])->paginate($perPage, ['*'], 'page', $page);
