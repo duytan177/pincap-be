@@ -24,10 +24,10 @@ class UpdateMediaRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "media_name" => "required|string",
-            "description" => "required|string",
-            "privacy" => ["required", Rule::in(Privacy::getValues())],
-            "is_comment" => "required|boolean",
+            "media_name" => "nullable|string",
+            "description" => "nullable|string",
+            "privacy" => ["nullable", Rule::in(Privacy::getValues())],
+            "is_comment" => "nullable|boolean",
             "is_created" => "nullable|boolean",
             "tags_name" => "nullable|array",
             "tags_name.*" => "nullable|string|max:255",
