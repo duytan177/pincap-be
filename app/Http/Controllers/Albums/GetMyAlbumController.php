@@ -17,7 +17,7 @@ class GetMyAlbumController extends Controller
 
         $userId = Auth::id();
 
-        $albums = Album::whereHas("userOwner", function ($query) use ($userId) {
+        $albums = Album::withCount("medias")->whereHas("userOwner", function ($query) use ($userId) {
             $query->where("user_id", $userId);
         })->paginate($perPage, ['*'], 'page', $page);
 

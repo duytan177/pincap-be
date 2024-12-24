@@ -9,7 +9,7 @@ use BenSampo\Enum\Enum;
  */
 final class StateReport extends Enum
 {
-    const UNPROCESSED = 0;
-    const PROCESSING = 1;
-    const PROCESSED = 2;
+    const UNPROCESSED = "0";
+    const PROCESSING = "1";
+    const PROCESSED = "2";
 }

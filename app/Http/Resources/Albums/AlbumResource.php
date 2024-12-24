@@ -12,7 +12,10 @@ class AlbumResource extends BaseResource
         'image_cover',
         'album_name',
         "description",
-        "privacy"
+        "privacy",
+        "medias_count",
+        "created_at",
+        "updated_at",
     ];
 
     /**
@@ -22,6 +25,8 @@ class AlbumResource extends BaseResource
      */
     public function toArray(Request $request): array
     {
-        return $this->resource->only(self::$attributes);
+        $data = $this->resource->only(self::$attributes);
+
+        return $data;
     }
 }
