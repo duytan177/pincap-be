@@ -12,7 +12,7 @@ class DetailAlbumResource extends BaseResource
     private static $attributes = [
         'id',
         'image_cover',
-        'album-name',
+        'album_name',
         "description",
         "privacy",
         'allUser',
