@@ -11,11 +11,20 @@ use Illuminate\Notifications\Notifiable;
 use App\Models\User;
 use App\Models\Media;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Builder;
 
 class Album extends Model
 {
     use HasFactory, HasUuids, Notifiable, SoftDeletes;
+    protected static function boot()
+    {
+        parent::boot();
 
+        static::addGlobalScope('order', function (Builder $builder) {
+            $builder->orderBy('updated_at', 'desc'); // 'asc' để sắp xếp tăng dần, 'desc' để sắp xếp giảm dần
+        });
+
+    }
     protected $table = "albums";
     protected $fillable = [
         'id',
@@ -49,6 +58,6 @@ class Album extends Model
     }
     public function medias() : BelongsToMany
     {
-        return $this->belongsToMany(Media::class, 'album_media')->where("is_created", true)->withTimestamps();
+        return $this->belongsToMany(Media::class, 'album_media')->where("is_created", operator: true)->withTimestamps();
     }
 }

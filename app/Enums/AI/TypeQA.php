@@ -11,6 +11,6 @@ use BenSampo\Enum\Enum;
  */
 final class TypeQA extends Enum
 {
-    const QUESTIONS = 0;
-    const ANSWER = 1;
+    const QUESTIONS = "0";
+    const ANSWER = "1";
 }

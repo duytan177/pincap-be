@@ -11,6 +11,6 @@ use BenSampo\Enum\Enum;
  */
 final class TypeAI extends Enum
 {
-    const GPT = 0;
-    const IMAGE = 1;
+    const GPT = "0";
+    const IMAGE = "1";
 }
