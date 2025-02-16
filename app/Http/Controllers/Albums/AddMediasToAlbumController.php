@@ -13,7 +13,7 @@ class AddMediasToAlbumController extends Controller
     {
         $data = $request->validated();
 
-$existingRecords = AlbumMedia::where('album_id', $data['album_id'])
+        $existingRecords = AlbumMedia::where('album_id', $data['album_id'])
             ->whereIn('media_id', $data['medias_id'])
             ->pluck('media_id')
             ->toArray();
