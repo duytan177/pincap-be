@@ -29,7 +29,7 @@ class RegisterMail extends Mailable implements ShouldQueue
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'NFT marketplace register',
+            subject: 'Welcome to PINCAP! Please Verify Your Email',
         );
     }
 
