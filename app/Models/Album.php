@@ -12,6 +12,7 @@ use App\Models\User;
 use App\Models\Media;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Builder;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class Album extends Model
 {
@@ -59,5 +60,30 @@ class Album extends Model
     public function medias() : BelongsToMany
     {
         return $this->belongsToMany(Media::class, 'album_media')->where("is_created", operator: true)->withTimestamps();
+    }
+
+    public static function getList(array $params, string $privacy = "", bool $private = false): Builder
+    {
+        $albums = Album::query()
+            ->when($privacy !== "", function ($query) use ($privacy) {
+                $query->where('privacy', $privacy);
+            })
+            ->when($private, function ($query) {
+                $query->whereHas("userOwner", function ($query) {
+                    $query->where("user_id", JWTAuth::user()->getAttribute("id"));
+                });
+            });
+
+            $albums = $albums->where(function ($query) use ($params) {
+                if (!empty($params['album_name'])) {
+                    $query->orWhere('album_name', 'like', "%{$params['album_name']}%");
+                }
+
+                if (!empty($params['description'])) {
+                    $query->orWhere('description', 'like', "%{$params['description']}%");
+                }
+            });
+
+        return $albums;
     }
 }

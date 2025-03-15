@@ -8,7 +8,7 @@ use App\Http\Resources\Albums\AlbumCollection;
 use App\Models\Album;
 use Illuminate\Http\Request;
 
-class GetMyAlbumController extends Controller
+class GetAllAlbumController extends Controller
 {
     public function __invoke(Request $request)
     {
@@ -23,7 +23,7 @@ class GetMyAlbumController extends Controller
                 "description" => $query
             ];
         }
-        $albums = Album::getList($searches, "", true);
+        $albums = Album::getList($searches, Privacy::PUBLIC);
         $albums = $albums->withCount("medias")->paginate($perPage, ['*'], 'page', $page);
 
         return AlbumCollection::make($albums);

@@ -158,7 +158,7 @@ class Media extends Model
                 $query->where('privacy', $privacy);
             })
             ->when($private, function ($query) {
-                $query->where('privacy',JWTAuth::user()->getAttribute("id"));
+                $query->where('media_owner_id',JWTAuth::user()->getAttribute("id"));
             });
 
 

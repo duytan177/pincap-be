@@ -28,7 +28,7 @@ class GetMyMediaController extends Controller
                 "tag_name" => $query
             ];
         }
-        $medias = Media::getList($searches, $isCreated, Privacy::PUBLIC)->with("reactions");
+        $medias = Media::getList($searches, $isCreated, Privacy::PUBLIC,true)->with("reactions");
 
         $medias = $medias->paginate( $perPage, ['*'], 'page', $page);
 

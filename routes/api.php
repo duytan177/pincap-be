@@ -6,6 +6,7 @@ use App\Http\Controllers\Albums\AddMemberIntoAlbumController;
 use App\Http\Controllers\Albums\CreateAlbumController;
 use App\Http\Controllers\Albums\DeleteAlbumController;
 use App\Http\Controllers\Albums\GetAlbumByUserIdController;
+use App\Http\Controllers\Albums\GetAllAlbumController;
 use App\Http\Controllers\Albums\GetDetailAlbumByIdController;
 use App\Http\Controllers\Albums\GetMyAlbumController;
 use App\Http\Controllers\Albums\GetMyAlbumRoleMemberController;
@@ -111,6 +112,7 @@ Route::middleware(["auth:api"])->group(function () {
         Route::post("/add-medias", AddMediasToAlbumController::class);
         Route::delete("/remove-medias", RemoveMediasFromAlbumController::class);
         Route::get("/medias/privacy", GetPrivacyController::class);
+        Route::get("/all", GetAllAlbumController::class);
         Route::get("/my-album", GetMyAlbumController::class);
         Route::get("/my-album-member", GetMyAlbumRoleMemberController::class);
         Route::post("/", CreateAlbumController::class);
