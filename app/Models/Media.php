@@ -19,7 +19,11 @@ use Ramsey\Uuid\Uuid;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Tymon\JWTAuth\Facades\JWTAuth;
+
+use function Laravel\Prompts\select;
 
 class Media extends Model
 {
@@ -102,7 +106,7 @@ class Media extends Model
 
     public function userOwner()
     {
-        return $this->belongsTo(User::class, 'mediaOwner_id', 'id');
+        return $this->belongsTo(User::class, 'media_owner_id', 'id');
     }
 
     public function mediaReported()
@@ -142,5 +146,46 @@ class Media extends Model
     public function reactions(): HasMany
     {
         return $this->hasMany(ReactionMedia::class, "media_id", "id");
+    }
+
+    public static function getList(array $params, bool $isCreated = false, string $privacy = "", bool $private = false): Builder
+    {
+        $medias = Media::query()
+            ->when($isCreated, function ($query) use ($isCreated) {
+                $query->where('is_created', $isCreated);
+            })
+            ->when($privacy !== "", function ($query) use ($privacy) {
+                $query->where('privacy', $privacy);
+            })
+            ->when($private, function ($query) {
+                $query->where('privacy',JWTAuth::user()->getAttribute("id"));
+            });
+
+
+
+        if (!empty($params['tag_name'])) {
+            $medias = $medias->orWhereHas('tags', function ($q) use ($params) {
+                $q->where('tags.tag_name', 'like', "%{$params['tag_name']}%");
+            });
+        }
+
+        if (!empty($params['title'])) {
+            $medias = $medias->orWhere('media_name', 'like', "%{$params['title']}%");
+        }
+
+        if (!empty($params['description'])) {
+            $medias = $medias->orWhere('description', 'like', "%{$params['description']}%");
+        }
+
+        if (!empty($params['user_name'])) {
+            $medias = $medias->orWhereIn('media_owner_id', function ($query) use ($params) {
+                $query->select('id')
+                    ->from('users')
+                    ->where('first_name', 'like', "%{$params['user_name']}%")
+                    ->orWhere('last_name', 'like', "%{$params['user_name']}%");
+            });
+        }
+
+        return $medias;
     }
 }

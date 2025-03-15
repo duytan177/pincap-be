@@ -17,13 +17,20 @@ class GetAllMediaController extends Controller
     {
         $perPage = $request->input('per_page', 15);
         $page = $request->input('page', 1);
-
+        $query = $request->input("query");
+        $searches = [];
+        if (!empty($query)){
+            $searches = [
+                "title" => $query,
+                "description" => $query,
+                "user_name" => $query,
+                "tag_name" => $query
+            ];
+        }
+        $medias = Media::getList($searches, true, Privacy::PUBLIC);
         $medias = $this->applyBlockedUsersFilter(
-            Media::where([
-                ["is_created", true],
-                ["privacy", Privacy::PUBLIC],
-            ]),
-            $this->getBlockedUserIds($request)
+            $medias,
+            blockedUserIds: $this->getBlockedUserIds($request)
         );
 
         if ($this->getBearerToken($request)) {
@@ -34,6 +41,7 @@ class GetAllMediaController extends Controller
                 }
             ]);
         }
+
 
         $medias = $medias->paginate($perPage, ['*'], 'page', $page);
 
