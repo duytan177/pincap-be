@@ -15,6 +15,7 @@ use App\Models\Tag;
 use App\Models\Feeling;
 use App\Models\Comment;
 use App\Models\ReactionMedia;
+use App\Traits\OrderableTrait;
 use Ramsey\Uuid\Uuid;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -27,7 +28,7 @@ use function Laravel\Prompts\select;
 
 class Media extends Model
 {
-    use HasFactory, HasUuids, Notifiable, SoftDeletes;
+    use HasFactory, HasUuids, Notifiable, SoftDeletes, OrderableTrait;
 
     protected static function boot()
     {
@@ -148,7 +149,7 @@ class Media extends Model
         return $this->hasMany(ReactionMedia::class, "media_id", "id");
     }
 
-    public static function getList(array $params, bool $isCreated = false, string $privacy = "", bool $private = false): Builder
+    public static function getList(array $params, bool $isCreated = false, string $privacy = "", bool $private = false, ?array $order = null): Builder
     {
         $medias = Media::query()
             ->when($isCreated, function ($query) use ($isCreated) {
@@ -185,6 +186,8 @@ class Media extends Model
                     ->orWhere('last_name', 'like', "%{$params['user_name']}%");
             });
         }
+
+        $medias = self::scopeApplyOrder($medias, $order);
 
         return $medias;
     }

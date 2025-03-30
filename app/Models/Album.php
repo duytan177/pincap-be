@@ -10,13 +10,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use App\Models\User;
 use App\Models\Media;
+use App\Traits\OrderableTrait;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Builder;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class Album extends Model
 {
-    use HasFactory, HasUuids, Notifiable, SoftDeletes;
+    use HasFactory, HasUuids, Notifiable, SoftDeletes, OrderableTrait;
     protected static function boot()
     {
         parent::boot();
@@ -62,7 +63,7 @@ class Album extends Model
         return $this->belongsToMany(Media::class, 'album_media')->where("is_created", operator: true)->withTimestamps();
     }
 
-    public static function getList(array $params, string $privacy = "", bool $private = false): Builder
+    public static function getList(array $params, string $privacy = "", bool $private = false, ?array $order = null): Builder
     {
         $albums = Album::query()
             ->when($privacy !== "", function ($query) use ($privacy) {
@@ -83,6 +84,8 @@ class Album extends Model
                     $query->orWhere('description', 'like', "%{$params['description']}%");
                 }
             });
+
+        $albums = self::scopeApplyOrder($albums, $order);
 
         return $albums;
     }

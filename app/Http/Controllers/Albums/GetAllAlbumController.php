@@ -6,10 +6,13 @@ use App\Enums\Album_Media\Privacy;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Albums\AlbumCollection;
 use App\Models\Album;
+use App\Traits\OrderableTrait;
 use Illuminate\Http\Request;
 
 class GetAllAlbumController extends Controller
 {
+    use OrderableTrait;
+
     public function __invoke(Request $request)
     {
         $perPage = $request->input("per_page");
@@ -23,7 +26,8 @@ class GetAllAlbumController extends Controller
                 "description" => $query
             ];
         }
-        $albums = Album::getList($searches, Privacy::PUBLIC);
+        $order = $this->getAttributeOrder($request->input("order_key"), $request->input("order_type"));
+        $albums = Album::getList($searches, Privacy::PUBLIC, order: $order);
         $albums = $albums->withCount("medias")->paginate($perPage, ['*'], 'page', $page);
 
         return AlbumCollection::make($albums);

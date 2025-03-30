@@ -6,12 +6,13 @@ use App\Enums\Album_Media\Privacy;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Medias\Media\MediaCollection;
 use App\Models\Media;
+use App\Traits\OrderableTrait;
 use App\Traits\SharedTrait;
 use Illuminate\Http\Request;
 
 class GetAllMediaController extends Controller
 {
-    use SharedTrait;
+    use SharedTrait, OrderableTrait;
 
     public function __invoke(Request $request)
     {
@@ -27,7 +28,8 @@ class GetAllMediaController extends Controller
                 "tag_name" => $query
             ];
         }
-        $medias = Media::getList($searches, true, Privacy::PUBLIC);
+        $order = $this->getAttributeOrder($request->input("order_key"), $request->input("order_type"));
+        $medias = Media::getList($searches, true, Privacy::PUBLIC, order: $order);
         $medias = $this->applyBlockedUsersFilter(
             $medias,
             blockedUserIds: $this->getBlockedUserIds($request)
