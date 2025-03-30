@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Medias;
 
+use App\Enums\Album_Media\MediaType;
 use App\Enums\Album_Media\Privacy;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Medias\MediaByUserIdRequest;
@@ -32,7 +33,7 @@ class GetListMediaByUserIdController extends Controller
             ];
         }
 
-        if (!empty($mediaType)) {
+        if (MediaType::hasValue($mediaType)) {
             $searches += [
                 "type" => $mediaType
             ];

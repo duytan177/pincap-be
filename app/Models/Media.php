@@ -152,7 +152,7 @@ class Media extends Model
     public static function getList(array $params, bool $isCreated = false, string $privacy = "", bool $private = false, ?array $order = null): Builder
     {
         $medias = Media::query()
-            ->when($isCreated, function ($query) use ($isCreated) {
+            ->when($isCreated || $params["my_media"], function ($query) use ($isCreated) {
                 $query->where('is_created', $isCreated);
             })
             ->when($privacy !== "", function ($query) use ($privacy) {

@@ -2,28 +2,33 @@
 
 namespace App\Http\Controllers\Medias;
 
+use App\Enums\Album_Media\MediaType;
 use App\Enums\Album_Media\Privacy;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Medias\MyMediaRequest;
 use App\Http\Resources\Medias\Media\MediaCollection;
 use App\Models\Media;
 use App\Traits\OrderableTrait;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class GetMyMediaController extends Controller
 {
     use OrderableTrait;
-    public function __invoke(MyMediaRequest $request)
+    public function __invoke(Request $request)
     {
-        $isCreated = $request->validated("is_created") ?? true;
+        $isCreated = $request->input("is_created") == "true" ? true : false;
 
         $perPage = $request->input('per_page', 15);
         $page = $request->input('page', 1);
         $mediaType = $request->input("type");
         $query = $request->input("query");
-        $searches = [];
+        $searches = [
+            "my_media" => true
+        ];
         if (!empty($query)){
-            $searches = [
+            $searches += [
                 "title" => $query,
                 "description" => $query,
                 "user_name" => $query,
@@ -31,7 +36,7 @@ class GetMyMediaController extends Controller
             ];
         }
 
-        if (!empty($mediaType)) {
+        if (MediaType::hasValue($mediaType)) {
             $searches += [
                 "type" => $mediaType
             ];
