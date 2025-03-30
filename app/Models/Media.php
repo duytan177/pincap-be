@@ -164,6 +164,9 @@ class Media extends Model
             ->when(!empty($params['user_id']), function ($query) use ($params) {
                 $query->where('media_owner_id', $params['user_id']);
             })
+            ->when(MediaType::hasValue($params['type'] ?? null), function ($query) use ($params) {
+                $query->where('type', $params['type']);
+            })
             ->where(function ($query) use ($params) {
                 if (!empty($params['tag_name'])) {
                     $query->orWhereHas('tags', function ($q) use ($params) {

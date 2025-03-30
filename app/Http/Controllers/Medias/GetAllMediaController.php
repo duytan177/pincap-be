@@ -19,8 +19,9 @@ class GetAllMediaController extends Controller
         $perPage = $request->input('per_page', 15);
         $page = $request->input('page', 1);
         $query = $request->input("query");
+        $mediaType = $request->input("type");
         $searches = [];
-        if (!empty($query)){
+        if (!empty($query)) {
             $searches = [
                 "title" => $query,
                 "description" => $query,
@@ -28,8 +29,14 @@ class GetAllMediaController extends Controller
                 "tag_name" => $query
             ];
         }
+
+        if (!empty($mediaType)) {
+            $searches += [
+                "type" => $mediaType
+            ];
+        }
         $order = $this->getAttributeOrder($request->input(key: "order_key"), $request->input("order_type"));
-        $medias = Media::getList($searches, true, Privacy::PUBLIC, order: $order);
+        $medias = Media::getList($searches, true, Privacy::PUBLIC , order: $order);
         $medias = $this->applyBlockedUsersFilter(
             $medias,
             blockedUserIds: $this->getBlockedUserIds($request)

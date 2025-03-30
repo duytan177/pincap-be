@@ -19,6 +19,7 @@ class GetListMediaByUserIdController extends Controller
         $perPage = $request->input("per_page");
         $page = $request->input("page");
         $query = $request->input("query");
+        $mediaType = $request->input("type");
         $searches = [
             "user_id" => $userId
         ];
@@ -30,6 +31,13 @@ class GetListMediaByUserIdController extends Controller
                 "tag_name" => $query,
             ];
         }
+
+        if (!empty($mediaType)) {
+            $searches += [
+                "type" => $mediaType
+            ];
+        }
+
         $order = $this->getAttributeOrder($request->input(key: "order_key"), $request->input("order_type"));
         $medias = Media::getList($searches, true, Privacy::PUBLIC, false, $order)->with("reactions")
                         ->paginate($perPage, ['*'], 'page', $page);

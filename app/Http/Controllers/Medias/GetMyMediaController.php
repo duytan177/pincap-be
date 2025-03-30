@@ -19,7 +19,7 @@ class GetMyMediaController extends Controller
 
         $perPage = $request->input('per_page', 15);
         $page = $request->input('page', 1);
-
+        $mediaType = $request->input("type");
         $query = $request->input("query");
         $searches = [];
         if (!empty($query)){
@@ -30,6 +30,13 @@ class GetMyMediaController extends Controller
                 "tag_name" => $query
             ];
         }
+
+        if (!empty($mediaType)) {
+            $searches += [
+                "type" => $mediaType
+            ];
+        }
+
         $order = $this->getAttributeOrder($request->input("order_key"), $request->input("order_type"));
         $medias = Media::getList($searches, $isCreated, Privacy::PUBLIC,true, $order)->with("reactions");
 
