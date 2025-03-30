@@ -8,11 +8,11 @@ use App\Http\Resources\Albums\AlbumCollection;
 use App\Models\Album;
 use App\Traits\OrderableTrait;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
-class GetMyAlbumController extends Controller
+class GetAllAlbumController extends Controller
 {
     use OrderableTrait;
+
     public function __invoke(Request $request)
     {
         $perPage = $request->input("per_page");
@@ -26,9 +26,8 @@ class GetMyAlbumController extends Controller
                 "description" => $query
             ];
         }
-
         $order = $this->getAttributeOrder($request->input("order_key"), $request->input("order_type"));
-        $albums = Album::getList($searches, "", true, $order);
+        $albums = Album::getList($searches, Privacy::PUBLIC, order: $order);
         $albums = $albums->withCount("medias")->paginate($perPage, ['*'], 'page', $page);
 
         return AlbumCollection::make($albums);

@@ -2,28 +2,45 @@
 
 namespace App\Http\Controllers\Medias;
 
+use App\Enums\Album_Media\MediaType;
 use App\Enums\Album_Media\Privacy;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Medias\Media\MediaCollection;
 use App\Models\Media;
+use App\Traits\OrderableTrait;
 use App\Traits\SharedTrait;
 use Illuminate\Http\Request;
 
 class GetAllMediaController extends Controller
 {
-    use SharedTrait;
+    use SharedTrait, OrderableTrait;
 
     public function __invoke(Request $request)
     {
         $perPage = $request->input('per_page', 15);
         $page = $request->input('page', 1);
+        $query = $request->input("query");
+        $mediaType = $request->input("type");
+        $searches = [];
+        if (!empty($query)) {
+            $searches = [
+                "title" => $query,
+                "description" => $query,
+                "user_name" => $query,
+                "tag_name" => $query
+            ];
+        }
 
+        if (MediaType::hasValue($mediaType)) {
+            $searches += [
+                "type" => $mediaType
+            ];
+        }
+        $order = $this->getAttributeOrder($request->input(key: "order_key"), $request->input("order_type"));
+        $medias = Media::getList($searches, true, Privacy::PUBLIC , order: $order);
         $medias = $this->applyBlockedUsersFilter(
-            Media::where([
-                ["is_created", true],
-                ["privacy", Privacy::PUBLIC],
-            ]),
-            $this->getBlockedUserIds($request)
+            $medias,
+            blockedUserIds: $this->getBlockedUserIds($request)
         );
 
         if ($this->getBearerToken($request)) {
@@ -34,6 +51,7 @@ class GetAllMediaController extends Controller
                 }
             ]);
         }
+
 
         $medias = $medias->paginate($perPage, ['*'], 'page', $page);
 

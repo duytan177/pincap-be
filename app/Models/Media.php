@@ -15,15 +15,20 @@ use App\Models\Tag;
 use App\Models\Feeling;
 use App\Models\Comment;
 use App\Models\ReactionMedia;
+use App\Traits\OrderableTrait;
 use Ramsey\Uuid\Uuid;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Tymon\JWTAuth\Facades\JWTAuth;
+
+use function Laravel\Prompts\select;
 
 class Media extends Model
 {
-    use HasFactory, HasUuids, Notifiable, SoftDeletes;
+    use HasFactory, HasUuids, Notifiable, SoftDeletes, OrderableTrait;
 
     protected static function boot()
     {
@@ -102,7 +107,7 @@ class Media extends Model
 
     public function userOwner()
     {
-        return $this->belongsTo(User::class, 'mediaOwner_id', 'id');
+        return $this->belongsTo(User::class, 'media_owner_id', 'id');
     }
 
     public function mediaReported()
@@ -142,5 +147,54 @@ class Media extends Model
     public function reactions(): HasMany
     {
         return $this->hasMany(ReactionMedia::class, "media_id", "id");
+    }
+
+    public static function getList(array $params, bool $isCreated = false, string $privacy = "", bool $private = false, ?array $order = null): Builder
+    {
+        $medias = Media::query()
+            ->when($isCreated || $params["my_media"], function ($query) use ($isCreated) {
+                $query->where('is_created', $isCreated);
+            })
+            ->when($privacy !== "", function ($query) use ($privacy) {
+                $query->where('privacy', $privacy);
+            })
+            ->when($private, function ($query) {
+                $query->where('media_owner_id',JWTAuth::user()->getAttribute("id"));
+            })
+            ->when(!empty($params['user_id']), function ($query) use ($params) {
+                $query->where('media_owner_id', $params['user_id']);
+            })
+            ->when(MediaType::hasValue($params['type'] ?? null), function ($query) use ($params) {
+                $query->where('type', $params['type']);
+            })
+            ->where(function ($query) use ($params) {
+                if (!empty($params['tag_name'])) {
+                    $query->orWhereHas('tags', function ($q) use ($params) {
+                        $q->where('tags.tag_name', 'like', "%{$params['tag_name']}%");
+                    });
+                }
+
+                if (!empty($params['title'])) {
+                    $query->orWhere('media_name', 'like', "%{$params['title']}%");
+                }
+
+                if (!empty($params['description'])) {
+                    $query->orWhere('description', 'like', "%{$params['description']}%");
+                }
+
+                if (!empty($params['user_name'])) {
+                    $query->orWhereIn('media_owner_id', function ($subQuery) use ($params) {
+                        $subQuery->select('id')
+                            ->from('users')
+                            ->where('first_name', 'like', "%{$params['user_name']}%")
+                            ->orWhere('last_name', 'like', "%{$params['user_name']}%");
+                    });
+                }
+            });
+
+
+        $medias = self::scopeApplyOrder($medias, $order);
+
+        return $medias;
     }
 }

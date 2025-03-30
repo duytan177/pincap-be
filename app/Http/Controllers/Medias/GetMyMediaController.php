@@ -2,26 +2,50 @@
 
 namespace App\Http\Controllers\Medias;
 
+use App\Enums\Album_Media\MediaType;
+use App\Enums\Album_Media\Privacy;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Medias\MyMediaRequest;
 use App\Http\Resources\Medias\Media\MediaCollection;
 use App\Models\Media;
+use App\Traits\OrderableTrait;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class GetMyMediaController extends Controller
 {
-    public function __invoke(MyMediaRequest $request)
+    use OrderableTrait;
+    public function __invoke(Request $request)
     {
-        $userId = JWTAuth::user()->getAttribute("id");
-        $isCreated = $request->validated("is_created") ?? true;
+        $isCreated = $request->input("is_created") == "true" ? true : false;
 
         $perPage = $request->input('per_page', 15);
         $page = $request->input('page', 1);
+        $mediaType = $request->input("type");
+        $query = $request->input("query");
+        $searches = [
+            "my_media" => true
+        ];
+        if (!empty($query)){
+            $searches += [
+                "title" => $query,
+                "description" => $query,
+                "user_name" => $query,
+                "tag_name" => $query
+            ];
+        }
 
-        $medias = Media::with('reactions')->where([
-            ['media_owner_id', $userId],
-            ["is_created", $isCreated]
-        ])->paginate($perPage, ['*'], 'page', $page);
+        if (MediaType::hasValue($mediaType)) {
+            $searches += [
+                "type" => $mediaType
+            ];
+        }
+
+        $order = $this->getAttributeOrder($request->input("order_key"), $request->input("order_type"));
+        $medias = Media::getList($searches, $isCreated, Privacy::PUBLIC,true, $order)->with("reactions");
+
+        $medias = $medias->paginate( $perPage, ['*'], 'page', $page);
 
         return MediaCollection::make($medias);
     }
