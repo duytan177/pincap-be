@@ -7,20 +7,32 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Medias\MediaByUserIdRequest;
 use App\Http\Resources\Medias\Media\MediaCollection;
 use App\Models\Media;
+use App\Traits\OrderableTrait;
+use Illuminate\Http\Request;
 
 class GetListMediaByUserIdController extends Controller
 {
-    public function __invoke(MediaByUserIdRequest $request)
+    use OrderableTrait;
+    public function __invoke(Request $request)
     {
         $userId = $request->input("user_id");
         $perPage = $request->input("per_page");
         $page = $request->input("page");
-
-        $medias = Media::where([
-            ['media_owner_id', $userId],
-            ["is_created", true],
-            ["privacy", Privacy::PUBLIC]
-        ])->paginate($perPage, ['*'], 'page', $page);
+        $query = $request->input("query");
+        $searches = [
+            "user_id" => $userId
+        ];
+        if (!empty($query)){
+            $searches += [
+                "title" => $query,
+                "description" => $query,
+                "user_name" => $query,
+                "tag_name" => $query,
+            ];
+        }
+        $order = $this->getAttributeOrder($request->input(key: "order_key"), $request->input("order_type"));
+        $medias = Media::getList($searches, true, Privacy::PUBLIC, false, $order)->with("reactions")
+                        ->paginate($perPage, ['*'], 'page', $page);
 
         return MediaCollection::make($medias);
     }

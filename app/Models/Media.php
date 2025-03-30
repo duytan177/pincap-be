@@ -160,32 +160,35 @@ class Media extends Model
             })
             ->when($private, function ($query) {
                 $query->where('media_owner_id',JWTAuth::user()->getAttribute("id"));
+            })
+            ->when(!empty($params['user_id']), function ($query) use ($params) {
+                $query->where('media_owner_id', $params['user_id']);
+            })
+            ->where(function ($query) use ($params) {
+                if (!empty($params['tag_name'])) {
+                    $query->orWhereHas('tags', function ($q) use ($params) {
+                        $q->where('tags.tag_name', 'like', "%{$params['tag_name']}%");
+                    });
+                }
+
+                if (!empty($params['title'])) {
+                    $query->orWhere('media_name', 'like', "%{$params['title']}%");
+                }
+
+                if (!empty($params['description'])) {
+                    $query->orWhere('description', 'like', "%{$params['description']}%");
+                }
+
+                if (!empty($params['user_name'])) {
+                    $query->orWhereIn('media_owner_id', function ($subQuery) use ($params) {
+                        $subQuery->select('id')
+                            ->from('users')
+                            ->where('first_name', 'like', "%{$params['user_name']}%")
+                            ->orWhere('last_name', 'like', "%{$params['user_name']}%");
+                    });
+                }
             });
 
-
-
-        if (!empty($params['tag_name'])) {
-            $medias = $medias->orWhereHas('tags', function ($q) use ($params) {
-                $q->where('tags.tag_name', 'like', "%{$params['tag_name']}%");
-            });
-        }
-
-        if (!empty($params['title'])) {
-            $medias = $medias->orWhere('media_name', 'like', "%{$params['title']}%");
-        }
-
-        if (!empty($params['description'])) {
-            $medias = $medias->orWhere('description', 'like', "%{$params['description']}%");
-        }
-
-        if (!empty($params['user_name'])) {
-            $medias = $medias->orWhereIn('media_owner_id', function ($query) use ($params) {
-                $query->select('id')
-                    ->from('users')
-                    ->where('first_name', 'like', "%{$params['user_name']}%")
-                    ->orWhere('last_name', 'like', "%{$params['user_name']}%");
-            });
-        }
 
         $medias = self::scopeApplyOrder($medias, $order);
 
