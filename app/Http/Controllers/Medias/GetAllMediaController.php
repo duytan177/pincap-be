@@ -28,7 +28,7 @@ class GetAllMediaController extends Controller
                 "tag_name" => $query
             ];
         }
-        $order = $this->getAttributeOrder($request->input("order_key"), $request->input("order_type"));
+        $order = $this->getAttributeOrder($request->input(key: "order_key"), $request->input("order_type"));
         $medias = Media::getList($searches, true, Privacy::PUBLIC, order: $order);
         $medias = $this->applyBlockedUsersFilter(
             $medias,

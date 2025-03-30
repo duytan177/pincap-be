@@ -27,7 +27,7 @@ class GetMyAlbumController extends Controller
             ];
         }
 
-        $order = $this->getAttributeOrder(orderKey: $request->input("order_key"), $request->input("order_type"));
+        $order = $this->getAttributeOrder($request->input("order_key"), $request->input("order_type"));
         $albums = Album::getList($searches, "", true, $order);
         $albums = $albums->withCount("medias")->paginate($perPage, ['*'], 'page', $page);
 

@@ -83,6 +83,13 @@ class Album extends Model
                 if (!empty($params['description'])) {
                     $query->orWhere('description', 'like', "%{$params['description']}%");
                 }
+
+                if (!empty($params['user_id'])) {
+                    $query->whereHas("userOwner", function ($query) use ($params) {
+                        $query->where("user_id", $params['user_id'])
+                            ->where("album_role", AlbumRole::OWNER);;
+                    });
+                }
             });
 
         $albums = self::scopeApplyOrder($albums, $order);
