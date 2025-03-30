@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\Album_Media\AlbumRole;
 use App\Enums\User\UserStatus;
+use App\Traits\OrderableTrait;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -26,6 +27,8 @@ use Ramsey\Uuid\Uuid;
 class User extends Authenticatable implements JWTSubject, MustVerifyEmail
 {
     use HasApiTokens, HasUuids, HasFactory, Notifiable, SoftDeletes;
+
+    use OrderableTrait;
 
     protected static function boot()
     {
@@ -157,5 +160,28 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
             'id', // Khóa chính trên bảng users
             'feeling_id'  // Local key trên bảng reaction_comments
         );
+    }
+
+    public static function getList(array $params, ?array $order = null): Builder
+    {
+        $users = User::query()
+                    ->where(function ($query) use ($params) {
+                        if (!empty($params['first_name'])) {
+                            $query->orWhere('first_name', 'like', "%{$params['first_name']}%");
+                        }
+
+                        if (!empty($params['last_name'])) {
+                            $query->orWhere('last_name', 'like', "%{$params['last_name']}%");
+                        }
+
+                        if (!empty($params['email'])) {
+                            $query->orWhere('email', 'like', "%{$params['email']}%");
+                        }
+                    });
+
+                    
+        $users = self::scopeApplyOrder($users, $order);
+
+        return $users;
     }
 }
