@@ -18,7 +18,7 @@ class GetMyMediaController extends Controller
     use OrderableTrait;
     public function __invoke(Request $request)
     {
-        $isCreated = $request->input("is_created") == "true" ? true : false;
+        $isCreated = $request->input("is_created") == "false" ? false : true;
 
         $perPage = $request->input('per_page', 15);
         $page = $request->input('page', 1);
