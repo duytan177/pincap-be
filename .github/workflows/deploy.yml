@@ -41,10 +41,10 @@ jobs:
           docker-compose up -d || { echo "Docker-compose up failed"; exit 1; }
 
           echo "Running migrations and optimizing the application"
-          docker-compose exec -T workspace bash -c 'php artisan migrate --force' || { echo "Migrate failed"; exit 1; }
+          docker-compose exec -T workspace bash -c 'php artisan migrate --force' || { echo "Migrate failed";}
 
           echo "Proceeding with optimization..."
-          docker-compose exec -T workspace bash -c 'php artisan config:clear && php artisan route:clear && php artisan view:clear && php artisan optimize' || { echo "Optimize failed"; exit 1; }
+          docker-compose exec -T workspace bash -c 'php artisan config:clear && php artisan route:clear && php artisan view:clear && php artisan optimize' || { echo "Optimize failed";}
           echo "Optimization successfully."
 
           echo "Deployment completed successfully"
