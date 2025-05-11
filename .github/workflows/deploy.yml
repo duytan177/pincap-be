@@ -40,10 +40,11 @@ jobs:
 
           docker-compose up -d || { echo "Docker-compose up failed"; exit 1; }
 
-          # Bước 4: Thực thi các lệnh artisan trong container workspace
           echo "Running migrations and optimizing the application"
-          docker-compose exec -T workspace bash -c 'php artisan migrate --force' || { echo "Migrate failed"; exit 1; }
-          docker-compose exec -T workspace bash -c 'php artisan optimize' || { echo "Optimize failed"; exit 1; }
+          docker-compose exec -it workspace bash -c 'php artisan migrate --force' || { echo "Migrate failed"; exit 1; }
+          echo "Migrations completed. Proceeding with optimization..."
+          docker-compose exec -it workspace bash -c 'php artisan optimize' || { echo "Optimize failed"; exit 1; }
+          echo "Optimization successfully."
 
           echo "Deployment completed successfully"
         EOSSH
