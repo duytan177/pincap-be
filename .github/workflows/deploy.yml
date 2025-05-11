@@ -26,12 +26,19 @@ jobs:
 
     - name: Deploy Code via SSH
       run: |
-        ssh -i ~/.ssh/deploy_key.pem ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
-          cd /var/www/pincap/laradock/
-          docker-compose up -d
-          docker-compose exec -T workspace bash -c "
-            git pull origin master &&
-            php artisan migrate --force &&
-            php artisan optimize
-          "
-        EOF
+        ssh -i ~/.ssh/deploy_key.pem -T -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} bash << 'EOSSH'
+          echo "Navigating to the Laradock directory"
+          cd /var/www/pincap/laradock || { echo "Failed to cd into /var/www/pincap/laradock"; exit 1; }
+
+          echo "Bringing up Docker containers"
+          docker-compose up -d || { echo "Docker-compose up failed"; exit 1; }
+
+          echo "Running git pull"
+          docker-compose exec -T workspace bash -c 'git pull origin master' || { echo "Git pull failed"; exit 1; }
+
+          echo "Running migrations"
+          docker-compose exec -T workspace bash -c 'php artisan migrate --force' || { echo "Migrate failed"; exit 1; }
+
+          echo "Optimizing the application"
+          docker-compose exec -T workspace bash -c 'php artisan optimize' || { echo "Optimize failed"; exit 1; }
+        EOSSH
