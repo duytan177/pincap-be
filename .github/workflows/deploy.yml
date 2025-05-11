@@ -27,10 +27,9 @@ jobs:
     - name: Deploy Code via SSH
       run: |
         ssh -i ~/.ssh/deploy_key.pem ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
-          cd ~/laradock
+          cd /var/www/pincap/laradock/
           docker-compose up -d
           docker-compose exec -T workspace bash -c "
-            cd ../backend-laravel &&
             git pull origin master &&
             php artisan migrate --force &&
             php artisan optimize
