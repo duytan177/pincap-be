@@ -27,18 +27,23 @@ jobs:
     - name: Deploy Code via SSH
       run: |
         ssh -i ~/.ssh/deploy_key.pem -T -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} bash << 'EOSSH'
-          echo "Navigating to the Laradock directory"
-          cd /var/www/pincap/laradock || { echo "Failed to cd into /var/www/pincap/laradock"; exit 1; }
+          echo "Navigating to the backend directory and stashing changes"
+          cd /var/www/pincap/pincap/pincap-be || { echo "Failed to cd into /var/www/pincap/pincap/pincap-be"; exit 1; }
 
-          echo "Bringing up Docker containers"
+          git stash || { echo "Git stash failed"; exit 1; }
+
+          echo "Pulling the latest code from the master branch"
+          git pull origin master || { echo "Git pull failed"; exit 1; }
+
+          echo "Navigating back to Laradock directory"
+          cd ../../laradock || { echo "Failed to cd back into /var/www/pincap/laradock"; exit 1; }
+
           docker-compose up -d || { echo "Docker-compose up failed"; exit 1; }
 
-          echo "Running git pull"
-          docker-compose exec -T workspace bash -c 'git pull origin master' || { echo "Git pull failed"; exit 1; }
-
-          echo "Running migrations"
+          # Bước 4: Thực thi các lệnh artisan trong container workspace
+          echo "Running migrations and optimizing the application"
           docker-compose exec -T workspace bash -c 'php artisan migrate --force' || { echo "Migrate failed"; exit 1; }
-
-          echo "Optimizing the application"
           docker-compose exec -T workspace bash -c 'php artisan optimize' || { echo "Optimize failed"; exit 1; }
+
+          echo "Deployment completed successfully"
         EOSSH
