@@ -44,7 +44,7 @@ jobs:
           docker-compose exec -T workspace bash -c 'php artisan migrate --force' || { echo "Migrate failed"; exit 1; }
 
           echo "Proceeding with optimization..."
-          docker-compose exec -T workspace bash -c 'cd pincap/pincap-be && php artisan config:clear && php artisan route:clear && php artisan view:clear && php artisan optimize' || { echo "Optimize failed"; exit 1; }
+          docker-compose exec -T workspace bash -c 'php artisan config:clear && php artisan route:clear && php artisan view:clear && php artisan optimize' || { echo "Optimize failed"; exit 1; }
           echo "Optimization successfully."
 
           echo "Deployment completed successfully"

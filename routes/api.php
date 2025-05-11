@@ -59,7 +59,7 @@ use App\Http\Controllers\Users\SearchUsersController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/health-check', function () {
-    return 'health-check OK';
+    return 'health-check test cicd OK';
 });
 
 
