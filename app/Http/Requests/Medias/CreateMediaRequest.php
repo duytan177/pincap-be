@@ -16,6 +16,13 @@ class CreateMediaRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation()
+    {
+        $this->merge([
+            'is_created' => filter_var($this->input('is_created'), FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE),
+        ]);
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *

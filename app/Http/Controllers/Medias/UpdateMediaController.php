@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Medias;
 
+use App\Events\MediaCreatedEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Medias\Shared\MediaHandle;
 use App\Http\Requests\Medias\UpdateMediaRequest;
@@ -37,6 +38,9 @@ class UpdateMediaController extends Controller
         }
 
         $media->updateOrFail($mediaData);
+        if ($media->getAttribute("is_created")) {
+            event(new MediaCreatedEvent($media));
+        }
         return responseWithMessage("Update media successfully");
     }
 }
