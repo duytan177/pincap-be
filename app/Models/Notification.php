@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
 
 class Notification extends Model
 {
@@ -28,6 +29,19 @@ class Notification extends Model
     protected $hidden = [
         'deleted_at'
     ];
+    protected $casts = [
+        'notification_type' => NotificationType::class,
+    ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::addGlobalScope('order', function (Builder $builder) {
+            $builder->orderBy('created_at', 'desc');
+        });
+    }
+
 
     public function getNotificationTypeAttribute($value)
     {
@@ -42,5 +56,18 @@ class Notification extends Model
     public function receiver()
     {
         return $this->belongsTo(User::class, 'receiver_id');
+    }
+
+    public static function getList($query, array $params)
+    {
+        if (isset($params['is_read'])) {
+            $query->where('is_read', $params['is_read']);
+        }
+
+        if (isset($params['notification_type'])) {
+            $query->where('notification_type', $params['notification_type']);
+        }
+
+        return $query;
     }
 }

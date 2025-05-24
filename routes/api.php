@@ -44,6 +44,7 @@ use App\Http\Controllers\Medias\Reactions\ReplyCommentController;
 use App\Http\Controllers\Medias\Reactions\ToggleReactionCommentController;
 use App\Http\Controllers\Medias\Reactions\ToggleReactionMediaController;
 use App\Http\Controllers\Medias\Reactions\ToggleReactionReplyController;
+use App\Http\Controllers\Notifications\GetAllMeNotificationController;
 use App\Http\Controllers\Tags\GetAllTagController;
 use App\Http\Controllers\Users\Reports\GetListReportReasonController;
 use App\Http\Controllers\Users\Profiles\GetMyFollowerOrFolloweeController;
@@ -119,6 +120,11 @@ Route::middleware(["auth:api"])->group(function () {
         Route::put("/{albumId}", UpdateAlbumController::class);
         Route::post("/{albumId}/invite/{userId}", AddMemberIntoAlbumController::class);
         Route::delete("/{albumId}", DeleteAlbumController::class);
+    });
+
+
+    Route::prefix("/notifications")->group(function () {
+        Route::get("/me", GetAllMeNotificationController::class);
     });
 });
 
