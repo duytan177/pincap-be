@@ -15,5 +15,6 @@ return [
         'icon' => "Icon",
         'logo' => "Logo",
     ],
-    "api_key_prodia" => env("API_KEY_PRODIA")
+    "api_key_prodia" => env("API_KEY_PRODIA"),
+    "gemini_api_key" => env("GEMINI_API_KEY")
 ];
