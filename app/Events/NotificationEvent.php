@@ -65,4 +65,11 @@ class NotificationEvent implements ShouldBroadcast
             'notificationType' => $this->notificationType,
         ];
     }
+
+    // This method is used to specify the event name when broadcasting.
+    // It is optional, but can be useful for clarity.
+    public function broadcastAs()
+    {
+        return 'notifications';
+    }
 }
