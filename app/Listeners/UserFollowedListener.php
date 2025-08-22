@@ -32,7 +32,6 @@ class UserFollowedListener implements ShouldQueue
         $follower = $event->follower;
         $followerId = $follower->getAttribute("id");
         $followeeId = $event->followeeId;
-        $followee = User::find($followeeId);
         $followerName = $follower->getAttribute('first_name').' '.$follower->getAttribute('last_name');
         $title = "A user is following you";
         $content = "$followerName has started following you. Check out their profile!";
@@ -55,8 +54,8 @@ class UserFollowedListener implements ShouldQueue
             $title,
             $content,
             $link,
-            SenderResource::make($followee),
-            [$followerId],
+            SenderResource::make($follower),
+            [$followeeId],
             NotificationType::getKey($notificationType)
         ));
 
