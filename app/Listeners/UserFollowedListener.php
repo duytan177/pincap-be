@@ -45,8 +45,8 @@ class UserFollowedListener implements ShouldQueue
             "title" => $title,
             "content" => $content,
             "link" => $link,
-            "sender_id" => $followeeId,
-            "receiver_id" => $followerId,
+            "sender_id" => $followerId,
+            "receiver_id" => $followeeId,
             "notification_type" => $notificationType
         ];
 
