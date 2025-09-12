@@ -46,5 +46,10 @@ jobs:
 
           echo "Optimization successfully."
 
+          echo "Update api documentation"
+          cd ../../pincap/pincap/api-documentation/ || { echo "Failed to cd into /var/www/pincap/pincap/api-documentation"; exit 1; }
+          git stash || { echo "Git stash failed"; exit 1; }
+          git pull origin master || { echo "Git pull failed"; exit 1; }
+
           echo "Deployment completed successfully"
         EOSSH
