@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\Album_Media\InvitationStatus;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -22,10 +23,7 @@ class UserAlbum extends Model
     ];
     protected $hidden = [];
 
-    protected function casts()
-    {
-        return [
-            "invitation_status" => "boolean"
-        ];
-    }
+    protected $casts = [
+        'invitation_status' => InvitationStatus::class,
+    ];
 }
