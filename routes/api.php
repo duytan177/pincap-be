@@ -45,6 +45,8 @@ use App\Http\Controllers\Medias\Reactions\ToggleReactionCommentController;
 use App\Http\Controllers\Medias\Reactions\ToggleReactionMediaController;
 use App\Http\Controllers\Medias\Reactions\ToggleReactionReplyController;
 use App\Http\Controllers\Notifications\GetAllMeNotificationController;
+use App\Http\Controllers\Notifications\MarkReadAllNotificationController;
+use App\Http\Controllers\Notifications\MarkReadByIdNotificationController;
 use App\Http\Controllers\Notifications\PusherController;
 use App\Http\Controllers\Tags\GetAllTagController;
 use App\Http\Controllers\Users\Reports\GetListReportReasonController;
@@ -129,6 +131,8 @@ Route::middleware(["auth:api"])->group(function () {
 
     Route::prefix("/notifications")->group(function () {
         Route::get("/me", GetAllMeNotificationController::class);
+        Route::post("/mark-all-read", MarkReadAllNotificationController::class);
+        Route::post("/{id}/read", MarkReadByIdNotificationController::class);
     });
 });
 
