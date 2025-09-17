@@ -131,8 +131,8 @@ Route::middleware(["auth:api"])->group(function () {
 
     Route::prefix("/notifications")->group(function () {
         Route::get("/me", GetAllMeNotificationController::class);
-        Route::post("/mark-all-read", MarkReadAllNotificationController::class);
-        Route::post("/{id}/read", MarkReadByIdNotificationController::class);
+        Route::put("/mark-all-read", MarkReadAllNotificationController::class);
+        Route::put("/{id}/read", MarkReadByIdNotificationController::class);
     });
 });
 
