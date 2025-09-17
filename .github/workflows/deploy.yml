@@ -41,7 +41,7 @@ jobs:
           docker compose up -d || { echo "Docker compose up failed"; exit 1; }
 
           echo "Proceeding with migrations and optimization..."
-          docker compose exec -T workspace bash -c 'php artisan migrate --force && php artisan config:clear && php artisan route:clear && php artisan view:clear && php artisan queue:clear && php artisan queue:restart && php artisan optimize' || { echo "Optimize or migrate failed";}
+          docker compose exec -T workspace bash -c 'php artisan migrate && php artisan config:clear && php artisan route:clear && php artisan view:clear && php artisan queue:clear && php artisan queue:restart && php artisan optimize' || { echo "Optimize or migrate failed";}
 
 
           echo "Optimization successfully."
