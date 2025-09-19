@@ -11,18 +11,7 @@ class DeleteAlbumController extends Controller
 {
     public function __invoke($albumId)
     {
-        $currentUserId = JWTAuth::user()->getAttribute("id");
-
-        $isOwner = Album::query()->where('id', $albumId)->ownedBy($currentUserId)->exists();
-
-        if (!$isOwner) {
-            throw AlbumException::notOwner();
-        }
-
-        $deleted = Album::where("id", $albumId)->delete();
-        if ($deleted === 0) {
-            throw AlbumException::deleteFailed();
-        }
+        Album::findOrFail($albumId)->delete();
 
         return responseWithMessage("Deleted album successfully");
     }
