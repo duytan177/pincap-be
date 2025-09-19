@@ -7,6 +7,7 @@ use App\Events\NotificationEvent;
 use App\Events\UserFollowedEvent;
 use App\Http\Resources\Users\Information\SenderResource;
 use App\Models\Notification;
+use App\Models\User;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Ramsey\Uuid\Uuid;
