@@ -1,0 +1,19 @@
+name: AI PR Description
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize]
+
+jobs:
+  generate-pr-description:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run PR-Agent
+        uses: Codium-ai/pr-agent@main
+        with:
+          GEMINI_KEY: ${{ secrets.GEMINI_API_KEY }}
+          PROVIDER: "gemini"
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

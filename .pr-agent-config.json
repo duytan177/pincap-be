@@ -1,0 +1,15 @@
+{
+  "pr_description": {
+    "title": "## 📝 Pull Request Description",
+    "sections": [
+      {
+        "title": "### 📌 Summary",
+        "content": "Write a clear and concise overview of what this PR does.\n\nUse Markdown:\n- Keep sentences short\n- Highlight important changes with **bold** or *italic*"
+      },
+      {
+        "title": "### 🔀 Commits",
+        "content": "For each commit, format the output like this in Markdown:\n\n#### 🔑 Commit `<hash>` - `<message>`\n- **Description:** Detailed explanation of changes\n- **Reason:** Why this commit was made\n- **Notes:** Any special considerations, risks, or breaking changes\n"
+      }
+    ]
+  }
+}
