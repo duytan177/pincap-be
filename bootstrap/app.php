@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use App\Exceptions\BaseException;
+use App\Exceptions\HttpException as AppHttpException;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
 use Illuminate\Console\Scheduling\Schedule;
@@ -81,6 +82,12 @@ return Application::configure(basePath: dirname(__DIR__))
                 case $exception instanceof TokenExpiredException:
                     $message = $exception->getMessage();
                     $statusCode = HttpStatusCode::HTTP_UNAUTHORIZED;
+                    break;
+
+                case $exception instanceof AppHttpException:
+                    $message = $exception->getMessage();
+                    $errors = method_exists($exception, 'getErrors') ? $exception->getErrors() : [];
+                    $statusCode = $exception->getCode();
                     break;
 
                 case $exception instanceof BaseException:
