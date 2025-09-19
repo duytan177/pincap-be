@@ -28,8 +28,9 @@ class AlbumInvitationListener implements ShouldQueue
         $content = "You've been invited to join album: " . $album->getAttribute("album_name");
         $link = '/albums/' . $album->getAttribute('id');
         $notificationType = NotificationType::ALBUM_INVITATION;
-
-        $notification = Notification::create([
+        $notificationId = Uuid::uuid4()->toString();
+        Notification::create([
+            'id' => $notificationId,
             'title' => $title,
             'content' => $content,
             'link' => $link,
@@ -39,7 +40,7 @@ class AlbumInvitationListener implements ShouldQueue
         ]);
 
         event(new NotificationEvent(
-            $notification->getAttribute('id'),
+            $notificationId,
             $title,
             $content,
             $link,

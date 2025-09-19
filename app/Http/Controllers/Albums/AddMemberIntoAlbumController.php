@@ -43,6 +43,6 @@ class AddMemberIntoAlbumController extends Controller
 
         event(new AlbumInvitationEvent($album, $inviter, $userId));
 
-        return responseWithMessage("Add user successfully");
+        return responseWithMessage("Invite sent successfully");
     }
 }
