@@ -1,0 +1,15 @@
+{
+  "pr_description": {
+    "title": "## 📝 Pull Request Description",
+    "sections": [
+      {
+        "title": "### 📌 Summary",
+        "content": "Provide a short overview of what this PR does."
+      },
+      {
+        "title": "### 🔀 Commits",
+        "content": "For each commit in this PR, list:\n- Commit hash and message\n- Detailed description of changes\n- Reason: why this commit was made\n- Notes: any special considerations or breaking changes"
+      }
+    ]
+  }
+}
