@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\Album_Media\AlbumRole;
+use App\Enums\Album_Media\InvitationStatus;
 use App\Enums\User\UserStatus;
 use App\Traits\OrderableTrait;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -113,7 +114,7 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
     }
     public function albums()
     {
-        return $this->belongsToMany(Album::class, "user_album")->withPivot(["invitation_status", 'album_role'])->wherePivot("invitation_status", true)->withTimestamps()->wherePivot("album_role", "=", AlbumRole::OWNER);
+        return $this->belongsToMany(Album::class, "user_album")->withPivot(["invitation_status", 'album_role'])->wherePivot("invitation_status", InvitationStatus::ACCEPTED)->withTimestamps()->wherePivot("album_role", "=", AlbumRole::OWNER);
     }
 
     public function followers(): BelongsToMany
@@ -179,7 +180,7 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
                         }
                     });
 
-                    
+
         $users = self::scopeApplyOrder($users, $order);
 
         return $users;

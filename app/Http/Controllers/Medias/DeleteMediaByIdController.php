@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Medias;
 
-use App\Exceptions\Users\MediaException;
+use App\Exceptions\MediaException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Medias\DeleteMediaRequest;
 use App\Models\Media;

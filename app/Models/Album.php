@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\Album_Media\AlbumRole;
+use App\Enums\Album_Media\InvitationStatus;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -51,7 +52,7 @@ class Album extends Model
 
     public function members(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, "user_album")->withPivot(["invitation_status", 'album_role'])->withTimestamps()->wherePivot("album_role", "!=", AlbumRole::OWNER)->wherePivot("invitation_status", "=", true);
+        return $this->belongsToMany(User::class, "user_album")->withPivot(["invitation_status", 'album_role'])->withTimestamps()->wherePivot("album_role", "!=", AlbumRole::OWNER)->wherePivot("invitation_status", "=", InvitationStatus::ACCEPTED);
     }
 
     public function userOwner(): BelongsToMany
@@ -61,6 +62,14 @@ class Album extends Model
     public function medias() : BelongsToMany
     {
         return $this->belongsToMany(Media::class, 'album_media')->where("is_created", operator: true)->withTimestamps();
+    }
+
+    public function scopeOwnedBy(Builder $query, string $userId): Builder
+    {
+        return $query->whereHas('userOwner', function (Builder $sub) use ($userId) {
+            $sub->where('user_id', $userId)
+                ->where('album_role', AlbumRole::OWNER);
+        });
     }
 
     public static function getList(array $params, string $privacy = "", bool $private = false, ?array $order = null): Builder

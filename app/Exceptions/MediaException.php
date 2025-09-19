@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Exceptions\Users;
+namespace App\Exceptions;
 
 use App\Exceptions\BaseException;
 
