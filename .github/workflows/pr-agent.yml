@@ -1,20 +1,23 @@
-name: AI PR Description
-
+name: PR Agent (Gemini)
 on:
   pull_request:
-    types: [opened, edited, synchronize]
-
+    types: [opened, edited, synchronize, reopened]
+  issue_comment:
 jobs:
-  generate-pr-description:
+  pr_agent_job:
+    if: ${{ github.event.sender.type != 'Bot' }}
     runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+      contents: write
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Run PR-Agent
-        uses: Codium-ai/pr-agent@main
-        with:
-          provider: gemini
+      - name: PR Agent action step
+        uses: qodo-ai/pr-agent@main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          config.model: "gemini/gemini-1.5-flash"
+          config.fallback_models: '["gemini/gemini-1.5-flash"]'
+          GOOGLE_AI_STUDIO.GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          github_action_config.auto_describe: "true"
+          github_action_config.auto_improve: "true"
