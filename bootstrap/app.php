@@ -63,7 +63,9 @@ return Application::configure(basePath: dirname(__DIR__))
                     break;
 
                 case $exception->getPrevious() instanceof ModelNotFoundException:
-                    $message = "model not found";
+                    $prev = $exception->getPrevious();
+                    $model = class_basename($prev->getModel());
+                    $message = strtolower($model) . ' not found';
                     $statusCode = HttpStatusCode::HTTP_NOT_FOUND;
                     break;
 

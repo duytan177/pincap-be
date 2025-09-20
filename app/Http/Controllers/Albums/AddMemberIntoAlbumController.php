@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\UserAlbum;
 use App\Enums\Album_Media\InvitationStatus;
 use App\Events\AlbumInvitationEvent;
+use App\Exceptions\Albums\AlbumException;
 use App\Models\Album;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
@@ -23,16 +24,16 @@ class AddMemberIntoAlbumController extends Controller
         if ($existing) {
             $status = $existing->getAttribute('invitation_status');
             if ($status == InvitationStatus::INVITED) {
-                return responseWithMessage("User already invited");
+                throw AlbumException::alreadyInvited();
             }
             if ($status == InvitationStatus::ACCEPTED) {
-                return responseWithMessage("User already a member");
+                throw AlbumException::alreadyMember();
             }
 
             // Re-invite when previously rejected
             $existing->update(['invitation_status' => InvitationStatus::INVITED]);
             event(new AlbumInvitationEvent($album, $inviter, $userId));
-            return responseWithMessage("Invite sent successfully");
+            return response()->json(responseWithMessage("Invite sent successfully"), 200);
         }
 
         UserAlbum::create([
@@ -43,6 +44,6 @@ class AddMemberIntoAlbumController extends Controller
 
         event(new AlbumInvitationEvent($album, $inviter, $userId));
 
-        return responseWithMessage("Invite sent successfully");
+        return response()->json(responseWithMessage("Invite sent successfully"), 201);
     }
 }
