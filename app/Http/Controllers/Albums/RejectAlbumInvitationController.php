@@ -27,11 +27,8 @@ class RejectAlbumInvitationController extends Controller
             throw AlbumException::alreadyMember();
         }
 
-        if ($status == InvitationStatus::REJECTED) {
-            throw AlbumException::invitationAlreadyRejected();
-        }
-
-        $invite->update(['invitation_status' => InvitationStatus::REJECTED]);
+        // Delete the record on reject to simplify future reinvitations
+        $invite->delete();
 
         return response()->json(responseWithMessage('Invitation rejected'), 200);
     }
