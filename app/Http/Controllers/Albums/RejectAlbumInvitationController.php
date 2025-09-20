@@ -22,7 +22,12 @@ class RejectAlbumInvitationController extends Controller
             throw AlbumException::invitationNotFound();
         }
 
-        if ($invite->getAttribute('invitation_status') == InvitationStatus::REJECTED) {
+        $status = $invite->getAttribute('invitation_status');
+        if ($status == InvitationStatus::ACCEPTED) {
+            throw AlbumException::alreadyMember();
+        }
+
+        if ($status == InvitationStatus::REJECTED) {
             throw AlbumException::invitationAlreadyRejected();
         }
 
