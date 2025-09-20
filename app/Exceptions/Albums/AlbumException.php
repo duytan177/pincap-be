@@ -20,6 +20,26 @@ class AlbumException extends BaseException
     {
         return self::code('Deleted album failed', [], 400);
     }
+
+    public static function alreadyInvited()
+    {
+        return self::code('User already invited', [], 409);
+    }
+
+    public static function alreadyMember()
+    {
+        return self::code('User already a member', [], 409);
+    }
+
+    public static function invitationNotFound()
+    {
+        return self::code('Invitation not found', [], 404);
+    }
+
+    public static function invitationAlreadyRejected()
+    {
+        return self::code('Invitation already rejected', [], 409);
+    }
 }
 
 

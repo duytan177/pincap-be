@@ -3,6 +3,8 @@
 use App\Http\Controllers\AlbumMedia\GetPrivacyController;
 use App\Http\Controllers\Albums\AddMediasToAlbumController;
 use App\Http\Controllers\Albums\AddMemberIntoAlbumController;
+use App\Http\Controllers\Albums\AcceptAlbumInvitationController;
+use App\Http\Controllers\Albums\RejectAlbumInvitationController;
 use App\Http\Controllers\Albums\CreateAlbumController;
 use App\Http\Controllers\Albums\DeleteAlbumController;
 use App\Http\Controllers\Albums\GetAlbumByUserIdController;
@@ -126,6 +128,8 @@ Route::middleware(["auth:api"])->group(function () {
         Route::post("/", CreateAlbumController::class);
         Route::put("/{albumId}", UpdateAlbumController::class);
         Route::post("/{albumId}/invite/{userId}", AddMemberIntoAlbumController::class);
+        Route::post("/{albumId}/accept-invitation", AcceptAlbumInvitationController::class);
+        Route::post("/{albumId}/reject-invitation", RejectAlbumInvitationController::class);
         Route::delete("/{albumId}", DeleteAlbumController::class);
     });
 
