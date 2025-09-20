@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Albums;
 
 use App\Enums\Album_Media\AlbumRole;
+use App\Enums\Album_Media\InvitationStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Albums\AlbumRequest;
 use App\Models\Album;
@@ -17,7 +18,7 @@ class CreateAlbumController extends Controller
 
         $album->userOwner()->attach(Auth::id(), [
             'id' => Uuid::uuid4()->toString(),
-            "invitation_status" => true,
+            "invitation_status" => InvitationStatus::ACCEPTED,
             "album_role" => AlbumRole::OWNER
         ]);
 
