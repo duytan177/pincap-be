@@ -21,7 +21,9 @@ class TagResource extends BaseResource
     {
         $data = $this->resource->only(self::$attributes);
 
-        $data["latestMediaUrl"] = $this->resource->latestMedia[0]->getAttribute("media_url");
+        if (!filter_var($request->input('tag_flg'), FILTER_VALIDATE_BOOLEAN)) {
+            $data["latestMediaUrl"] = $this->resource->latestMedia[0]->getAttribute("media_url");
+        }
 
         return $data;
     }

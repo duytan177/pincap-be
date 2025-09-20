@@ -36,10 +36,6 @@ class AlbumException extends BaseException
         return self::code('Invitation not found', [], 404);
     }
 
-    public static function invitationAlreadyRejected()
-    {
-        return self::code('Invitation already rejected', [], 409);
-    }
 }
 
 
