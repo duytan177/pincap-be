@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Medias;
 use App\Events\MediaCreatedEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Medias\Shared\MediaHandle;
+use App\Exceptions\MediaException;
 use App\Http\Requests\Medias\UpdateMediaRequest;
 use App\Models\AlbumMedia;
 use App\Models\Media;
@@ -34,6 +35,9 @@ class UpdateMediaController extends Controller
         }
 
         if (isset($mediaData["tags_name"])) {
+            if ($media->getAttribute('is_created') === true) {
+                throw MediaException::cannotUpdateTagsCreated();
+            }
             MediaHandle::attachTagtoMedia($mediaData["tags_name"], $mediaId, $userId, $now);
         }
 

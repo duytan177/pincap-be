@@ -5,6 +5,7 @@ namespace App\Http\Resources\Medias\MediaDetail;
 use App\Components\Resources\BaseResource;
 use App\Http\Resources\Feelings\FeelingCollection;
 use App\Http\Resources\Medias\Comments\CommentResource;
+use App\Http\Resources\Tags\TagCollection;
 use App\Http\Resources\Users\Profiles\FollowResource;
 use App\Models\User;
 use App\Traits\SharedTrait;
@@ -46,6 +47,11 @@ class MediaDetailResource extends BaseResource
         $data["userComments"] = CommentResource::make($this->resource->comments->first());
         $data["commentCount"] = $this->resource->comments->count();
         $data["feelings"] = FeelingCollection::make($this->resource->feelings);
+
+        // Optional include tags when tag_flg=true
+        if (filter_var($request->input('tag_flg'), FILTER_VALIDATE_BOOLEAN)) {
+            $data["tags"] = TagCollection::make($this->resource->tags);
+        }
 
         return $data;
     }
