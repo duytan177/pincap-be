@@ -13,6 +13,6 @@ class MediaException extends BaseException
 
     public static function cannotUpdateTagsCreated()
     {
-        return self::code("Cannot update tags when media is created", [], 409);
+        return self::code("Cannot update tags when media is created", [], 400);
     }
 }
