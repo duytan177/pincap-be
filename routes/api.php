@@ -147,7 +147,7 @@ Route::group([], function () {
         Route::post('/login', LoginController::class);
         Route::post('/register', RegisterController::class);
         Route::get('/verify-email/{token}', VerifyUserController::class);
-        Route::get('/resend-verify-email', ResendVerifyUserController::class);
+        Route::post('/resend-verify-email', ResendVerifyUserController::class);
         Route::get("/redirect-forgot-password/{token}", RedirectController::class);
         Route::post("/forgot-password", ForgotPasswordController::class);
         Route::post("/reset-password", ResetPasswordController::class);
