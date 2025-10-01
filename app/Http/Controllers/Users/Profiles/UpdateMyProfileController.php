@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Users\Profiles\UpdateMyProfileRequest;
 use App\Models\User;
 use App\Traits\AWSS3Trait;
+use Illuminate\Support\Arr;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class UpdateMyProfileController extends Controller
@@ -17,13 +18,13 @@ class UpdateMyProfileController extends Controller
     const BACKGROUND = 'background';
     public function __invoke(UpdateMyProfileRequest $request)
     {
-        $requestDataUser = $request->validated();
+        $requestDataUser = Arr::except($request->validated(), ['email']);
         $user = JWTAuth::user();
 
-        $emailCheck = User::where("email", $requestDataUser["email"])->whereNot("id", $user->getAttribute("id"))->exists();
-        if ($emailCheck) {
-            throw ProfileException::emailIsExisted();
-        }
+        // $emailCheck = User::where("email", $requestDataUser["email"])->whereNot("id", $user->getAttribute("id"))->exists();
+        // if ($emailCheck) {
+        //     throw ProfileException::emailIsExisted();
+        // }
         $phoneCheck = User::Where("phone", $requestDataUser["phone"])->whereNot("id", $user->getAttribute("id"))->exists();
 
         if ($phoneCheck) {
