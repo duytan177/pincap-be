@@ -23,6 +23,7 @@ class SearchUsersController extends Controller
             $query->where('follower_id', $userId);
         })->withCount("followers")->where("first_name", "like", $textSearch)
             ->orWhere("last_name", "like", $textSearch)
+            ->orWhere("email", "like", $textSearch)
             ->get();
 
         return UserInfoCollection::make($users);
