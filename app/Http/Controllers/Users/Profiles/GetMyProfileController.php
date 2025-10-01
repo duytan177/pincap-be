@@ -10,8 +10,7 @@ class GetMyProfileController extends Controller
 {
     public function __invoke()
     {
-        $user = JWTAuth::user()->withCount(["followers", "followees"])->first();
-
+        $user = JWTAuth::user()->loadCount(["followers", "followees"]);
         return ProfileResource::make($user);
     }
 }
