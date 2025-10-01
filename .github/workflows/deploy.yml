@@ -35,6 +35,11 @@ jobs:
           echo "Pulling the latest code from the master branch"
           git pull origin master || { echo "Git pull failed"; exit 1; }
 
+          echo "Update api documentation"
+          cd ../api-documentation/ || { echo "Failed to cd into ./api-documentation/"; exit 1; }
+          git stash || { echo "Git stash failed"; exit 1; }
+          git pull origin master || { echo "Git pull failed"; exit 1; }
+
           echo "Navigating back to Laradock directory"
           cd ../../laradock || { echo "Failed to cd back into /var/www/pincap/laradock"; exit 1; }
 
@@ -45,11 +50,6 @@ jobs:
 
 
           echo "Optimization successfully."
-
-          echo "Update api documentation"
-          cd ../../pincap/pincap/api-documentation/ || { echo "Failed to cd into /var/www/pincap/pincap/api-documentation"; exit 1; }
-          git stash || { echo "Git stash failed"; exit 1; }
-          git pull origin master || { echo "Git pull failed"; exit 1; }
 
           echo "Deployment completed successfully"
         EOSSH
