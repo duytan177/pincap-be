@@ -9,8 +9,7 @@ class UserInfoResource extends BaseResource
 {
     private static $attributes = [
         'id',
-        'first_name',
-        "last_name",
+        "email",
         "avatar",
         "followers_count"
     ];
@@ -22,6 +21,11 @@ class UserInfoResource extends BaseResource
      */
     public function toArray(Request $request): array
     {
-        return $this->resource->only(self::$attributes);
+        return array_merge(
+            $this->resource->only(self::$attributes),
+            [
+                'name' => trim(($this->resource->first_name ?? '') . ' ' . ($this->resource->last_name ?? ''))
+            ]
+        );
     }
 }
