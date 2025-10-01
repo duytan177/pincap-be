@@ -33,7 +33,7 @@ class SendResetPasswordMail implements ShouldQueue
      */
     public function handle(): void
     {
-        $name = $this->user->getAttribute("firstName") . $this->user->getAttribute("lastName");
+        $name = $this->user->getAttribute("first_name") . $this->user->getAttribute("last_name");
         Mail::to($this->user->getAttribute("email"))->send(new ResetPasswordMail($name, $this->token));
     }
 }

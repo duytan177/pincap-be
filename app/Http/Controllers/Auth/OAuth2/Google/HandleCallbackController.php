@@ -22,8 +22,8 @@ class HandleCallbackController extends Controller
             ],
             [
                 'email_verified_at' => Carbon::now(),
-                'lastName' => $socialiteUser->user["family_name"] ?? null,
-                'firstName' => $socialiteUser->user["given_name"] ?? null,
+                'last_name' => $socialiteUser->user["family_name"] ?? null,
+                'first_name' => $socialiteUser->user["given_name"] ?? null,
                 'google_id' => $socialiteUser->getId(),
                 "avatar" => config("common.avatar_default"),
                 "background" => config("common.background_default"),
