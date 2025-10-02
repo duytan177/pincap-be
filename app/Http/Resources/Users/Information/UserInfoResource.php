@@ -21,11 +21,18 @@ class UserInfoResource extends BaseResource
      */
     public function toArray(Request $request): array
     {
-        return array_merge(
+        $data = array_merge(
             $this->resource->only(self::$attributes),
             [
                 'name' => trim(($this->resource->first_name ?? '') . ' ' . ($this->resource->last_name ?? ''))
             ]
         );
+
+        // If album_id exists then have field status
+        if ($this->resource->getAttributes() && array_key_exists('status', $this->resource->getAttributes())) {
+            $data['status'] = $this->resource->status;
+        }
+
+        return $data;
     }
 }
