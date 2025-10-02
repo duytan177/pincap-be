@@ -35,7 +35,7 @@ class SearchUsersController extends Controller
                     $join->on('users.id', '=', 'ua.user_id')
                         ->where('ua.album_id', '=', $albumId);
                 })
-                    ->addSelect('users.*', 'ua.invitation_status');
+                    ->addSelect('users.*', 'ua.invitation_status as status');
             })
             ->whereNot("users.id", "=", $userId)
             ->get();
