@@ -11,7 +11,8 @@ class UserInfoResource extends BaseResource
         'id',
         "email",
         "avatar",
-        "followers_count"
+        "followers_count",
+        "invitation_status"
     ];
 
     /**

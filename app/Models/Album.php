@@ -59,7 +59,7 @@ class Album extends Model
     {
         return $this->belongsToMany(User::class, "user_album")->withPivot(["invitation_status", 'album_role'])->withTimestamps()->wherePivot("album_role", AlbumRole::OWNER);
     }
-    public function medias() : BelongsToMany
+    public function medias(): BelongsToMany
     {
         return $this->belongsToMany(Media::class, 'album_media')->where("is_created", operator: true)->withTimestamps();
     }
@@ -84,25 +84,39 @@ class Album extends Model
                 });
             });
 
-            $albums = $albums->where(function ($query) use ($params) {
-                if (!empty($params['album_name'])) {
-                    $query->orWhere('album_name', 'like', "%{$params['album_name']}%");
-                }
+        $albums = $albums->where(function ($query) use ($params) {
+            if (!empty($params['album_name'])) {
+                $query->orWhere('album_name', 'like', "%{$params['album_name']}%");
+            }
 
-                if (!empty($params['description'])) {
-                    $query->orWhere('description', 'like', "%{$params['description']}%");
-                }
+            if (!empty($params['description'])) {
+                $query->orWhere('description', 'like', "%{$params['description']}%");
+            }
 
-                if (!empty($params['user_id'])) {
-                    $query->whereHas("userOwner", function ($query) use ($params) {
-                        $query->where("user_id", $params['user_id'])
-                            ->where("album_role", AlbumRole::OWNER);;
-                    });
-                }
-            });
+            if (!empty($params['user_id'])) {
+                $query->whereHas("userOwner", function ($query) use ($params) {
+                    $query->where("user_id", $params['user_id'])
+                        ->where("album_role", AlbumRole::OWNER);
+                    ;
+                });
+            }
+        });
 
         $albums = self::scopeApplyOrder($albums, $order);
 
         return $albums;
+    }
+
+    public function scopeWithUserRoleAndStatus(Builder $query, ?string $role = null, ?string $status = null): Builder
+    {
+        return $query->whereHas("allUser", function ($q) use ($role, $status) {
+            if ($role) {
+                $q->wherePivot("album_role", $role);
+            }
+
+            if ($status) {
+                $q->wherePivot("invitation_status", $status);
+            }
+        });
     }
 }

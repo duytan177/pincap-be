@@ -43,6 +43,10 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
         static::addGlobalScope('order', function (Builder $builder) {
             $builder->orderBy('users.created_at', 'desc'); // 'asc' để sắp xếp tăng dần, 'desc' để sắp xếp giảm dần
         });
+        // Apply a global scope to only include verified users
+        static::addGlobalScope('verified', function (Builder $builder) {
+            $builder->whereNotNull('email_verified_at');
+        });
     }
     public function getJWTIdentifier()
     {

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Users;
 
+use App\Enums\Album_Media\AlbumRole;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Users\SearchUserOrTagNameRequest;
 use App\Http\Resources\Users\Information\UserInfoCollection;
@@ -15,6 +16,8 @@ class SearchUsersController extends Controller
         $target = $request->input("target");
         $textSearch = "%" . $target . "%";
         $userId = null;
+        $albumId = $request->input("album_id");
+
         if ($token = $request->bearerToken()) {
             $userId = JWTAuth::setToken($token)->authenticate()->getAttribute("id");
         }
@@ -26,7 +29,16 @@ class SearchUsersController extends Controller
                 ->orWhere("last_name", "like", $textSearch)
                 ->orWhere("email", "like", $textSearch)
                 ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", [$textSearch]);
-                })->get();
+        })
+            ->when(!empty($albumId), function ($query) use ($albumId) {
+                $query->leftJoin('user_album as ua', function ($join) use ($albumId) {
+                    $join->on('users.id', '=', 'ua.user_id')
+                        ->where('ua.album_id', '=', $albumId);
+                })
+                    ->addSelect('users.*', 'ua.invitation_status');
+            })
+            ->whereNot("users.id", "=", $userId)
+            ->get();
 
 
         return UserInfoCollection::make($users);
