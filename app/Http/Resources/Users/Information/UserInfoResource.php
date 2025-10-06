@@ -33,6 +33,11 @@ class UserInfoResource extends BaseResource
             $data['status'] = $this->resource->status;
         }
 
+        // If album_id exists then have field status
+        if ($this->resource->getAttributes() && array_key_exists('album_role', $this->resource->getAttributes())) {
+            $data['album_role'] = $this->resource->album_role;
+        }
+
         return $data;
     }
 }
