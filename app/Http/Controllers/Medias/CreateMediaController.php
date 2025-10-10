@@ -7,6 +7,7 @@ use App\Events\MediaCreatedEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Medias\Shared\MediaHandle;
 use App\Http\Requests\Medias\CreateMediaRequest;
+use App\Http\Resources\Medias\Media\MediaResource;
 use App\Models\Media;
 use App\Traits\AWSS3Trait;
 use Ramsey\Uuid\Guid\Guid;
@@ -43,7 +44,7 @@ class CreateMediaController extends Controller
             event(new MediaCreatedEvent($mediaNew));
         }
 
-        return response()->json(["message" => "Created media successfully"], 201);
+        return response()->json(["message" => "Created media successfully", "media" => MediaResource::make($mediaNew)], 201);
     }
 
     private function handleMediaFile($file)
