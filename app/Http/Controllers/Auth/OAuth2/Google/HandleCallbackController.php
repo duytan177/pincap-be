@@ -16,12 +16,12 @@ class HandleCallbackController extends Controller
     {
         $socialiteUser = Socialite::driver('google')->stateless()->user();
 
-        $user = User::firstOrCreate(
+        $user = User::withoutGlobalScope('verified')->firstOrCreate(
             [
                 'email' => $socialiteUser->getEmail(),
             ],
             [
-                'email_verified_at' => Carbon::now(),
+                'email_verified_at' => Carbon::now()->toDateTimeString(),
                 'last_name' => $socialiteUser->user["family_name"] ?? null,
                 'first_name' => $socialiteUser->user["given_name"] ?? null,
                 'google_id' => $socialiteUser->getId(),
@@ -29,6 +29,12 @@ class HandleCallbackController extends Controller
                 "background" => config("common.background_default"),
             ]
         );
+        if (!$user->email_verified_at) {
+            $user->email_verified_at = Carbon::now()->toDateTimeString();
+            $user->verification_token = null;
+            $user->verification_token_expires_at = null;
+            $user->save();
+        }
 
         $token = JWTAuth::fromUser($user);
         if (!$token) {
