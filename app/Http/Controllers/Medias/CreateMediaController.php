@@ -24,9 +24,13 @@ class CreateMediaController extends Controller
         $mediaData["media_owner_id"] = $userId;
 
         if (isset($mediaData["media"])) {
-            $mediaData = array_merge($mediaData, $this->handleMediaFile($mediaData["media"]));
+            if (count($mediaData["media"]) == 1) {
+                $mediaData = array_merge($mediaData, $this->handleMediaFile($mediaData["media"][0]));
+            } else {
+                $results = $this->handleMediaFilesWithConcurrency($mediaData["media"], 3);
+                $mediaData = array_merge($mediaData, $this->formatFinalResult($results));
+            }
         }
-
         $mediaNew = Media::create($mediaData);
         $mediaId = $mediaNew->getAttribute("id");
 
@@ -72,5 +76,31 @@ class CreateMediaController extends Controller
         }
 
         return [$type, $typeName];
+    }
+
+
+    /**
+     * 🧩 Format upload results for the final response
+     *
+     * Rules:
+     * - If multiple files uploaded → return `type = null`
+     *   and `media_url` as a JSON string of all URLs.
+     */
+    private function formatFinalResult(array $results): array
+    {
+        if (empty($results)) {
+            return [
+                'type' => null,
+                'media_url' => null,
+            ];
+        }
+
+        // ✅ Multiple files: collect all URLs into JSON array
+        $urls = array_column($results, 'media_url');
+
+        return [
+            'type' => null,
+            'media_url' => json_encode($urls), // ["url1","url2","url3"]
+        ];
     }
 }
