@@ -50,34 +50,7 @@ class CreateMediaController extends Controller
 
         return response()->json(["message" => "Created media successfully", "media" => MediaResource::make($mediaNew)], 201);
     }
-
-    private function handleMediaFile($file)
-    {
-        [$type, $mediaType] = $this->getTypeMedia($file->getMimeType());
-        $mediaUrl = $this->uploadToS3($file, $mediaType);
-
-        return [
-            'type' => $type,
-            'media_url' => $mediaUrl,
-        ];
-    }
-
-    private function getTypeMedia($mimeType)
-    {
-        $image = strtolower(self::IMAGE);
-        $video = strtolower(self::VIDEO);
-
-        if (str_starts_with($mimeType, $image)) {
-            $type = MediaType::getValue(self::IMAGE);
-            $typeName = $image;
-        } else {
-            $type = MediaType::getValue(self::VIDEO);
-            $typeName = $video;
-        }
-
-        return [$type, $typeName];
-    }
-
+    
 
     /**
      * 🧩 Format upload results for the final response
