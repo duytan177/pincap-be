@@ -61,7 +61,7 @@ class Album extends Model
     }
     public function medias(): BelongsToMany
     {
-        return $this->belongsToMany(Media::class, 'album_media')->where("is_created", operator: true)->withTimestamps();
+        return $this->belongsToMany(Media::class, 'album_media')->where("is_created",  true)->withTimestamps();
     }
 
     public function scopeOwnedBy(Builder $query, string $userId): Builder
@@ -101,6 +101,16 @@ class Album extends Model
                 });
             }
         });
+
+        // Check media_id exists album
+        if (!empty($params['media_id'])) {
+            $mediaId = $params['media_id'];
+            $albums->withExists([
+                'medias as is_media_in_album' => function ($query) use ($mediaId) {
+                    $query->where('media_id', $mediaId);
+                },
+            ]);
+        }
 
         $albums = self::scopeApplyOrder($albums, $order);
 

@@ -29,6 +29,9 @@ class GetMyAlbumRoleMemberController extends Controller
                 "description" => $query
             ];
         }
+        if ($request->input("media_id")) {
+            $searches["media_id"] = $request->input("media_id");
+        }
         $order = $this->getAttributeOrder($request->input("order_key"), $request->input("order_type"));
 
         $albums = Album::getList($searches, order: $order);

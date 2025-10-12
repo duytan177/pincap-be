@@ -14,6 +14,7 @@ class AlbumResource extends BaseResource
         "description",
         "privacy",
         "medias_count",
+        "is_media_in_album",
         "created_at",
         "updated_at",
     ];

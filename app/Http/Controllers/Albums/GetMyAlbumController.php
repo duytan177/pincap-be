@@ -2,13 +2,11 @@
 
 namespace App\Http\Controllers\Albums;
 
-use App\Enums\Album_Media\Privacy;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Albums\AlbumCollection;
 use App\Models\Album;
 use App\Traits\OrderableTrait;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 class GetMyAlbumController extends Controller
 {
@@ -25,6 +23,10 @@ class GetMyAlbumController extends Controller
                 "album_name" => $query,
                 "description" => $query
             ];
+        }
+
+        if ($request->input("media_id")) {
+            $searches["media_id"] = $request->input("media_id");
         }
 
         $order = $this->getAttributeOrder($request->input("order_key"), $request->input("order_type"));

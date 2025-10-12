@@ -27,7 +27,7 @@ class GetAllAlbumController extends Controller
             ];
         }
         $order = $this->getAttributeOrder($request->input("order_key"), $request->input("order_type"));
-        $albums = Album::getList($searches, Privacy::PUBLIC, order: $order);
+        $albums = Album::getList($searches, Privacy::PUBLIC, false, order: $order);
         $albums = $albums->withCount("medias")->paginate($perPage, ['*'], 'page', $page);
 
         return AlbumCollection::make($albums);
