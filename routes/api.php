@@ -35,6 +35,7 @@ use App\Http\Controllers\Medias\SearchMediaByTagIdController;
 use App\Http\Controllers\Medias\UpdateMediaController;
 use App\Http\Controllers\Feelings\GetAllFeelingController;
 use App\Http\Controllers\Medias\CreateMediaByAIController;
+use App\Http\Controllers\Medias\CreateMediaTestController;
 use App\Http\Controllers\Medias\GetCommentsOfMediaDetailByIdController;
 use App\Http\Controllers\Medias\GetListMediaByUserIdController;
 use App\Http\Controllers\Medias\GetReplyCommentByIdController;
@@ -97,6 +98,7 @@ Route::middleware(["auth:api"])->group(function () {
     Route::prefix("/medias")->group(function () {
         Route::get("/my-media", GetMyMediaController::class);
         Route::post("/", CreateMediaController::class);
+        Route::post("/media-test", CreateMediaTestController::class);
         Route::post("/ai", CreateMediaByAIController::class);
         Route::put("/{mediaId}", UpdateMediaController::class);
         Route::delete("/", DeleteMediaByIdController::class);

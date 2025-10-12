@@ -31,11 +31,11 @@ class CreateMediaRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'media' => [
-                'nullable',
+            'media' => ['nullable', 'array'],
+            'media.*' => [
                 'file',
-                'mimes:jpeg,png,jpg,gif,svg,mp4,mov,ogg,qt',
-                'max:25600' // 25 MB
+                'mimetypes:image/*,video/*',
+                'max:51200', // 50 MB
             ],
             "media_name" => "nullable|string",
             "description" => "nullable|string",
