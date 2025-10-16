@@ -11,6 +11,7 @@ use BenSampo\Enum\Enum;
  */
 final class AlbumRole extends Enum
 {
-    const OWNER = "0";
-    const EDIT = "1";
+    const OWNER = "OWNER";
+    const EDIT = "EDIT";
+    const VIEW = 'VIEW';
 }
