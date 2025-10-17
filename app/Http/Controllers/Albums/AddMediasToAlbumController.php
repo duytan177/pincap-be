@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Albums\AddMediasToAlbumRequest;
 use App\Models\Album;
 use App\Models\AlbumMedia;
+use App\Models\Media;
 use Illuminate\Support\Facades\Auth;
 use Ramsey\Uuid\Uuid;
 
@@ -43,6 +44,26 @@ class AddMediasToAlbumController extends Controller
         }
 
         AlbumMedia::insert($records);
+
+        // If album has no image_cover, set it from the first provided media's URL
+        if (empty($album->image_cover) && !empty($newMediaIds)) {
+            $firstMediaId = reset($newMediaIds);
+            $firstMedia = Media::find($firstMediaId);
+            if ($firstMedia && !empty($firstMedia->media_url)) {
+                $mediaUrl = $firstMedia->media_url;
+
+                // If media_url is a JSON array string, pick the first element; otherwise use as-is
+                if (is_string($mediaUrl)) {
+                    $decoded = json_decode($mediaUrl, true);
+                    if (json_last_error() === JSON_ERROR_NONE && is_array($decoded) && !empty($decoded)) {
+                        $mediaUrl = $decoded[0];
+                    }
+                }
+
+                $album->image_cover = $mediaUrl;
+                $album->save();
+            }
+        }
 
         return responseWithMessage("Add medias to albums successfully");
     }
