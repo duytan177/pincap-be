@@ -12,8 +12,6 @@ class GetReplyCommentByIdController extends Controller
 {
     public function __invoke($commentId, PaginateRequest $request)
     {
-        $perPage = $request->input("per_page");
-        $page = $request->input("page");
 
         $userId = null;
         if ($token = $request->bearerToken()) {
@@ -25,7 +23,7 @@ class GetReplyCommentByIdController extends Controller
             ->whereDoesntHave('userComment.blockedUsers', function ($query) use ($userId) {
                 $query->where('follower_id', $userId);
             })
-            ->where("comment_id", $commentId)->paginate($perPage, ['*'], 'page', $page);
+            ->where("comment_id", $commentId)->paginateOrAll($request);
 
         return CommentCollection::make($replies);
     }

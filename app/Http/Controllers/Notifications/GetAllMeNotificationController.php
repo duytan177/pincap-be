@@ -13,9 +13,6 @@ class GetAllMeNotificationController extends Controller
 {
     public function __invoke(Request $request)
     {
-        $perPage = $request->input('per_page', 20);
-        $page = $request->input('page', 1);
-
         $notificationType = $request->input('notification_type');
         if ($notificationType && !NotificationType::hasValue($notificationType)) {
             return response()->json(['error' => 'Invalid notification type'], 422);
@@ -30,7 +27,7 @@ class GetAllMeNotificationController extends Controller
 
         $notificationQuery = Auth::user()->notifications()->with('sender');
 
-        $notifications = Notification::getList($notificationQuery, $params)->paginate($perPage, ['*'], 'page', $page);
+        $notifications = Notification::getList($notificationQuery, $params)->paginateOrAll($request);
 
         return new NotificationCollection($notifications);
     }

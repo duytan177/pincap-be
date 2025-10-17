@@ -32,7 +32,7 @@ class AddMemberIntoAlbumController extends Controller
             }
 
             // Re-invite when previously rejected
-            $existing->update(['invitation_status' => InvitationStatus::INVITED]);
+            $existing->update(['invitation_status' => InvitationStatus::INVITED, "album_role" => AlbumRole::VIEW]);
             event(new AlbumInvitationEvent($album, $inviter, $userId));
             return response()->json(responseWithMessage("Invite sent successfully"), 200);
         }
@@ -41,6 +41,7 @@ class AddMemberIntoAlbumController extends Controller
             "user_id" => $userId,
             "album_id" => $albumId,
             "invitation_status" => InvitationStatus::INVITED,
+            "album_role" => AlbumRole::VIEW,
         ]);
 
         event(new AlbumInvitationEvent($album, $inviter, $userId));

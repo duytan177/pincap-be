@@ -12,8 +12,6 @@ class GetDetailFeelingMediaController extends Controller
 {
     public function __invoke($mediaId, $feelingId, PaginateRequest $request)
     {
-        $perPage = $request->input("per_page");
-        $page = $request->input("page");
         $userId = null;
         if ($token = $request->bearerToken()) {
             $userId = JWTAuth::setToken($token)->authenticate()->getAttribute("id");
@@ -32,7 +30,7 @@ class GetDetailFeelingMediaController extends Controller
         $query->whereDoesntHave('userReaction.blockedUsers', function ($query) use ($userId) {
             $query->where('follower_id', $userId);
         });
-        $reactionMedia = $query->paginate($perPage, ['*'], 'page', $page);
+        $reactionMedia = $query->paginateOrAll($request);
         return UserFeelingCollection::make($reactionMedia);
     }
 }

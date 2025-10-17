@@ -9,11 +9,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use App\Models\User;
+use App\Traits\HasPaginateOrAll;
 use Illuminate\Database\Eloquent\Builder;
 
 class Notification extends Model
 {
-    use HasFactory, HasUuids, Notifiable, SoftDeletes;
+    use HasFactory, HasUuids, Notifiable, SoftDeletes, HasPaginateOrAll;
 
     protected $table = "notifications";
     protected $fillable = [
