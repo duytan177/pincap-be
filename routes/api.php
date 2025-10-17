@@ -46,6 +46,7 @@ use App\Http\Controllers\Medias\Reactions\ReplyCommentController;
 use App\Http\Controllers\Medias\Reactions\ToggleReactionCommentController;
 use App\Http\Controllers\Medias\Reactions\ToggleReactionMediaController;
 use App\Http\Controllers\Medias\Reactions\ToggleReactionReplyController;
+use App\Http\Controllers\Albums\GetUserInAlbumController;
 use App\Http\Controllers\Notifications\DeleteNotificationByIdController;
 use App\Http\Controllers\Notifications\GetAllMeNotificationController;
 use App\Http\Controllers\Notifications\MarkReadAllNotificationController;
@@ -130,6 +131,7 @@ Route::middleware(["auth:api"])->group(function () {
         Route::post("/{albumId}/invite/{userId}", AddMemberIntoAlbumController::class);
         Route::post("/{albumId}/accept-invitation", AcceptAlbumInvitationController::class);
         Route::post("/{albumId}/reject-invitation", RejectAlbumInvitationController::class);
+        Route::get("/{albumId}/users", GetUserInAlbumController::class);
         Route::delete("/{albumId}", DeleteAlbumController::class);
     });
 
