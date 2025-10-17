@@ -70,8 +70,7 @@ class Album extends Model
     {
         return $query->whereHas('userOwner', function (Builder $sub) use ($userId) {
             $sub->where('user_id', $userId)
-                ->where('album_role', AlbumRole::OWNER)
-                ->whereNull("deleted_at");
+                ->where('album_role', AlbumRole::OWNER);
         });
     }
 
