@@ -15,7 +15,7 @@ class DeleteAlbumController extends Controller
         $userId = Auth::user()->id;
         $album = Album::findOrFailWithPermission($albumId, $userId, [AlbumRole::OWNER], [InvitationStatus::ACCEPTED]);
 
-        // $album->delete();
+        $album->delete();
 
         return responseWithMessage("Deleted album successfully");
     }

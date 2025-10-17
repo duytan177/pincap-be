@@ -138,11 +138,11 @@ class Album extends Model
         return $query->whereHas("allUser", function ($q) use ($role, $status, $userId) {
             $q->where('users.id', $userId);
 
-            if ($role) {
+            if (!empty($role)) {
                 $q->whereIn('user_album.album_role', $role);
             }
 
-            if ($status) {
+            if (!empty($status)) {
                 $q->whereIn('user_album.invitation_status', $status);
             }
         });
