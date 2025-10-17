@@ -89,7 +89,7 @@ class Media extends Model
 
     public function userComments(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'comments')->withPivot(["content", 'id', "image_url"])->withTimestamps()->orderBy('created_at');
+        return $this->belongsToMany(User::class, 'comments')->withPivot(["content", 'id', "image_url"])->withTimestamps()->wherePivotNull("deleted_at")->orderBy('created_at');
     }
 
     public function reactionUser()
@@ -99,11 +99,11 @@ class Media extends Model
 
     public function albums()
     {
-        return $this->belongsToMany(Album::class, 'album_media')->withTimestamps();
+        return $this->belongsToMany(Album::class, 'album_media')->wherePivotNull("deleted_at")->withTimestamps();
     }
     public function tags(): BelongsToMany
     {
-        return $this->belongsToMany(Tag::class, 'media_tag')->withTimestamps();
+        return $this->belongsToMany(Tag::class, 'media_tag')->wherePivotNull("deleted_at")->withTimestamps();
     }
 
     public function userOwner()
@@ -113,7 +113,7 @@ class Media extends Model
 
     public function mediaReported()
     {
-        return $this->belongsToMany(User::class, 'report_media')->withTimestamps();
+        return $this->belongsToMany(User::class, 'report_media')->wherePivotNull("deleted_at")->withTimestamps();
     }
 
     public function allFeelings(): BelongsToMany

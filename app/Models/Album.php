@@ -49,28 +49,29 @@ class Album extends Model
 
     public function allUser(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, "user_album")->withPivot(["invitation_status", 'album_role'])->withTimestamps();
+        return $this->belongsToMany(User::class, "user_album")->withPivot(["invitation_status", 'album_role'])->withTimestamps()->wherePivotNull("deleted_at");
     }
 
     public function members(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, "user_album")->withPivot(["invitation_status", 'album_role'])->withTimestamps()->wherePivot("album_role", "!=", AlbumRole::OWNER)->wherePivot("invitation_status", "=", InvitationStatus::ACCEPTED);
+        return $this->belongsToMany(User::class, "user_album")->withPivot(["invitation_status", 'album_role'])->withTimestamps()->wherePivot("album_role", "!=", AlbumRole::OWNER)->wherePivot("invitation_status", "=", InvitationStatus::ACCEPTED)->wherePivotNull("deleted_at");;
     }
 
     public function userOwner(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, "user_album")->withPivot(["invitation_status", 'album_role'])->withTimestamps()->wherePivot("album_role", AlbumRole::OWNER);
+        return $this->belongsToMany(User::class, "user_album")->withPivot(["invitation_status", 'album_role'])->withTimestamps()->wherePivot("album_role", AlbumRole::OWNER)->wherePivotNull("deleted_at");;
     }
     public function medias(): BelongsToMany
     {
-        return $this->belongsToMany(Media::class, 'album_media')->where("is_created", true)->withTimestamps();
+        return $this->belongsToMany(Media::class, 'album_media')->where("is_created", true)->withTimestamps()->wherePivotNull("deleted_at");;
     }
 
     public function scopeOwnedBy(Builder $query, string $userId): Builder
     {
         return $query->whereHas('userOwner', function (Builder $sub) use ($userId) {
             $sub->where('user_id', $userId)
-                ->where('album_role', AlbumRole::OWNER);
+                ->where('album_role', AlbumRole::OWNER)
+                ->whereNull("deleted_at");
         });
     }
 

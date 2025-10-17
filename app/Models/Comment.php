@@ -13,10 +13,11 @@ use App\Traits\HasPaginateOrAll;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Comment extends Model
 {
-    use HasFactory, HasUuids, Notifiable, HasPaginateOrAll;
+    use HasFactory, HasUuids, Notifiable, SoftDeletes, HasPaginateOrAll;
 
     protected static function boot()
     {
@@ -50,7 +51,7 @@ class Comment extends Model
 
     public function replies(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'replies')->withPivot(["content", 'id', "image_url"])->withTimestamps()->orderBy('created_at');
+        return $this->belongsToMany(User::class, 'replies')->withPivot(["content", 'id', "image_url"])->withTimestamps()->orderBy('created_at')->wherePivotNull("deleted_at");
     }
 
     public function feelings(): BelongsToMany

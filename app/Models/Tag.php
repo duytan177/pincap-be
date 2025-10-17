@@ -42,11 +42,11 @@ class Tag extends Model
     }
     public function medias() : BelongsToMany
     {
-        return $this->belongsToMany(Media::class, 'media_tag')->withTimestamps();
+        return $this->belongsToMany(Media::class, 'media_tag')->wherePivotNull("deleted_at")->withTimestamps();
     }
 
     public function latestMedia() : BelongsToMany
     {
-        return $this->belongsToMany(Media::class, 'media_tag')->withTimestamps()->latest('created_at')->take(1);
+        return $this->belongsToMany(Media::class, 'media_tag')->withTimestamps()->wherePivotNull("deleted_at")->latest('created_at')->take(1);
     }
 }

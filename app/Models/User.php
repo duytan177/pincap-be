@@ -119,7 +119,7 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
     }
     public function albums()
     {
-        return $this->belongsToMany(Album::class, "user_album")->withPivot(["invitation_status", 'album_role'])->wherePivot("invitation_status", InvitationStatus::ACCEPTED)->withTimestamps()->wherePivot("album_role", "=", AlbumRole::OWNER);
+        return $this->belongsToMany(Album::class, "user_album")->withPivot(["invitation_status", 'album_role'])->wherePivotNull("deleted_at")->wherePivot("invitation_status", InvitationStatus::ACCEPTED)->withTimestamps()->wherePivot("album_role", "=", AlbumRole::OWNER);
     }
 
     public function followers(): BelongsToMany
@@ -148,7 +148,7 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
 
     public function reportMedias()
     {
-        return $this->belongsToMany(Media::class, 'report_media');
+        return $this->belongsToMany(Media::class, 'report_media')->wherePivotNull("deleted_at");
     }
 
     public function notifications()
