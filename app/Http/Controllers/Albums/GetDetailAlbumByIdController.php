@@ -12,7 +12,7 @@ class GetDetailAlbumByIdController extends Controller
     {
         $albumDetail = Album::with([
             'allUser' => function ($query) {
-                $query->select('users.*', 'user_album.invitation_status as status', 'user_album.album_role')->orderBy("user_album.created_at", "desc")->limit(5);
+                $query->withCount('followers')->addSelect(['user_album.invitation_status as status', 'user_album.album_role'])->orderBy("user_album.created_at", "desc")->limit(5);
             },
             'medias'
         ])->findOrFail($albumId);
