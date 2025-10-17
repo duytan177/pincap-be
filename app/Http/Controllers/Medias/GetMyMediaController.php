@@ -45,7 +45,7 @@ class GetMyMediaController extends Controller
         $order = $this->getAttributeOrder($request->input("order_key"), $request->input("order_type"));
         $medias = Media::getList($searches, $isCreated, "",true, $order)->with("reactions");
 
-        $medias = $medias->paginate( $perPage, ['*'], 'page', $page);
+        $medias = $medias->paginateOrAll($request);
 
         return MediaCollection::make($medias);
     }

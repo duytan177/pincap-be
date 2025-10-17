@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\User;
 use App\Models\Feeling;
+use App\Traits\HasPaginateOrAll;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -13,7 +14,7 @@ use Illuminate\Notifications\Notifiable;
 
 class Reply extends Model
 {
-    use HasFactory, HasUuids, Notifiable;
+    use HasFactory, HasUuids, Notifiable, HasPaginateOrAll;
     protected $fillable = [
         'id',
         'user_id',

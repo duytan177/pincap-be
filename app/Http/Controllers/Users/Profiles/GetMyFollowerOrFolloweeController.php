@@ -9,11 +9,9 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 
 class GetMyFollowerOrFolloweeController extends Controller
 {
-    public function __invoke(GetMyFollowerOrFolloweeRequest $requests)
+    public function __invoke(GetMyFollowerOrFolloweeRequest $request)
     {
-        $perPage = $requests->input("per_page");
-        $page = $requests->input("page");
-        $relationship = $requests->input("relationship");
+        $relationship = $request->input("relationship");
         $user = JWTAuth::user();
 
         $followRelationship = $user->$relationship();
@@ -26,7 +24,7 @@ class GetMyFollowerOrFolloweeController extends Controller
             ]);
         }
 
-        $followRelationship = $followRelationship->paginate($perPage, ['*'], 'page', $page);
+        $followRelationship = $followRelationship->paginateOrAll($request);
 
         return FollowCollection::make($followRelationship);
     }

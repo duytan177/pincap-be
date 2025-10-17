@@ -12,8 +12,6 @@ class GetCommentsOfMediaDetailByIdController extends Controller
 {
     public function __invoke($mediaId, PaginateRequest $request)
     {
-        $perPage = $request->input("per_page");
-        $page = $request->input("page");
         $userId = null;
         if ($token = $request->bearerToken()) {
             $userId = JWTAuth::setToken($token)->authenticate()->getAttribute("id");
@@ -25,7 +23,7 @@ class GetCommentsOfMediaDetailByIdController extends Controller
             ->whereDoesntHave('userComment.blockedUsers', function ($query) use ($userId) {
                 $query->where('follower_id', $userId);
             })
-            ->paginate($perPage, ['*'], 'page', $page);
+            ->paginateOrAll($request);
 
         return CommentCollection::make($comments);
     }

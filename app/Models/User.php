@@ -21,13 +21,14 @@ use App\Models\Tag;
 use App\Models\Notification;
 use App\Models\ReactionComment;
 use App\Models\Feeling;
+use App\Traits\HasPaginateOrAll;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Ramsey\Uuid\Uuid;
 
 class User extends Authenticatable implements JWTSubject, MustVerifyEmail
 {
-    use HasApiTokens, HasUuids, HasFactory, Notifiable, SoftDeletes;
+    use HasApiTokens, HasUuids, HasFactory, Notifiable, SoftDeletes, HasPaginateOrAll;
 
     use OrderableTrait;
 

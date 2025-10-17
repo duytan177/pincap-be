@@ -53,7 +53,7 @@ class GetAllMediaController extends Controller
         }
 
 
-        $medias = $medias->paginate($perPage, ['*'], 'page', $page);
+        $medias = $medias->paginateOrAll($request);
 
         return new MediaCollection($medias);
     }

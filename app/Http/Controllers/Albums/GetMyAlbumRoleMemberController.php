@@ -18,8 +18,6 @@ class GetMyAlbumRoleMemberController extends Controller
 
     public function __invoke(Request $request)
     {
-        $perPage = $request->input("per_page");
-        $page = $request->input("page");
         $userId = Auth::id();
         $searches = [];
         $query = $request->input("query");
@@ -40,7 +38,7 @@ class GetMyAlbumRoleMemberController extends Controller
             $query->where("user_id", $userId);
         })->whereDoesntHave('members.blockedUsers', function ($query) use ($userId) {
             $query->where('follower_id', $userId);
-        })->paginate($perPage, ['*'], 'page', $page);
+        })->paginateOrAll($request);
 
         return AlbumCollection::make($albums);
     }

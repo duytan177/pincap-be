@@ -30,7 +30,7 @@ class GetAllMeNotificationController extends Controller
 
         $notificationQuery = Auth::user()->notifications()->with('sender');
 
-        $notifications = Notification::getList($notificationQuery, $params)->paginate($perPage, ['*'], 'page', $page);
+        $notifications = Notification::getList($notificationQuery, $params)->paginateOrAll($request);
 
         return new NotificationCollection($notifications);
     }

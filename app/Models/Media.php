@@ -15,6 +15,7 @@ use App\Models\Tag;
 use App\Models\Feeling;
 use App\Models\Comment;
 use App\Models\ReactionMedia;
+use App\Traits\HasPaginateOrAll;
 use App\Traits\OrderableTrait;
 use Ramsey\Uuid\Uuid;
 use Illuminate\Database\Eloquent\Builder;
@@ -28,7 +29,7 @@ use function Laravel\Prompts\select;
 
 class Media extends Model
 {
-    use HasFactory, HasUuids, Notifiable, SoftDeletes, OrderableTrait;
+    use HasFactory, HasUuids, Notifiable, SoftDeletes, OrderableTrait, HasPaginateOrAll;
 
     protected static function boot()
     {
