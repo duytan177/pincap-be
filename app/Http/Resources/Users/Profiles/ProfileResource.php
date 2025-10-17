@@ -17,7 +17,9 @@ class ProfileResource extends BaseResource
         "phone",
         "role",
         "followers_count",
-        "followees_count"
+        "followees_count",
+        "medias_count",
+        "reaction_media_count",
     ];
 
     /**

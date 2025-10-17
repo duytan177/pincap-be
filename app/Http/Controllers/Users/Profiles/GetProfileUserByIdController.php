@@ -12,7 +12,7 @@ class GetProfileUserByIdController extends Controller
 {
     public function __invoke($id, Request $request)
     {
-        $user = User::withCount(["followers", "followees"])->findOrFail($id);
+        $user = User::withCount(["followers", "followees", "medias", "reactionMedia"])->findOrFail($id);
         if ($token = $request->bearerToken()) {
             JWTAuth::setToken($token)->authenticate();
             $user->with("followers");

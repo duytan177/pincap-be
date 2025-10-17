@@ -135,7 +135,7 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
     {
         return $this->belongsToMany(User::class, "user_relationship", 'followee_id', 'follower_id')->withPivot(["user_status"])->withTimestamps()->wherePivot("user_status", "=", UserStatus::BLOCK);
     }
-    public function mediaOwner()
+    public function medias()
     {
         return $this->hasMany(Media::class, 'media_owner_id', 'id');
     }
