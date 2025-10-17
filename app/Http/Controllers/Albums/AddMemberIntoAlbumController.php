@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Albums;
 
+use App\Enums\Album_Media\AlbumRole;
 use App\Http\Controllers\Controller;
 use App\Models\UserAlbum;
 use App\Enums\Album_Media\InvitationStatus;
@@ -15,7 +16,7 @@ class AddMemberIntoAlbumController extends Controller
     public function __invoke($albumId, $userId)
     {
         $inviter = JWTAuth::user();
-        $album = Album::findOrFail($albumId);
+        $album = Album::findOrFailWithPermission($albumId, $inviter->id, [AlbumRole::OWNER], [InvitationStatus::ACCEPTED]);
 
         $existing = UserAlbum::where('album_id', $albumId)
             ->where('user_id', $userId)

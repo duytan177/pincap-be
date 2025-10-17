@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\Album_Media\AlbumRole;
 use App\Enums\Album_Media\InvitationStatus;
+use App\Exceptions\Albums\AlbumException;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -24,7 +25,7 @@ class Album extends Model
         parent::boot();
 
         static::addGlobalScope('order', function (Builder $builder) {
-            $builder->orderBy('updated_at', 'desc'); // 'asc' để sắp xếp tăng dần, 'desc' để sắp xếp giảm dần
+            $builder->orderBy('created_at', 'desc'); // 'asc' để sắp xếp tăng dần, 'desc' để sắp xếp giảm dần
         });
 
     }
@@ -61,7 +62,7 @@ class Album extends Model
     }
     public function medias(): BelongsToMany
     {
-        return $this->belongsToMany(Media::class, 'album_media')->where("is_created",  true)->withTimestamps();
+        return $this->belongsToMany(Media::class, 'album_media')->where("is_created", true)->withTimestamps();
     }
 
     public function scopeOwnedBy(Builder $query, string $userId): Builder
@@ -117,15 +118,32 @@ class Album extends Model
         return $albums;
     }
 
-    public function scopeWithUserRoleAndStatus(Builder $query, ?string $role = null, ?string $status = null): Builder
+    public static function findOrFailWithPermission(string $albumId, string $userId, ?array $role = null, ?array $status = null): self
     {
-        return $query->whereHas("allUser", function ($q) use ($role, $status) {
+        $album = Album::WithUserRoleAndStatus(
+            $userId,
+            $role,
+            $status
+        )->find($albumId);
+
+        if (!$album) {
+            throw AlbumException::noPermission();
+        }
+
+        return $album;
+    }
+
+    public function scopeWithUserRoleAndStatus(Builder $query, string $userId, ?array $role = [], ?array $status = []): Builder
+    {
+        return $query->whereHas("allUser", function ($q) use ($role, $status, $userId) {
+            $q->where('users.id', $userId);
+
             if ($role) {
-                $q->wherePivot("album_role", $role);
+                $q->whereIn('user_album.album_role', $role);
             }
 
             if ($status) {
-                $q->wherePivot("invitation_status", $status);
+                $q->whereIn('user_album.invitation_status', $status);
             }
         });
     }

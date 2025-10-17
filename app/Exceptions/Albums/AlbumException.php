@@ -36,6 +36,10 @@ class AlbumException extends BaseException
         return self::code('Invitation not found', [], 404);
     }
 
+    public static function noPermission()
+    {
+        return self::code('You do not have permission', [], 403);
+    }
 }
 
 
