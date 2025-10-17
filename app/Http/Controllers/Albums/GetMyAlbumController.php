@@ -13,9 +13,6 @@ class GetMyAlbumController extends Controller
     use OrderableTrait;
     public function __invoke(Request $request)
     {
-        $perPage = $request->input("per_page");
-        $page = $request->input("page");
-
         $searches = [];
         $query = $request->input("query");
         if (!empty($query)) {
@@ -31,8 +28,7 @@ class GetMyAlbumController extends Controller
 
         $order = $this->getAttributeOrder($request->input("order_key"), $request->input("order_type"));
         $albums = Album::getList($searches, "", true, $order);
-        $albums = $albums->withCount("medias")->paginate($perPage, ['*'], 'page', $page);
-
+        $albums = $albums->withCount("medias")->paginateOrAll($request);
         return AlbumCollection::make($albums);
     }
 }

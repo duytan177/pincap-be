@@ -12,15 +12,12 @@ class SearchMediaByTagIdController extends Controller
 {
     public function __invoke($tagId, SearchMediaRequest $request)
     {
-        $perPage = $request->input('per_page');
-        $page = $request->input("page");
-
         $medias = Media::where([
             ["is_created", "=", true],
             ["privacy", "=", Privacy::PUBLIC]
         ])->whereHas('tags', function ($query) use ($tagId) {
             $query->where('tag_id', $tagId);
-        })->paginate($perPage, ['*'], 'page', $page);
+        })->paginateOrAll($request);
 
         return MediaCollection::make($medias);
     }

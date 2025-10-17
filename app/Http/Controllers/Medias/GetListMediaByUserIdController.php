@@ -17,8 +17,6 @@ class GetListMediaByUserIdController extends Controller
     public function __invoke(Request $request)
     {
         $userId = $request->input("user_id");
-        $perPage = $request->input("per_page");
-        $page = $request->input("page");
         $query = $request->input("query");
         $mediaType = $request->input("type");
         $searches = [
@@ -41,7 +39,7 @@ class GetListMediaByUserIdController extends Controller
 
         $order = $this->getAttributeOrder($request->input(key: "order_key"), $request->input("order_type"));
         $medias = Media::getList($searches, true, Privacy::PUBLIC, false, $order)->with("reactions")
-                        ->paginate($perPage, ['*'], 'page', $page);
+                        ->paginateOrAll($request);
 
         return MediaCollection::make($medias);
     }

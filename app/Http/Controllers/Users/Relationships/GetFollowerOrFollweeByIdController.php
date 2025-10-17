@@ -12,8 +12,6 @@ class GetFollowerOrFollweeByIdController extends Controller
 {
     public function __invoke($userId, GetMyFollowerOrFolloweeRequest $request)
     {
-        $perPage = $request->input("per_page");
-        $page = $request->input("page");
         $relationship = $request->input("relationship");
 
         $user = User::findOrFail($userId);
@@ -28,7 +26,7 @@ class GetFollowerOrFollweeByIdController extends Controller
             ->whereDoesntHave('blockedUsers', function ($query) use ($userAuthId) {
                 $query->where('follower_id', $userAuthId);
             })
-            ->paginate($perPage, ['*'], 'page', $page);
+            ->paginateOrAll($request);
 
         return FollowCollection::make($followRelationship);
     }

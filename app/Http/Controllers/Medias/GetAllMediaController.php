@@ -17,8 +17,6 @@ class GetAllMediaController extends Controller
 
     public function __invoke(Request $request)
     {
-        $perPage = $request->input('per_page', 15);
-        $page = $request->input('page', 1);
         $query = $request->input("query");
         $mediaType = $request->input("type");
         $searches = [];
@@ -53,7 +51,7 @@ class GetAllMediaController extends Controller
         }
 
 
-        $medias = $medias->paginate($perPage, ['*'], 'page', $page);
+        $medias = $medias->paginateOrAll($request);
 
         return new MediaCollection($medias);
     }

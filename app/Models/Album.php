@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use App\Models\User;
 use App\Models\Media;
+use App\Traits\HasPaginateOrAll;
 use App\Traits\OrderableTrait;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Builder;
@@ -19,7 +20,7 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 
 class Album extends Model
 {
-    use HasFactory, HasUuids, Notifiable, SoftDeletes, OrderableTrait;
+    use HasFactory, HasUuids, Notifiable, SoftDeletes, OrderableTrait, HasPaginateOrAll;
     protected static function boot()
     {
         parent::boot();

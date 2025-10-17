@@ -17,8 +17,6 @@ class GetAlbumByUserIdController extends Controller
     public function __invoke(Request $request)
     {
         $userId = $request->input("user_id");
-        $perPage = $request->input("per_page");
-        $page = $request->input("page");
 
         $user = User::findOrFail($userId);
         $searches = [
@@ -29,7 +27,7 @@ class GetAlbumByUserIdController extends Controller
         $order = $this->getAttributeOrder($request->input("order_key"), $request->input("order_type"));
         $albums = Album::getList($searches, Privacy::PUBLIC, false, $order);
 
-        $albums = $albums->paginate($perPage, ['*'], 'page', $page);
+        $albums = $albums->paginateOrAll($request);
         return AlbumCollection::make($albums);
     }
 }

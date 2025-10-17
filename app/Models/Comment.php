@@ -9,13 +9,14 @@ use Illuminate\Notifications\Notifiable;
 use App\Models\User;
 use App\Models\Media;
 use App\Models\Feeling;
+use App\Traits\HasPaginateOrAll;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Comment extends Model
 {
-    use HasFactory, HasUuids, Notifiable;
+    use HasFactory, HasUuids, Notifiable, HasPaginateOrAll;
 
     protected static function boot()
     {
