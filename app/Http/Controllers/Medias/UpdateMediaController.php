@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\Medias\Shared\MediaHandle;
 use App\Exceptions\MediaException;
 use App\Http\Requests\Medias\UpdateMediaRequest;
+use App\Http\Resources\Medias\Media\MediaResource;
 use App\Models\AlbumMedia;
 use App\Models\Media;
 use Carbon\Carbon;
@@ -45,6 +46,6 @@ class UpdateMediaController extends Controller
         if ($media->getAttribute("is_created")) {
             event(new MediaCreatedEvent($media));
         }
-        return responseWithMessage("Update media successfully");
+        return response()->json(["message" => "Update media successfully", "media" => MediaResource::make($media)], 201);
     }
 }

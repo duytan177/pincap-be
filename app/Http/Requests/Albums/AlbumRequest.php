@@ -25,7 +25,7 @@ class AlbumRequest extends FormRequest
     {
         return [
             "album_name" => "required|string",
-            'image_cover' => 'nullable|string|exists:medias,media_url',
+            'image_cover' => 'nullable|string',
             "description" => "nullable|string",
             "privacy" => ["nullable", Rule::in(Privacy::getValues())],
         ];
