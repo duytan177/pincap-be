@@ -142,7 +142,7 @@ Route::middleware(["auth:api"])->group(function () {
 
     Route::prefix("/notifications")->group(function () {
         Route::get("/me", GetAllMeNotificationController::class);
-        Route::put("/mark-all-read", MarkReadAllNotificationController::class);
+        Route::put("/mark-read-all", MarkReadAllNotificationController::class);
         Route::put("/{id}/read", MarkReadByIdNotificationController::class);
         Route::delete("/{id}", DeleteNotificationByIdController::class);
     });
