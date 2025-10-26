@@ -25,7 +25,7 @@ class UpdateMyProfileRequest extends FormRequest
             "first_name" => "required|string",
             "last_name" => "required|string",
             "email" => "required|email",
-            'phone' => 'required|string|max:20',
+            'phone' => 'nullable|string|max:20',
             "password" => "nullable|confirmed|min:8",
             'avatar' => 'nullable|image|max:25600',
             'background' => 'nullable|image|max:25600',
