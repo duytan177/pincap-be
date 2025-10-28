@@ -39,6 +39,7 @@ class AddMediasToAlbumController extends Controller
                 'id' => Uuid::uuid4()->toString(),
                 'album_id' => $data['album_id'],
                 'media_id' => $mediaId,
+                'user_created' => $userId, // Track who added this media
                 'created_at' => now(),
             ];
         }
