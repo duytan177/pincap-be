@@ -22,7 +22,7 @@ class GetListMediaByUserIdController extends Controller
         $searches = [
             "user_id" => $userId
         ];
-        if (!empty($query)){
+        if (!empty($query)) {
             $searches += [
                 "title" => $query,
                 "description" => $query,
@@ -38,8 +38,12 @@ class GetListMediaByUserIdController extends Controller
         }
 
         $order = $this->getAttributeOrder($request->input(key: "order_key"), $request->input("order_type"));
-        $medias = Media::getList($searches, true, Privacy::PUBLIC, false, $order)->with("reactions")
-                        ->paginateOrAll($request);
+        $medias = Media::getList($searches, true, Privacy::PUBLIC , false, $order)->with([
+            "reactions" => function ($q) use ($userId) {
+                $q->where('user_id', $userId);
+            }
+        ])
+            ->paginateOrAll($request);
 
         return MediaCollection::make($medias);
     }

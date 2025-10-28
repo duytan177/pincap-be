@@ -3,7 +3,7 @@
 namespace App\Http\Resources\Albums;
 
 use App\Components\Resources\BaseResource;
-use App\Http\Resources\Medias\Media\MediaCollection;
+use App\Http\Resources\Albums\AlbumMediaCollection;
 use App\Http\Resources\Users\Information\UserInfoCollection;
 use Illuminate\Http\Request;
 
@@ -28,7 +28,7 @@ class DetailAlbumResource extends BaseResource
     {
         $data = $this->resource->only(self::$attributes);
         $data["allUser"] = UserInfoCollection::make($data["allUser"]);
-        $data["medias"] = MediaCollection::make($data["medias"]);
+        $data["medias"] = AlbumMediaCollection::make($data["medias"]);
         return $data;
     }
 }

@@ -30,6 +30,7 @@ class UpdateMediaController extends Controller
                     'album_id' => $albumId,
                 ],
                 [
+                    'user_created' => $userId,
                     "created_at" => $now
                 ]
             );
