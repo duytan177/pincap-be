@@ -19,7 +19,7 @@ class GetMyMediaController extends Controller
     public function __invoke(Request $request)
     {
         $isCreated = $request->input("is_created") == "false" ? false : true;
-
+        $userId = JWTAuth::user()->getAttribute("id");
         $mediaType = $request->input("type");
         $query = $request->input("query");
         $searches = [
@@ -41,7 +41,11 @@ class GetMyMediaController extends Controller
         }
 
         $order = $this->getAttributeOrder($request->input("order_key"), $request->input("order_type"));
-        $medias = Media::getList($searches, $isCreated, "",true, $order)->with("reactions");
+        $medias = Media::getList($searches, $isCreated, "",true, $order)->with([
+            "reactions" => function ($q) use ($userId) {
+                $q->where('user_id', $userId);
+            }
+        ]);
 
         $medias = $medias->paginateOrAll($request);
 

@@ -104,6 +104,7 @@ Route::middleware(["auth:api"])->group(function () {
         Route::post("/", CreateMediaController::class);
         Route::post("/ai", CreateMediaByAIController::class);
         Route::put("/{mediaId}", UpdateMediaController::class);
+        Route::get("/{mediaId}", GetDetailMediaByIdController::class);
         Route::delete("/", DeleteMediaByIdController::class);
 
         Route::prefix("report")->group(function () {
@@ -189,7 +190,7 @@ Route::group([], function () {
         Route::post("downloads", DownloadMediaController::class);
 
         Route::prefix("/{mediaId}")->group(function () {
-            Route::get("/", GetDetailMediaByIdController::class);
+            // Route::get("/", GetDetailMediaByIdController::class);
             Route::prefix("/feelings")->group(function () {
                 Route::get("/", GetFeelingOfMediaController::class);
                 Route::get("/users", GetAllUserFeelingMediaController::class);
