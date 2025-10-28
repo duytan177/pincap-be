@@ -30,6 +30,7 @@ use App\Http\Controllers\Medias\DeleteMediaByIdController;
 use App\Http\Controllers\Medias\GetAllMediaController;
 use App\Http\Controllers\Medias\GetDetailMediaByIdController;
 use App\Http\Controllers\Medias\GetMyMediaController;
+use App\Http\Controllers\Medias\GetMyReactedMediaController;
 use App\Http\Controllers\Medias\ReportMediaController;
 use App\Http\Controllers\Medias\SearchMediaByTagIdController;
 use App\Http\Controllers\Medias\UpdateMediaController;
@@ -99,6 +100,7 @@ Route::middleware(["auth:api"])->group(function () {
 
     Route::prefix("/medias")->group(function () {
         Route::get("/my-media", GetMyMediaController::class);
+        Route::get("/my-reacted-medias", GetMyReactedMediaController::class);
         Route::post("/", CreateMediaController::class);
         Route::post("/ai", CreateMediaByAIController::class);
         Route::put("/{mediaId}", UpdateMediaController::class);
