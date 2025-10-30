@@ -16,7 +16,8 @@ class AlbumMediaResource extends BaseResource
         'media_name',
         "description",
         "is_created",
-        "type"
+        "type",
+        "media_owner_id",
     ];
 
     /**
