@@ -58,6 +58,9 @@ class Media extends Model
         'is_created',
         'is_comment',
         'media_owner_id',
+        'safe_search_data',
+        'is_policy_violation',
+        'deleted_at'
     ];
     protected $hidden = [
         'deleted_at'
@@ -72,7 +75,9 @@ class Media extends Model
     {
         return [
             'is_created' => "boolean",
-            "is_comment" => "boolean"
+            "is_comment" => "boolean",
+            "safe_search_data" => "array",
+            "is_policy_violation" => "boolean",
         ];
     }
 

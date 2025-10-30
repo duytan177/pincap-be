@@ -16,7 +16,9 @@ class MediaResource extends BaseResource
         'media_url',
         'media_name',
         "description",
-        "type"
+        "type",
+        "safe_search_data",
+        "is_policy_violation",
     ];
 
     /**

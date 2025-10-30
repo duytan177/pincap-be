@@ -9,6 +9,7 @@ use App\Http\Controllers\Medias\Shared\MediaHandle;
 use App\Http\Requests\Medias\CreateMediaRequest;
 use App\Http\Resources\Medias\Media\MediaResource;
 use App\Models\Media;
+use App\Services\GoogleVisionService;
 use App\Traits\AWSS3Trait;
 use Ramsey\Uuid\Guid\Guid;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -31,6 +32,26 @@ class CreateMediaController extends Controller
                 $mediaData = array_merge($mediaData, $this->formatFinalResult($results));
             }
         }
+
+        // Google Vision Safe Search Detection
+        if (config("services.google_vision.enable")) {
+
+            $base64Images = $this->covertMediaImageToBase64($mediaData["media"] ?? []);
+            $visionService = new GoogleVisionService();
+            $annotations = $visionService->detectSafeSearch($base64Images);
+
+            // check policy violation
+            $isViolation = $this->checkPolicyViolation($annotations);
+
+            $mediaData["safe_search_data"] = $annotations;
+            $mediaData["is_policy_violation"] = $isViolation;
+
+            // Mark media as deleted if it violates policy
+            if ($isViolation) {
+                $mediaData["deleted_at"] = now();
+            }
+        }
+
         $mediaNew = Media::create($mediaData);
         $mediaId = $mediaNew->getAttribute("id");
 
@@ -54,7 +75,7 @@ class CreateMediaController extends Controller
 
         return response()->json(["message" => "Created media successfully", "media" => MediaResource::make($mediaNew)], 201);
     }
-    
+
 
     /**
      * 🧩 Format upload results for the final response
@@ -79,5 +100,38 @@ class CreateMediaController extends Controller
             'type' => null,
             'media_url' => json_encode($urls), // ["url1","url2","url3"]
         ];
+    }
+
+    private function covertMediaImageToBase64($medias): array
+    {
+        return collect($medias ?? [])
+            ->filter(fn($file) => str_starts_with($file->getMimeType(), 'image/'))
+            ->map(function ($file) {
+                $mimeType = $file->getMimeType();
+                $fileContents = file_get_contents($file->getRealPath());
+                $base64 = base64_encode($fileContents);
+
+                return $base64;
+            })
+            ->values()
+            ->all();
+    }
+
+    /**
+     * Kiểm tra xem có ảnh nào vi phạm chính sách không
+     */
+    private function checkPolicyViolation(array $annotations): bool
+    {
+        $violationLevels = ['LIKELY', 'VERY_LIKELY'];
+        $labelSpoof = "spoof"; // just to initialize
+        foreach ($annotations as $annotation) {
+            foreach ($annotation as $label => $level) {
+                if ($label != $labelSpoof && in_array(strtoupper($level), $violationLevels, true)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }
