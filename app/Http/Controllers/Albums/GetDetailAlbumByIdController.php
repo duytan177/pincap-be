@@ -18,10 +18,10 @@ class GetDetailAlbumByIdController extends Controller
             'medias' => function ($query) {
                 // Eager load thông tin user đã add media vào album
                 $query
-                    ->leftJoin('users', 'users.id', '=', 'album_media.user_created')
+                    ->leftJoin('users', 'users.id', '=', 'album_media.added_by_user_id')
                     ->addSelect(
                         'medias.*',
-                        'album_media.user_created as user_created_id',
+                        'album_media.added_by_user_id as added_by_user_id',
                         DB::raw("CONCAT(users.first_name, ' ', users.last_name) as name"),
                         'users.avatar as avatar',
                         'users.email as email',

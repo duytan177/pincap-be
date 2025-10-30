@@ -63,7 +63,7 @@ class Album extends Model
     }
     public function medias(): BelongsToMany
     {
-        return $this->belongsToMany(Media::class, 'album_media')->where("is_created", true)->withTimestamps()->wherePivotNull("deleted_at")->withPivot("user_created");
+        return $this->belongsToMany(Media::class, 'album_media')->where("is_created", true)->withTimestamps()->wherePivotNull("deleted_at")->withPivot("added_by_user_id");
     }
 
     public function scopeOwnedBy(Builder $query, string $userId): Builder

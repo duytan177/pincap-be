@@ -23,7 +23,7 @@ class AlbumMedia extends Model
         'media_id',
         'created_at',
         'updated_at',
-        'user_created'
+        'added_by_user_id'
     ];
     protected $hidden = [
         'deleted_at'
