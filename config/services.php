@@ -40,4 +40,10 @@ return [
         'client_secret' => env('GOOGLE_CLIENT_SECRET'),
         'redirect' => env("GOOGLE_URL_REDIRECT"),
     ],
+
+    'google_vision' => [
+        'api_key' => env('API_KEY_GOOGLE_VISION'),
+        'url' => env('URL_GOOGLE_VISION'),
+        'enable' => env('ENABLE_SERVICE_GOOGLE_VISION', false),
+    ],
 ];

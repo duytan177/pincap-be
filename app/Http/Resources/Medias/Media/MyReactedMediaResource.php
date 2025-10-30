@@ -18,7 +18,9 @@ class MyReactedMediaResource extends BaseResource
         "description",
         "feeling_id",
         "feeling_type",
-        "type"
+        "type",
+        "safe_search_data",
+        "is_policy_violation",
     ];
 
     /**

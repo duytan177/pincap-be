@@ -25,7 +25,9 @@ class MediaDetailResource extends BaseResource
         'is_comment',
         "userComments",
         "feelings",
-        "reaction_user_count"
+        "reaction_user_count",
+        "safe_search_data",
+        "is_policy_violation",
     ];
 
     /**
