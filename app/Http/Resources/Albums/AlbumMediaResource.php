@@ -16,7 +16,8 @@ class AlbumMediaResource extends BaseResource
         'media_name',
         "description",
         "is_created",
-        "type"
+        "type",
+        "media_owner_id",
     ];
 
     /**
@@ -29,9 +30,9 @@ class AlbumMediaResource extends BaseResource
         // Get base media attributes (same as MediaResource)
         $data = $this->resource->only(self::$attributes);
 
-        // Add user_created information from join
-        $data['user_created'] = [
-            'id' => $this->resource->user_created_id ?? null,
+        // Add added_by_user information from join
+        $data['added_by_user'] = [
+            'id' => $this->resource->added_by_user_id ?? null,
             'name' => $this->resource->name ?? null,
             'avatar' => $this->resource->avatar ?? null,
             'email' => $this->resource->email ?? null,

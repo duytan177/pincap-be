@@ -59,7 +59,7 @@ class CreateMediaController extends Controller
             $mediaNew->albums()->attach([
                 $request->album_id => [
                     'id' => Guid::uuid4()->toString(),
-                    'user_created' => $userId,
+                    'added_by_user_id' => $userId,
                     'created_at' => now()
                 ]
             ]);

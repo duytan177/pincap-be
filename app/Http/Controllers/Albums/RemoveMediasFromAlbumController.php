@@ -23,13 +23,13 @@ class RemoveMediasFromAlbumController extends Controller
         // Validate ALL medias trước khi xóa
         // Allow removal if:
         // 1. User is album owner (can remove any media)
-        // 2. User is the one who added the media (user_created)
+        // 2. User is the one who added the media (added_by_user_id)
 
         if (!$isOwner) {
             // Non-owner: Kiểm tra tất cả medias có phải do họ add không
             $userCanRemove = AlbumMedia::where("album_id", $data["album_id"])
                 ->whereIn("media_id", $data["medias_id"])
-                ->where("user_created", $currentUserId)
+                ->where("added_by_user_id", $currentUserId)
                 ->pluck("media_id")
                 ->toArray();
 

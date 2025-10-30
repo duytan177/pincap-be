@@ -19,6 +19,7 @@ class MediaResource extends BaseResource
         "type",
         "safe_search_data",
         "is_policy_violation",
+        "media_owner_id",
     ];
 
     /**

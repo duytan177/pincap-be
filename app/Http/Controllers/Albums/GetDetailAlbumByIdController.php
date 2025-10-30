@@ -16,18 +16,19 @@ class GetDetailAlbumByIdController extends Controller
                 $query->withCount('followers')->addSelect(['user_album.invitation_status as status', 'user_album.album_role'])->orderBy("user_album.created_at", "desc")->limit(5);
             },
             'medias' => function ($query) {
-                // // Eager load thông tin user đã add media vào album
+                // Eager load thông tin user đã add media vào album
                 $query
-                    ->join('users', 'users.id', '=', 'album_media.user_created')
+                    ->leftJoin('users', 'users.id', '=', 'album_media.added_by_user_id')
                     ->addSelect(
                         'medias.*',
-                        'album_media.user_created as user_created_id',
+                        'album_media.added_by_user_id as added_by_user_id',
                         DB::raw("CONCAT(users.first_name, ' ', users.last_name) as name"),
                         'users.avatar as avatar',
                         'users.email as email',
                     );
             }
         ])->findOrFail($albumId);
+
         return DetailAlbumResource::make($albumDetail);
     }
 }

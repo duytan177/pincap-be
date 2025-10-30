@@ -35,16 +35,27 @@ class MediaHandle
 
             $tagIds = array_merge($tagIds, $newTagsInDB);
         }
+        $existingTagIds = MediaTag::where('media_id', $mediaId)
+            ->whereIn('tag_id', $tagIds)
+            ->pluck('tag_id')
+            ->toArray();
 
-        $mediaTagData = array_map(function ($tagId) use ($mediaId, $now) {
-            return [
-                'id' => Uuid::uuid4()->toString(),
-                'media_id' => $mediaId,
-                'tag_id' => $tagId,
-                "created_at" => $now
-            ];
-        }, $tagIds);
+        $newTagIds = collect($tagIds)
+            ->diff($existingTagIds)
+            ->values()
+            ->all();
 
-        MediaTag::insert($mediaTagData);
+        if (!empty($newTagIds)) {
+            $mediaTagData = array_map(function ($tagId) use ($mediaId, $now) {
+                return [
+                    'id' => Uuid::uuid4()->toString(),
+                    'media_id' => $mediaId,
+                    'tag_id' => $tagId,
+                    "created_at" => $now
+                ];
+            }, $newTagIds);
+
+            MediaTag::insert($mediaTagData);
+        }
     }
 }
