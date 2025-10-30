@@ -154,7 +154,6 @@ Route::middleware(["auth:api"])->group(function () {
 
     Route::prefix("/albums")->group(function () {
         Route::get("/", GetAlbumByUserIdController::class);
-        Route::get("/{albumId}", GetDetailAlbumByIdController::class);
         Route::post("/add-medias", AddMediasToAlbumController::class);
         Route::delete("/remove-medias", RemoveMediasFromAlbumController::class);
         Route::get("/medias/privacy", GetPrivacyController::class);
@@ -162,6 +161,7 @@ Route::middleware(["auth:api"])->group(function () {
         Route::get("/my-album", GetMyAlbumController::class);
         Route::get("/my-album-member", GetMyAlbumRoleMemberController::class);
         Route::post("/", CreateAlbumController::class);
+        Route::get("/{albumId}", GetDetailAlbumByIdController::class);
         Route::put("/{albumId}", UpdateAlbumController::class);
         Route::post("/{albumId}/invite/{userId}", AddMemberIntoAlbumController::class);
         Route::put("/{albumId}/members/{userId}", UpdateMemberRoleController::class);
