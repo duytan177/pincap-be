@@ -85,6 +85,7 @@ Route::middleware(["auth:api"])->group(function () {
     Route::prefix("/users")->group(function () {
         Route::prefix("/relationships")->group(function () {
             Route::get("/", GetMyFollowerOrFolloweeController::class);
+            Route::get("/{userId}", GetFollowerOrFollweeByIdController::class);
             Route::post("/", FollowOrBlockController::class);
             Route::delete("/", UnFollowOrUnBlockController::class);
         });
@@ -96,9 +97,36 @@ Route::middleware(["auth:api"])->group(function () {
         Route::prefix("report")->group(function () {
             Route::post("/", ReportUserController::class);
         });
+
+        Route::prefix("/profiles")->group(function () {
+            Route::get("/{userId}", GetProfileUserByIdController::class);
+        });
+
+        Route::prefix("report-reasons")->group(function () {
+            Route::get("/", GetListReportReasonController::class);
+        });
+
+        Route::get("/search", SearchUserOrTagNameController::class);
+        Route::get('/find', SearchUsersController::class);
     });
 
     Route::prefix("/medias")->group(function () {
+
+        Route::get("/", GetListMediaByUserIdController::class);
+        Route::get("/all", GetAllMediaController::class);
+        Route::get("/search/{tagId}", SearchMediaByTagIdController::class);
+        Route::get("/{mediaId}/comments", GetCommentsOfMediaDetailByIdController::class);
+        Route::get("/comments/{commentId}/replies", GetReplyCommentByIdController::class);
+        Route::post("downloads", DownloadMediaController::class);
+
+        Route::prefix("/{mediaId}")->group(function () {
+            Route::prefix("/feelings")->group(function () {
+                Route::get("/", GetFeelingOfMediaController::class);
+                Route::get("/users", GetAllUserFeelingMediaController::class);
+                Route::get("/{feelingId}", GetDetailFeelingMediaController::class);
+            });
+        });
+
         Route::get("/my-media", GetMyMediaController::class);
         Route::get("/my-reacted-medias", GetMyReactedMediaController::class);
         Route::post("/", CreateMediaController::class);
@@ -125,6 +153,8 @@ Route::middleware(["auth:api"])->group(function () {
     });
 
     Route::prefix("/albums")->group(function () {
+        Route::get("/", GetAlbumByUserIdController::class);
+        Route::get("/{albumId}", GetDetailAlbumByIdController::class);
         Route::post("/add-medias", AddMediasToAlbumController::class);
         Route::delete("/remove-medias", RemoveMediasFromAlbumController::class);
         Route::get("/medias/privacy", GetPrivacyController::class);
@@ -149,6 +179,12 @@ Route::middleware(["auth:api"])->group(function () {
         Route::put("/{id}/read", MarkReadByIdNotificationController::class);
         Route::delete("/{id}", DeleteNotificationByIdController::class);
     });
+
+    Route::get("/feelings", GetAllFeelingController::class);
+
+    Route::prefix("/tags")->group(function () {
+        Route::get("/", GetAllTagController::class);
+    });
 });
 
 Route::group([], function () {
@@ -165,48 +201,48 @@ Route::group([], function () {
         Route::get("/google/callback", HandleCallbackController::class);
     });
 
-    Route::prefix("/users")->group(function () {
-        Route::prefix("/profiles")->group(function () {
-            Route::get("/{userId}", GetProfileUserByIdController::class);
-        });
-        Route::prefix("/relationships")->group(function () {
-            Route::get("/{userId}", GetFollowerOrFollweeByIdController::class);
-        });
+    // Route::prefix("/users")->group(function () {
+    //     Route::prefix("/profiles")->group(function () {
+    //         Route::get("/{userId}", GetProfileUserByIdController::class);
+    //     });
+    //     Route::prefix("/relationships")->group(function () {
+    //         Route::get("/{userId}", GetFollowerOrFollweeByIdController::class);
+    //     });
 
-        Route::prefix("report-reasons")->group(function () {
-            Route::get("/", GetListReportReasonController::class);
-        });
+    //     Route::prefix("report-reasons")->group(function () {
+    //         Route::get("/", GetListReportReasonController::class);
+    //     });
 
-        Route::get("/search", SearchUserOrTagNameController::class);
-        Route::get('/find', SearchUsersController::class);
-    });
+    //     Route::get("/search", SearchUserOrTagNameController::class);
+    //     Route::get('/find', SearchUsersController::class);
+    // });
 
-    Route::prefix("/medias")->group(function () {
-        Route::get("/", GetListMediaByUserIdController::class);
-        Route::get("/all", GetAllMediaController::class);
-        Route::get("/search/{tagId}", SearchMediaByTagIdController::class);
-        Route::get("/{mediaId}/comments", GetCommentsOfMediaDetailByIdController::class);
-        Route::get("/comments/{commentId}/replies", GetReplyCommentByIdController::class);
-        Route::post("downloads", DownloadMediaController::class);
+    // Route::prefix("/medias")->group(function () {
+    //     Route::get("/", GetListMediaByUserIdController::class);
+    //     Route::get("/all", GetAllMediaController::class);
+    //     Route::get("/search/{tagId}", SearchMediaByTagIdController::class);
+    //     Route::get("/{mediaId}/comments", GetCommentsOfMediaDetailByIdController::class);
+    //     Route::get("/comments/{commentId}/replies", GetReplyCommentByIdController::class);
+    //     Route::post("downloads", DownloadMediaController::class);
 
-        Route::prefix("/{mediaId}")->group(function () {
-            // Route::get("/", GetDetailMediaByIdController::class);
-            Route::prefix("/feelings")->group(function () {
-                Route::get("/", GetFeelingOfMediaController::class);
-                Route::get("/users", GetAllUserFeelingMediaController::class);
-                Route::get("/{feelingId}", GetDetailFeelingMediaController::class);
-            });
-        });
-    });
+    //     Route::prefix("/{mediaId}")->group(function () {
+    //         // Route::get("/", GetDetailMediaByIdController::class);
+    //         Route::prefix("/feelings")->group(function () {
+    //             Route::get("/", GetFeelingOfMediaController::class);
+    //             Route::get("/users", GetAllUserFeelingMediaController::class);
+    //             Route::get("/{feelingId}", GetDetailFeelingMediaController::class);
+    //         });
+    //     });
+    // });
 
-    Route::prefix("/albums")->group(function () {
-        Route::get("/", GetAlbumByUserIdController::class);
-        Route::get("/{albumId}", GetDetailAlbumByIdController::class);
-    });
+    // Route::prefix("/albums")->group(function () {
+    //     Route::get("/", GetAlbumByUserIdController::class);
+    //     Route::get("/{albumId}", GetDetailAlbumByIdController::class);
+    // });
 
-    Route::get("/feelings", GetAllFeelingController::class);
+    // Route::get("/feelings", GetAllFeelingController::class);
 
-    Route::prefix("/tags")->group(function () {
-        Route::get("/", GetAllTagController::class);
-    });
+    // Route::prefix("/tags")->group(function () {
+    //     Route::get("/", GetAllTagController::class);
+    // });
 });

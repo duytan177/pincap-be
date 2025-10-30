@@ -12,7 +12,8 @@ class MediaHandle
     public static function attachTagtoMedia($tags, $mediaId, $userId, $now = null)
     {
         $now = $now ?? Carbon::now()->toDateTimeString();
-        $tags = array_map('ucfirst', $tags);
+        $tags = array_map('strtolower', $tags);
+
         $tagsInDB = Tag::whereIn('tag_name', $tags)->pluck('tag_name', 'id')->toArray();
         $newTags = array_diff($tags, array_values($tagsInDB));
         $tagIds = array_keys($tagsInDB);
