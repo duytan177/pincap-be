@@ -10,7 +10,8 @@ class GetMyProfileController extends Controller
 {
     public function __invoke()
     {
-        $user = JWTAuth::user()->loadCount(["followers", "followees", "medias", "reactionMedia"]);
+        $user = JWTAuth::user()->loadCount(["followers", "followees", "medias", "reactionMedia"])->load("socialInstagram");
+
         return ProfileResource::make($user);
     }
 }
