@@ -41,6 +41,14 @@ return [
         'redirect' => env("GOOGLE_URL_REDIRECT"),
     ],
 
+    'facebook' => [
+        'client_id' => env('FACEBOOK_CLIENT_ID'),
+        'client_secret' => env('FACEBOOK_CLIENT_SECRET'),
+        'redirect' => env("FACEBOOK_URL_REDIRECT"),
+        'exchange_url' => env('FACEBOOK_EXCHANGE_URL', 'https://graph.facebook.com/oauth/access_token'),
+        'grant_type' => env('FACEBOOK_GRANT_TYPE', 'fb_exchange_token'),
+    ],
+
     'google_vision' => [
         'api_key' => env('API_KEY_GOOGLE_VISION'),
         'url' => env('URL_GOOGLE_VISION'),
