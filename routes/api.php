@@ -112,6 +112,9 @@ Route::middleware(["auth:api"])->group(function () {
         Route::prefix("/facebook")->group(function () {
             Route::get("/url", \App\Http\Controllers\Users\SocialAccounts\Instagram\GetUrlRedirectController::class);
             Route::get("/callback", \App\Http\Controllers\Users\SocialAccounts\Instagram\HandleCallbackController::class);
+            Route::prefix("/instagram")->group(function () {
+                Route::get("/media", \App\Http\Controllers\Users\SocialAccounts\Instagram\GetMediaInstagramController::class);
+            });
         });
     });
 

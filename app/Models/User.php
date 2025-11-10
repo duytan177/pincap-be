@@ -164,6 +164,13 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
             ->select(['id', 'user_id', 'name', 'avatar', 'permalink', 'social_id']);
     }
 
+    public function socialInstagramFirstFull()
+    {
+        return $this->hasOne(\App\Models\UserSocialAccount::class, 'user_id')
+            ->where('social_type', SocialType::INSTAGRAM)
+            ->first();
+    }
+
     public function feelings(): HasOneThrough
     {
         return $this->hasOneThrough(

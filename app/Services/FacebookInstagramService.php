@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Http;
 
 class FacebookInstagramService
@@ -75,6 +76,48 @@ class FacebookInstagramService
         return [
             'token' => $this->longLivedToken,
             'expired_at' => $this->longLivedTokenExpiresAt,
+        ];
+    }
+    /**
+     * Lấy media với cursor-based paging
+     *
+     * Nếu $after truyền vào null, dùng cursor lưu trong service
+     */
+    public function getInstagramMediaWithCursor(string $igBizId, int $limit = 20): ?array
+    {
+
+        $response = Http::get("https://graph.facebook.com/v21.0/{$igBizId}", [
+            'fields' => "media.limit($limit){id,caption,media_type,media_url,permalink,children{media_type,media_url}}",
+            'access_token' => $this->longLivedToken,
+        ])->json();
+
+        return $this->formatMedia($response["media"]);
+    }
+
+    public function getInstagramMediaWithCursorAfter($after)
+    {
+        $response = Http::get($after)->json();
+        return $response;
+    }
+
+    /**
+     * Format response media + paging, tự động mã hoá 'next' nếu có
+     *
+     * @param array $response Raw response từ API Instagram
+     * @return array
+     */
+    public static function formatMedia(array $response): array
+    {
+        $media = data_get($response, 'data', []);
+        $pagingCursors = data_get($response, 'paging.cursors', []);
+        $nextUrl = data_get($response, 'paging.next', null);
+
+        return [
+            'data' => $media,
+            'paging' => [
+                'cursors' => $pagingCursors,
+                'next' => $nextUrl ? Crypt::encryptString($nextUrl) : null,
+            ],
         ];
     }
 }
