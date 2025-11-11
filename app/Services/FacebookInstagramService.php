@@ -18,7 +18,7 @@ class FacebookInstagramService
     {
         $this->shortLivedToken = $shortLivedToken;
         $this->baseUrl = config('services.facebook.base_url');
-        $this->exchangeLongLivedToken();
+        // $this->exchangeLongLivedToken();
     }
 
     /**
@@ -46,7 +46,7 @@ class FacebookInstagramService
         $url = $this->baseUrl . config('services.facebook.me_accounts');
 
         return Http::get($url, [
-            'access_token' => $this->longLivedToken,
+            'access_token' => $this->shortLivedToken,
         ])->json('data') ?? [];
     }
 
@@ -59,7 +59,7 @@ class FacebookInstagramService
 
         $response = Http::get($url, [
             'fields' => 'instagram_business_account,access_token',
-            'access_token' => $this->longLivedToken,
+            'access_token' => $this->shortLivedToken,
         ])->json();
 
         return data_get($response, 'instagram_business_account.id');
@@ -74,7 +74,7 @@ class FacebookInstagramService
 
         return Http::get($url, [
             'fields' => 'id,username,name,profile_picture_url,biography',
-            'access_token' => $this->longLivedToken,
+            'access_token' => $this->shortLivedToken,
         ])->json();
     }
 
@@ -98,7 +98,7 @@ class FacebookInstagramService
         $url = "{$this->baseUrl}/{$igBizId}";
         $response = Http::get($url, [
             'fields' => "media.limit($limit){id,caption,media_type,media_url,permalink,children{media_type,media_url}}",
-            'access_token' => $this->longLivedToken,
+            'access_token' => $this->shortLivedToken,
         ])->json();
 
         return $this->formatMedia($response["media"] ?? []);
