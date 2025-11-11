@@ -5,7 +5,7 @@ namespace App\Http\Resources\Users\Profiles;
 use App\Components\Resources\BaseResource;
 use Illuminate\Http\Request;
 
-class ProfileResource extends BaseResource
+class ProfileByIdResource extends BaseResource
 {
     private static $attributes = [
         'id',
@@ -20,7 +20,6 @@ class ProfileResource extends BaseResource
         "followees_count",
         "medias_count",
         "reaction_media_count",
-        "social_instagram",
     ];
 
     /**
@@ -31,7 +30,10 @@ class ProfileResource extends BaseResource
     public function toArray(Request $request): array
     {
         $data = $this->resource->only(self::$attributes);
-        $data["social_instagram"] = $this->resource->socialInstagram;
+        $userAuth = $request->user();
+        if ($userAuth && $userAuth->getAttribute("id") != $this->resource->id) {
+            $data["isFollowing"] = $this->resource->followers->contains("id", $userAuth->getAttribute("id"));
+        }
         return $data;
     }
 }

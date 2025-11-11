@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Users\Profiles;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Users\Profiles\ProfileResource;
+use App\Http\Resources\Users\Profiles\ProfileByIdResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -18,6 +18,6 @@ class GetProfileUserByIdController extends Controller
             $user->with("followers");
         }
 
-        return ProfileResource::make($user);
+        return ProfileByIdResource::make($user);
     }
 }

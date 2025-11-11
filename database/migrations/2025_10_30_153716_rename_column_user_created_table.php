@@ -29,15 +29,15 @@ return new class extends Migration {
     public function down(): void
     {
 
-        // 1️⃣ Thêm lại cột user_created
+        // addtional column user_created
         Schema::table('album_media', function (Blueprint $table) {
             $table->foreignUuid('user_created')->nullable()->after('media_id')->references('id')->on('users')->onDelete('set null');
         });
 
-        // 2️⃣ Copy dữ liệu ngược lại
+        // Copy data
         DB::statement('UPDATE album_media SET user_created = added_by_user_id');
 
-        // 3️⃣ Xóa foreign key + cột mới
+        // Remove foreign key + add new column
         Schema::table('album_media', function (Blueprint $table) {
             // Xóa ràng buộc foreign key trước
             $table->dropForeign(['added_by_user_id']);

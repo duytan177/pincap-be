@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\Album_Media\AlbumRole;
 use App\Enums\Album_Media\InvitationStatus;
+use App\Enums\User\SocialType;
 use App\Enums\User\UserStatus;
 use App\Traits\OrderableTrait;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -156,6 +157,12 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
         return $this->hasMany(Notification::class, "receiver_id");
     }
 
+    public function socialInstagram()
+    {
+        return $this->hasOne(\App\Models\UserSocialAccount::class, 'user_id')
+            ->where('social_type', SocialType::INSTAGRAM);
+    }
+
     public function feelings(): HasOneThrough
     {
         return $this->hasOneThrough(
@@ -171,19 +178,19 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
     public static function getList(array $params, ?array $order = null): Builder
     {
         $users = User::query()
-                    ->where(function ($query) use ($params) {
-                        if (!empty($params['first_name'])) {
-                            $query->orWhere('first_name', 'like', "%{$params['first_name']}%");
-                        }
+            ->where(function ($query) use ($params) {
+                if (!empty($params['first_name'])) {
+                    $query->orWhere('first_name', 'like', "%{$params['first_name']}%");
+                }
 
-                        if (!empty($params['last_name'])) {
-                            $query->orWhere('last_name', 'like', "%{$params['last_name']}%");
-                        }
+                if (!empty($params['last_name'])) {
+                    $query->orWhere('last_name', 'like', "%{$params['last_name']}%");
+                }
 
-                        if (!empty($params['email'])) {
-                            $query->orWhere('email', 'like', "%{$params['email']}%");
-                        }
-                    });
+                if (!empty($params['email'])) {
+                    $query->orWhere('email', 'like', "%{$params['email']}%");
+                }
+            });
 
 
         $users = self::scopeApplyOrder($users, $order);
