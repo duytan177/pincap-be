@@ -11,10 +11,13 @@ class FacebookInstagramService
     protected string $shortLivedToken;
     protected string $longLivedToken;
     protected Carbon $longLivedTokenExpiresAt;
+    protected string $baseUrl;
+
 
     public function __construct(string $shortLivedToken)
     {
         $this->shortLivedToken = $shortLivedToken;
+        $this->baseUrl = config('services.facebook.base_url');
         $this->exchangeLongLivedToken();
     }
 
@@ -23,7 +26,8 @@ class FacebookInstagramService
      */
     protected function exchangeLongLivedToken(): void
     {
-        $response = Http::get(config('services.facebook.exchange_url'), [
+        $url = $this->baseUrl . config('services.facebook.exchange_url');
+        $response = Http::get($url, [
             'grant_type' => config('services.facebook.grant_type'),
             'client_id' => config('services.facebook.client_id'),
             'client_secret' => config('services.facebook.client_secret'),
@@ -39,7 +43,9 @@ class FacebookInstagramService
      */
     public function getUserPages(): array
     {
-        return Http::get("https://graph.facebook.com/v23.0/me/accounts", [
+        $url = $this->baseUrl . config('services.facebook.me_accounts');
+
+        return Http::get($url, [
             'access_token' => $this->longLivedToken,
         ])->json('data') ?? [];
     }
@@ -49,7 +55,9 @@ class FacebookInstagramService
      */
     public function getInstagramBusinessId(string $pageId): ?string
     {
-        $response = Http::get("https://graph.facebook.com/v23.0/{$pageId}", [
+        $url = "{$this->baseUrl}/{$pageId}";
+
+        $response = Http::get($url, [
             'fields' => 'instagram_business_account,access_token',
             'access_token' => $this->longLivedToken,
         ])->json();
@@ -62,7 +70,9 @@ class FacebookInstagramService
      */
     public function getInstagramDetails(string $igBizId): array
     {
-        return Http::get("https://graph.facebook.com/v23.0/{$igBizId}", [
+        $url = "{$this->baseUrl}/{$igBizId}";
+
+        return Http::get($url, [
             'fields' => 'id,username,name,profile_picture_url,biography',
             'access_token' => $this->longLivedToken,
         ])->json();
@@ -85,13 +95,13 @@ class FacebookInstagramService
      */
     public function getInstagramMediaWithCursor(string $igBizId, int $limit = 20): ?array
     {
-
-        $response = Http::get("https://graph.facebook.com/v21.0/{$igBizId}", [
+        $url = "{$this->baseUrl}/{$igBizId}";
+        $response = Http::get($url, [
             'fields' => "media.limit($limit){id,caption,media_type,media_url,permalink,children{media_type,media_url}}",
             'access_token' => $this->longLivedToken,
         ])->json();
 
-        return $this->formatMedia($response["media"]);
+        return $this->formatMedia($response["media"] ?? []);
     }
 
     public function getInstagramMediaWithCursorAfter($after)
@@ -101,7 +111,7 @@ class FacebookInstagramService
     }
 
     /**
-     * Format response media + paging, tự động mã hoá 'next' nếu có
+     * Format response media + paging
      *
      * @param array $response Raw response từ API Instagram
      * @return array
@@ -110,13 +120,15 @@ class FacebookInstagramService
     {
         $media = data_get($response, 'data', []);
         $pagingCursors = data_get($response, 'paging.cursors', []);
-        $nextUrl = data_get($response, 'paging.next', null);
+        $previous = data_get($response, 'paging.previous', null);
+        $next = data_get($response, 'paging.next', null);
 
         return [
             'data' => $media,
             'paging' => [
                 'cursors' => $pagingCursors,
-                'next' => $nextUrl ? Crypt::encryptString($nextUrl) : null,
+                "previous" => $previous ? Crypt::encryptString($previous) : null,
+                'next' => $next ? Crypt::encryptString($next) : null,
             ],
         ];
     }

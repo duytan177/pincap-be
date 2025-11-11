@@ -45,8 +45,10 @@ return [
         'client_id' => env('FACEBOOK_CLIENT_ID'),
         'client_secret' => env('FACEBOOK_CLIENT_SECRET'),
         'redirect' => env("FACEBOOK_URL_REDIRECT"),
-        'exchange_url' => env('FACEBOOK_EXCHANGE_URL', 'https://graph.facebook.com/oauth/access_token'),
-        'grant_type' => env('FACEBOOK_GRANT_TYPE', 'fb_exchange_token'),
+        'base_url' => env('FACEBOOK_API_BASE_URL') . env('FACEBOOK_API_VERSION'),
+        'exchange_url' => env('FACEBOOK_EXCHANGE_URL'),
+        'grant_type' => env('FACEBOOK_GRANT_TYPE'),
+        'me_accounts' => env('FACEBOOK_ME_ACCOUNTS'),
     ],
 
     'google_vision' => [
@@ -54,4 +56,8 @@ return [
         'url' => env('URL_GOOGLE_VISION'),
         'enable' => env('ENABLE_SERVICE_GOOGLE_VISION', false),
     ],
+
+    'kafka' => [
+        'kafka_brokers' => env('IP_SERVICE_URL', 'localhost') . ":" . env('KAFKA_BROKERS_PORT', 9092),
+    ]
 ];

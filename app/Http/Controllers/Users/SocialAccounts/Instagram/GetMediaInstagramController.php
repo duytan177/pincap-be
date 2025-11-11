@@ -14,8 +14,7 @@ class GetMediaInstagramController extends Controller
         $user = $request->user();
 
         // Lấy Instagram Social Account
-        $socialInstagram = $user->socialInstagramFirstFull()->first();
-
+        $socialInstagram = $user->socialInstagram()->first();
         if (!$socialInstagram) {
             return response()->json(['message' => 'Instagram account not linked'], 404);
         }
@@ -37,7 +36,6 @@ class GetMediaInstagramController extends Controller
                 return response()->json(['message' => 'Invalid next cursor'], 400);
             }
         }
-
 
         $firstPage = $fbService->getUserPages()[0] ?? null;
         $igBizId = $fbService->getInstagramBusinessId($firstPage['id'] ?? '');

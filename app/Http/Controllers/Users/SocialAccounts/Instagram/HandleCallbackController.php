@@ -19,16 +19,27 @@ class HandleCallbackController extends Controller
         DB::beginTransaction();
 
         try {
-            // ✅ Lấy user đang login từ JWT token
             $user = JWTAuth::parseToken()->authenticate();
 
             $facebookUser = Socialite::driver('facebook')->stateless()->user();
             $accessToken = $facebookUser->token;
             $accessTokenExpiresAt = Carbon::now()->addHour();
             $fbService = new FacebookInstagramService($accessToken);
-            // Lấy page đầu tiên
-            $firstPage = $fbService->getUserPages()[0] ?? null;
+            $pages = $fbService->getUserPages();
+            if (empty($pages)) {
+                DB::rollBack();
+                return response()->json(['error' => 'No Facebook pages found for this user.'], 404);
+            }
+
+            // get first page
+            $firstPage = $pages[0];
             $igBizId = $fbService->getInstagramBusinessId($firstPage['id'] ?? '');
+
+            if (!$igBizId) {
+                DB::rollBack();
+                return response()->json(['error' => 'Could not find an Instagram Business account linked to the Facebook page.'], 404);
+            }
+
             $igDetail = $fbService->getInstagramDetails($igBizId);
 
             $tokenData = $fbService->getLongLivedToken();
