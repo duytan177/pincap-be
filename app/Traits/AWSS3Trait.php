@@ -48,7 +48,6 @@ trait AWSS3Trait
                 config('filesystems.disks.s3.bucket'),
                 $filePath,
                 fopen($file->getRealPath(), 'rb'), // stream thay vì load toàn bộ file
-                'public-read'
             );
 
             return $result->get('ObjectURL'); // trả về URL S3
@@ -59,6 +58,34 @@ trait AWSS3Trait
         // Storage::disk('s3')->put($filePath, file_get_contents($file));
 
         // return Storage::disk('s3')->url($filePath);
+    }
+
+    /**
+     * Tạo presigned URL cho một file trên S3
+     *
+     * @param string $filePath path trong bucket
+     * @param int $expires Thời gian hết hạn (giây), mặc định 3600 = 1 giờ
+     * @return string
+     */
+    public function getPresignedUrl(string $filePath, int $expires = 3600): string
+    {
+        if (!isset($this->s3Client)) {
+            $this->initS3Client();
+        }
+
+        try {
+            $cmd = $this->s3Client->getCommand('GetObject', [
+                'Bucket' => config('filesystems.disks.s3.bucket'),
+                'Key' => $filePath,
+            ]);
+
+            $request = $this->s3Client->createPresignedRequest($cmd, "+{$expires} seconds");
+
+            return (string) $request->getUri();
+        } catch (AwsException $e) {
+            Log::error("❌ Presign URL lỗi file {$filePath}: " . $e->getMessage());
+            throw $e;
+        }
     }
 
     public function deleteFromS3($fileUrl)
@@ -180,7 +207,6 @@ trait AWSS3Trait
                 config('filesystems.disks.s3.bucket'),
                 $filePath,
                 $stream,
-                'public-read'
             );
 
             fclose($stream);
