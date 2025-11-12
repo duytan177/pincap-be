@@ -2,9 +2,12 @@
 
 namespace App\Services;
 
+use App\Enums\User\SocialType;
+use App\Models\UserSocialAccount;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class FacebookInstagramService
 {
@@ -18,13 +21,12 @@ class FacebookInstagramService
     {
         $this->shortLivedToken = $shortLivedToken;
         $this->baseUrl = config('services.facebook.base_url');
-        // $this->exchangeLongLivedToken();
     }
 
     /**
      * Đổi short-lived token sang long-lived token
      */
-    protected function exchangeLongLivedToken(): void
+    public function exchangeLongLivedToken(string $userId): void
     {
         $url = $this->baseUrl . config('services.facebook.exchange_url');
         $response = Http::get($url, [
@@ -36,6 +38,19 @@ class FacebookInstagramService
 
         $this->longLivedToken = $response['access_token'] ?? $this->shortLivedToken;
         $this->longLivedTokenExpiresAt = Carbon::now()->addSeconds($response['expires_in'] ?? 60 * 24 * 60 * 60);
+
+        UserSocialAccount::UpdateOrCreate(
+            [
+                'user_id' => $userId,
+                'social_type' => SocialType::INSTAGRAM,
+            ],
+            [
+                'access_token' => $response['access_token'],
+                'access_token_expired' => Carbon::now()->addHour(),
+                'refresh_token' => $this->longLivedToken,
+                'refresh_token_expired' => $this->longLivedTokenExpiresAt,
+            ]
+        );
     }
 
     /**
@@ -101,7 +116,7 @@ class FacebookInstagramService
             'access_token' => $this->shortLivedToken,
         ])->json();
 
-        return $this->formatMedia($response["media"] ?? []);
+        return $response["media"] ?? [];
     }
 
     public function getInstagramMediaWithCursorAfter($after)
@@ -122,7 +137,6 @@ class FacebookInstagramService
         $pagingCursors = data_get($response, 'paging.cursors', []);
         $previous = data_get($response, 'paging.previous', null);
         $next = data_get($response, 'paging.next', null);
-
         return [
             'data' => $media,
             'paging' => [
@@ -131,5 +145,33 @@ class FacebookInstagramService
                 'next' => $next ? Crypt::encryptString($next) : null,
             ],
         ];
+    }
+
+    /**
+     * Lấy chi tiết media theo một ID
+     *
+     * @param string $mediaId
+     * @return array|null
+     */
+    public function getMediaDetail(string $mediaId): ?array
+    {
+        try {
+            $url = "{$this->baseUrl}/{$mediaId}";
+            $response = Http::get($url, [
+                'fields' => 'id,caption,media_type,media_url,thumbnail_url,permalink,timestamp,username,children{id,media_type,media_url,permalink}',
+                'access_token' => $this->shortLivedToken,
+            ]);
+
+            if ($response->successful()) {
+                return $response->json();
+            }
+
+            Log::error("Failed to fetch media {$mediaId}: {$response->status()} | {$response->body()}");
+            return null;
+
+        } catch (\Exception $e) {
+            Log::error("Exception fetching media {$mediaId}: " . $e->getMessage());
+            return null;
+        }
     }
 }

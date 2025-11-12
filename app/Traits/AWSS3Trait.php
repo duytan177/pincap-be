@@ -3,6 +3,8 @@
 namespace App\Traits;
 
 use App\Enums\Album_Media\MediaType;
+use Aws\Exception\AwsException;
+use Aws\S3\S3Client;
 use Illuminate\Support\Facades\Storage;
 use GuzzleHttp\Promise\Utils;
 use Illuminate\Support\Facades\Log;
@@ -15,22 +17,68 @@ trait AWSS3Trait
     const COMMENT = "comment";
     const REPLY = "reply";
 
+
+    private S3Client $s3Client;
+
+    // Khởi tạo S3Client khi trait được dùng
+    private function initS3Client(): void
+    {
+        $this->s3Client = new S3Client([
+            'version' => 'latest',
+            'region' => config('filesystems.disks.s3.region'),
+            'credentials' => [
+                'key' => config('filesystems.disks.s3.key'),
+                'secret' => config('filesystems.disks.s3.secret'),
+            ],
+        ]);
+    }
+
     public function uploadToS3($file, $type)
     {
+        if (!isset($this->s3Client)) {
+            $this->initS3Client();
+        }
+
         $fileName = time() . "-" . $file->getClientOriginalName();
         $mediaFolder = config("common.folders_s3.$type");
         $filePath = $mediaFolder . "/" . $fileName;
 
-        Storage::disk('s3')->put($filePath, file_get_contents($file));
+        try {
+            $result = $this->s3Client->upload(
+                config('filesystems.disks.s3.bucket'),
+                $filePath,
+                fopen($file->getRealPath(), 'rb'), // stream thay vì load toàn bộ file
+                'public-read'
+            );
 
-        return Storage::disk('s3')->url($filePath);
+            return $result->get('ObjectURL'); // trả về URL S3
+        } catch (AwsException $e) {
+            Log::error("❌ Upload lỗi file {$fileName}: " . $e->getMessage());
+            throw $e;
+        }
+        // Storage::disk('s3')->put($filePath, file_get_contents($file));
+
+        // return Storage::disk('s3')->url($filePath);
     }
 
     public function deleteFromS3($fileUrl)
     {
+        if (!isset($this->s3Client)) {
+            $this->initS3Client();
+        }
+
         $path = parse_url(urldecode($fileUrl), PHP_URL_PATH);
         $path = ltrim($path, '/');
-        Storage::disk('s3')->delete($path);
+        try {
+            $this->s3Client->deleteObject([
+                'Bucket' => config('filesystems.disks.s3.bucket'),
+                'Key' => $path,
+            ]);
+        } catch (AwsException $e) {
+            Log::error("❌ Delete lỗi file {$fileUrl}: " . $e->getMessage());
+        }
+
+        // Storage::disk('s3')->delete($path);
     }
 
     private function handleMediaFile($file)
@@ -107,6 +155,90 @@ trait AWSS3Trait
         ksort($results);
 
         Log::info("🏁 All uploads completed successfully! Total files: " . count($results));
+
+        return array_values($results);
+    }
+
+
+    // ========================== UPLOAD URL ==========================
+
+    private function uploadUrlToS3(string $url, string $type): string
+    {
+        if (!isset($this->s3Client))
+            $this->initS3Client();
+
+        $fileName = time() . '-' . basename(parse_url($url, PHP_URL_PATH));
+        $mediaFolder = config("common.folders_s3.$type");
+        $filePath = "$mediaFolder/$fileName";
+
+        try {
+            $stream = fopen($url, 'rb');
+            if (!$stream)
+                throw new \Exception("Cannot open URL: $url");
+
+            $result = $this->s3Client->upload(
+                config('filesystems.disks.s3.bucket'),
+                $filePath,
+                $stream,
+                'public-read'
+            );
+
+            fclose($stream);
+            return $result->get('ObjectURL');
+        } catch (AwsException $e) {
+            Log::error("❌ Upload lỗi file {$fileName} từ URL {$url}: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    private function handleMediaUrl(string $url): array
+    {
+        $headers = get_headers($url, 1);
+        $mimeType = $headers['Content-Type'] ?? 'application/octet-stream';
+        if (is_array($mimeType)) {
+            $mimeType = $mimeType[0];
+        }
+        [$type, $mediaType] = $this->getTypeMedia($mimeType);
+        $mediaUrl = $this->uploadUrlToS3($url, $mediaType);
+
+        return [
+            'type' => $type,
+            'media_url' => $mediaUrl,
+        ];
+    }
+
+    public function handleMediaUrlsWithConcurrency(array $urls, int $concurrency = 3): array
+    {
+        $results = [];
+        Log::info("Starting URL upload process with concurrency: {$concurrency}");
+
+        $chunks = array_chunk($urls, $concurrency, true);
+
+        foreach ($chunks as $batchIndex => $batch) {
+            Log::info("Running batch {$batchIndex} (up to {$concurrency} URLs in parallel)");
+
+            $promises = [];
+
+            foreach ($batch as $index => $url) {
+                $promises[$index] = \GuzzleHttp\Promise\Create::promiseFor(null)
+                    ->then(function () use ($url, $index, &$results) {
+                        $results[$index] = $this->handleMediaUrl($url);
+                        Log::info("✅ Finished uploading URL #{$index}");
+                    })
+                    ->otherwise(function ($e) use ($index, $url) {
+                        Log::error("❌ Upload lỗi URL #{$index}: {$url} | " . $e->getMessage());
+                        throw $e;
+                    });
+            }
+
+            Utils::settle($promises)->wait();
+            unset($promises);
+            gc_collect_cycles();
+            usleep(100_000);
+        }
+
+        ksort($results);
+        Log::info("🏁 All URL uploads completed successfully! Total: " . count($results));
 
         return array_values($results);
     }
