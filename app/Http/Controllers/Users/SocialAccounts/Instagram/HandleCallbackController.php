@@ -25,7 +25,7 @@ class HandleCallbackController extends Controller
             $accessToken = $facebookUser->token;
             $accessTokenExpiresAt = Carbon::now()->addHour();
             $fbService = new FacebookInstagramService($accessToken);
-            $fbService->exchangeLongLivedToken();
+            $fbService->exchangeLongLivedToken($user->id);
 
             $pages = $fbService->getUserPages();
             if (empty($pages)) {
@@ -45,7 +45,7 @@ class HandleCallbackController extends Controller
             $igDetail = $fbService->getInstagramDetails($igBizId);
 
             $tokenData = $fbService->getLongLivedToken();
-            UserSocialAccount::firstOrCreate(
+            UserSocialAccount::UpdateOrCreate(
                 [
                     'user_id' => $user->id,
                     'social_id' => $igDetail['id'],
