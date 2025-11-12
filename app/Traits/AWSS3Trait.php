@@ -193,7 +193,11 @@ trait AWSS3Trait
 
     private function handleMediaUrl(string $url): array
     {
-        $mimeType = mime_content_type($url);
+        $headers = get_headers($url, 1);
+        $mimeType = $headers['Content-Type'] ?? 'application/octet-stream';
+        if (is_array($mimeType)) {
+            $mimeType = $mimeType[0];
+        }
         [$type, $mediaType] = $this->getTypeMedia($mimeType);
         $mediaUrl = $this->uploadUrlToS3($url, $mediaType);
 

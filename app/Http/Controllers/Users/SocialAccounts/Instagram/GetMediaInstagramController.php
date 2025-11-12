@@ -34,7 +34,11 @@ class GetMediaInstagramController extends Controller
                 return response()->json(['message' => 'Invalid next cursor'], 400);
             }
         } else {
-            $firstPage = $fbService->getUserPages()[0] ?? null;
+            $pages = $fbService->getUserPages();
+            if (empty($pages)) {
+                return response()->json(['message' => 'No Facebook pages found for this user.'], 404);
+            }
+            $firstPage = $pages[0];
             $igBizId = $fbService->getInstagramBusinessId($firstPage['id'] ?? '');
             $mediaData = $fbService->getInstagramMediaWithCursor($igBizId, $limit);
         }
