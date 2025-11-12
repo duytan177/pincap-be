@@ -4,10 +4,13 @@ namespace App\Http\Controllers\Users\SocialAccounts\Instagram;
 
 use App\Enums\User\SocialType;
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use App\Models\UserSocialAccount;
 use App\Services\FacebookInstagramService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Laravel\Socialite\Facades\Socialite;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -16,12 +19,29 @@ class HandleCallbackController extends Controller
 {
     public function __invoke(Request $request)
     {
+        $state = $request->get('state');
+        try {
+            $payload = Crypt::decryptString($state);
+            $data = json_decode($payload, true);
+
+            $userId = $data['user_id'] ?? null;
+            $timestamp = $data['ts'] ?? null;
+
+            // Optional: expire after 10 minutes
+            if (!$userId || !$timestamp || $timestamp < time() - 600) {
+                abort(403, 'Invalid or expired state.');
+            }
+
+            $user = User::findOrFail($userId);
+
+            // Authenticate the user
+            Auth::login($user);
+        } catch (\Exception $e) {
+            abort(403, 'Invalid or tampered state.');
+        }
         DB::beginTransaction();
 
         try {
-            $state = $request->get('state');
-            $user = JWTAuth::setToken($state)->authenticate();
-
             $facebookUser = Socialite::driver('facebook')->stateless()->user();
             $accessToken = $facebookUser->token;
             $accessTokenExpiresAt = Carbon::now()->addHour();

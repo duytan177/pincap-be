@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Users\SocialAccounts\Instagram;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
 use Laravel\Socialite\Facades\Socialite;
-use Illuminate\Support\Str;
 
 class GetUrlRedirectController extends Controller
 {
@@ -25,11 +25,18 @@ class GetUrlRedirectController extends Controller
             'pages_manage_posts',
         ];
 
+        $user = $request->user();
+        $payload = json_encode([
+            'user_id' => $user->id,
+            'ts' => time(),
+        ]);
+        $state = Crypt::encryptString($payload);
+
         // Dùng Socialite để tạo URL có scope + state
         $redirectUrl = Socialite::driver('facebook')
             ->scopes($scopes)
             ->stateless()
-            ->with(['state' => $request->bearerToken()])
+            ->with(['state' => $state])
             ->redirect()
             ->getTargetUrl();
 

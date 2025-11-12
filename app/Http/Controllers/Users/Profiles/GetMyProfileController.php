@@ -18,9 +18,11 @@ class GetMyProfileController extends Controller
         ]);
         if ($user->socialInstagram) {
             $social = $user->socialInstagram;
-            // Call exchange token for get new long-lived token and update into database
-            $fbService = new FacebookInstagramService($social->refresh_token);
-            $fbService->exchangeLongLivedToken($user->id, $social->social_id);
+            // Only refresh if the token expires in the next 7 days
+            if (\Carbon\Carbon::parse($social->refresh_token_expired)->isBefore(now()->addDays(7))) {
+                $fbService = new FacebookInstagramService($social->refresh_token);
+                $fbService->exchangeLongLivedToken($user->id, $social->social_id);
+            }
         }
         return ProfileResource::make($user);
     }
