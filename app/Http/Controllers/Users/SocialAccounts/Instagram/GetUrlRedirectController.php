@@ -3,12 +3,13 @@
 namespace App\Http\Controllers\Users\SocialAccounts\Instagram;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Support\Str;
 
 class GetUrlRedirectController extends Controller
 {
-    public function __invoke()
+    public function __invoke(Request $request)
     {
         // Danh sách permission (dấu phẩy ngăn cách)
         $scopes = [
@@ -28,7 +29,7 @@ class GetUrlRedirectController extends Controller
         $redirectUrl = Socialite::driver('facebook')
             ->scopes($scopes)
             ->stateless()
-            ->with(['state' => Str::random(16)])
+            ->with(['state' => $request->bearerToken()])
             ->redirect()
             ->getTargetUrl();
 

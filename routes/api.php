@@ -108,11 +108,6 @@ Route::middleware(["auth:api"])->group(function () {
 
         Route::get("/search", SearchUserOrTagNameController::class);
         Route::get('/find', SearchUsersController::class);
-
-        Route::prefix("/facebook")->group(function () {
-            Route::get("/url", \App\Http\Controllers\Users\SocialAccounts\Instagram\GetUrlRedirectController::class);
-            Route::get("/callback", \App\Http\Controllers\Users\SocialAccounts\Instagram\HandleCallbackController::class);
-        });
     });
     Route::prefix("/instagram")->group(function () {
         Route::get("/medias", \App\Http\Controllers\Users\SocialAccounts\Instagram\GetMediaInstagramController::class);
@@ -209,7 +204,11 @@ Route::group([], function () {
         Route::get("/google/callback", HandleCallbackController::class);
     });
 
-    // Route::prefix("/users")->group(function () {
+    Route::prefix("/users")->group(function () {
+        Route::prefix("/facebook")->group(function () {
+            Route::get("/url", \App\Http\Controllers\Users\SocialAccounts\Instagram\GetUrlRedirectController::class)->middleware(["auth:api"]);
+            Route::get("/callback", \App\Http\Controllers\Users\SocialAccounts\Instagram\HandleCallbackController::class);
+        });
     //     Route::prefix("/profiles")->group(function () {
     //         Route::get("/{userId}", GetProfileUserByIdController::class);
     //     });
@@ -223,7 +222,7 @@ Route::group([], function () {
 
     //     Route::get("/search", SearchUserOrTagNameController::class);
     //     Route::get('/find', SearchUsersController::class);
-    // });
+    });
 
     // Route::prefix("/medias")->group(function () {
     //     Route::get("/", GetListMediaByUserIdController::class);

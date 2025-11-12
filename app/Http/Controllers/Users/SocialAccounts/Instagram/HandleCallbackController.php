@@ -19,7 +19,8 @@ class HandleCallbackController extends Controller
         DB::beginTransaction();
 
         try {
-            $user = JWTAuth::parseToken()->authenticate();
+            $state = $request->get('state');
+            $user = JWTAuth::setToken($state)->authenticate();
 
             $facebookUser = Socialite::driver('facebook')->stateless()->user();
             $accessToken = $facebookUser->token;
