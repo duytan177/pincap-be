@@ -26,7 +26,7 @@ class FacebookInstagramService
     /**
      * Đổi short-lived token sang long-lived token
      */
-    public function exchangeLongLivedToken(string $userId): void
+    public function exchangeLongLivedToken(string $userId, string $socialId): void
     {
         $url = $this->baseUrl . config('services.facebook.exchange_url');
         $response = Http::get($url, [
@@ -42,6 +42,7 @@ class FacebookInstagramService
         UserSocialAccount::UpdateOrCreate(
             [
                 'user_id' => $userId,
+                'social_id' => $socialId,
                 'social_type' => SocialType::INSTAGRAM,
             ],
             [
