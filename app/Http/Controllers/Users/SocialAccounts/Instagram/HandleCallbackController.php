@@ -13,7 +13,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Laravel\Socialite\Facades\Socialite;
-use Tymon\JWTAuth\Facades\JWTAuth;
 
 class HandleCallbackController extends Controller
 {
@@ -33,9 +32,6 @@ class HandleCallbackController extends Controller
             }
 
             $user = User::findOrFail($userId);
-
-            // Authenticate the user
-            Auth::login($user);
         } catch (\Exception $e) {
             abort(403, 'Invalid or tampered state.');
         }
@@ -63,7 +59,7 @@ class HandleCallbackController extends Controller
             }
 
             $igDetail = $fbService->getInstagramDetails($igBizId);
-
+            $fbService->exchangeLongLivedToken($user->id, $igDetail["id"]);
             $tokenData = $fbService->getLongLivedToken();
             UserSocialAccount::UpdateOrCreate(
                 [
