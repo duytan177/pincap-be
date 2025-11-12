@@ -5,6 +5,7 @@ namespace App\Services;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class FacebookInstagramService
 {
@@ -24,7 +25,7 @@ class FacebookInstagramService
     /**
      * Đổi short-lived token sang long-lived token
      */
-    protected function exchangeLongLivedToken(): void
+    public function exchangeLongLivedToken(): void
     {
         $url = $this->baseUrl . config('services.facebook.exchange_url');
         $response = Http::get($url, [
@@ -101,7 +102,7 @@ class FacebookInstagramService
             'access_token' => $this->shortLivedToken,
         ])->json();
 
-        return $this->formatMedia($response["media"] ?? []);
+        return $response["media"] ?? [];
     }
 
     public function getInstagramMediaWithCursorAfter($after)
@@ -122,7 +123,6 @@ class FacebookInstagramService
         $pagingCursors = data_get($response, 'paging.cursors', []);
         $previous = data_get($response, 'paging.previous', null);
         $next = data_get($response, 'paging.next', null);
-
         return [
             'data' => $media,
             'paging' => [
@@ -131,5 +131,33 @@ class FacebookInstagramService
                 'next' => $next ? Crypt::encryptString($next) : null,
             ],
         ];
+    }
+
+    /**
+     * Lấy chi tiết media theo một ID
+     *
+     * @param string $mediaId
+     * @return array|null
+     */
+    public function getMediaDetail(string $mediaId): ?array
+    {
+        try {
+            $url = "{$this->baseUrl}/{$mediaId}";
+            $response = Http::get($url, [
+                'fields' => 'id,caption,media_type,media_url,thumbnail_url,permalink,timestamp,username,children{id,media_type,media_url,permalink}',
+                'access_token' => $this->shortLivedToken,
+            ]);
+
+            if ($response->successful()) {
+                return $response->json();
+            }
+
+            Log::error("Failed to fetch media {$mediaId}: {$response->status()} | {$response->body()}");
+            return null;
+
+        } catch (\Exception $e) {
+            Log::error("Exception fetching media {$mediaId}: " . $e->getMessage());
+            return null;
+        }
     }
 }
