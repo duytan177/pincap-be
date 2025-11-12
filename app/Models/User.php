@@ -108,6 +108,22 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
         ];
     }
 
+     /**
+     * Nếu avatar null → trả default trong config
+     */
+    public function getAvatarAttribute($value): string
+    {
+        return $value ?: config('common.avatar_default');
+    }
+
+    /**
+     * Nếu background null → trả default trong config
+     */
+    public function getBackgroundAttribute($value): string
+    {
+        return $value ?: config('common.background_default');
+    }
+
 
     public function getRoleAttribute($value)
     {
