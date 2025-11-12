@@ -13,13 +13,13 @@ class GetMyProfileController extends Controller
     {
         $user = JWTAuth::user()->loadCount(["followers", "followees", "medias", "reactionMedia"])->load([
             "socialInstagram" => function ($query) {
-                $query->select(['id', 'user_id', 'name', 'avatar', 'permalink', 'social_id']);
+                $query->select(['id', 'user_id', 'name', 'avatar', 'permalink', 'social_id', "refresh_token_expired"]);
             }
         ]);
         if ($user->socialInstagram) {
             $social = $user->socialInstagram;
-            // Only refresh if the token expires in the next 7 days
-            if (\Carbon\Carbon::parse($social->refresh_token_expired)->isBefore(now()->addDays(7))) {
+            // Only refresh if the token expires in the next 70 days
+            if (\Carbon\Carbon::parse($social->refresh_token_expired)->isBefore(now()->addDays(30))) {
                 $fbService = new FacebookInstagramService($social->refresh_token);
                 $fbService->exchangeLongLivedToken($user->id, $social->social_id);
             }
