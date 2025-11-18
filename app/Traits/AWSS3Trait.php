@@ -209,7 +209,7 @@ trait AWSS3Trait
                 $stream,
             );
 
-            fclose($stream);
+            // fclose($stream);
             return $result->get('ObjectURL');
         } catch (AwsException $e) {
             Log::error("❌ Upload lỗi file {$fileName} từ URL {$url}: " . $e->getMessage());
