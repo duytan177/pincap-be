@@ -67,6 +67,7 @@ use App\Http\Controllers\Users\Relationships\UnFollowOrUnBlockController;
 use App\Http\Controllers\Users\Reports\ReportUserController;
 use App\Http\Controllers\Users\SearchUserOrTagNameController;
 use App\Http\Controllers\Users\SearchUsersController;
+use App\Http\Controllers\Users\SocialAccounts\Instagram\InstagramMediaSyncController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/health-check', function () {
@@ -111,6 +112,7 @@ Route::middleware(["auth:api"])->group(function () {
     });
     Route::prefix("/instagram")->group(function () {
         Route::get("/medias", \App\Http\Controllers\Users\SocialAccounts\Instagram\GetMediaInstagramController::class);
+        Route::post("/medias/async", InstagramMediaSyncController::class);
     });
 
     Route::prefix("/medias")->group(function () {

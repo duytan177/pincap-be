@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Enums\User\SocialType;
 use App\Models\UserSocialAccount;
+use App\Traits\AWSS3Trait;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Http;
@@ -16,6 +17,8 @@ class FacebookInstagramService
     protected Carbon $longLivedTokenExpiresAt;
     protected string $baseUrl;
 
+
+    use AWSS3Trait;
 
     public function __construct(string $shortLivedToken)
     {
@@ -174,5 +177,104 @@ class FacebookInstagramService
             Log::error("Exception fetching media {$mediaId}: " . $e->getMessage());
             return null;
         }
+    }
+
+    /**
+     * Fetch many Instagram media details + upload to S3 in parallel.
+     *
+     * @param string[] $ids
+     * @param int      $apiConcurrency  Max parallel Instagram API calls (default: 5)
+     * @return array   [id => media data]
+     */
+    public function getMultipleMediaDetailsUpdate(array $ids, int $apiConcurrency = 5): array
+    {
+        if (empty($ids)) {
+            return [];
+        }
+
+        // -----------------------------------------------------------------
+        // 1. Build a pool of Instagram API requests
+        // -----------------------------------------------------------------
+        $responses = Http::pool(function ($pool) use ($ids) {
+            return collect($ids)->map(function ($id) use ($pool) {
+                return $pool->get("{$this->baseUrl}/{$id}", [
+                    'fields' => 'id,caption,media_type,media_url,thumbnail_url,permalink,timestamp,username,children{id,media_type,media_url,permalink}',
+                    'access_token' => $this->shortLivedToken,
+                ]);
+            })->all();
+        }, $apiConcurrency);
+
+        // -----------------------------------------------------------------
+        // 2. Process responses in original order
+        // -----------------------------------------------------------------
+        $results = [];
+        foreach ($responses as $index => $response) {
+            $id = $ids[$index];
+
+            try {
+                if (!$response->successful()) {
+                    $results[$id] = [
+                        'error' => true,
+                        'status' => $response->status(),
+                        'message' => $response->body(),
+                    ];
+                    continue;
+                }
+
+                $media = $response->json();
+                Log::info("Fetched Instagram media {$id}", $media);
+
+                $mediaType = $media['media_type'] ?? null;
+
+                // --------------------- SINGLE MEDIA ---------------------
+                if (in_array($mediaType, ['IMAGE', 'VIDEO'])) {
+                    $uploaded = $this->handleMediaUrl($media['media_url']);
+                    $media['media_url'] = $uploaded['media_url'];
+                    $media['type'] = $uploaded['type'];
+                }
+
+                // --------------------- CAROUSEL ALBUM -------------------
+                elseif ($mediaType === 'CAROUSEL_ALBUM' && !empty($media['children']['data'])) {
+                    $childUrls = collect($media['children']['data'])
+                        ->pluck('media_url')
+                        ->filter()
+                        ->values()
+                        ->toArray();
+
+                    $uploadedChildren = $this->handleMediaUrlsWithConcurrency($childUrls, 3);
+                    $media['media_url'] = array_column($uploadedChildren, 'media_url');
+                    $media['type'] = null;
+                }
+
+                $results[$id] = $this->formatInstagramMedia($media);
+
+            } catch (\Throwable $e) {
+                Log::error("Lỗi xử lý media {$id}: " . $e->getMessage());
+                $results[$id] = [
+                    'error' => true,
+                    'exception' => $e->getMessage(),
+                ];
+            }
+        }
+
+        return $results;
+
+    }
+
+    /**
+     * Format Instagram media to return only required fields.
+     *
+     * @param array $media
+     * @return array
+     */
+    private function formatInstagramMedia(array $media): array
+    {
+        return [
+            'media_social_id' => $media['id'] ?? null,
+            'media_name' => $media['caption'] ?? null,
+            'type' => $media['type'] ?? null,
+            'media_url' => $media['media_url'] ?? null,
+            'permalink' => $media['permalink'] ?? null,
+        ];
     }
 }
