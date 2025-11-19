@@ -201,7 +201,7 @@ class FacebookInstagramService
                     'fields' => 'id,caption,media_type,media_url,thumbnail_url,permalink,timestamp,username,children{id,media_type,media_url,permalink}',
                     'access_token' => $this->shortLivedToken,
                 ]);
-            });
+            })->all();
         }, $apiConcurrency);
 
         // -----------------------------------------------------------------
@@ -246,7 +246,7 @@ class FacebookInstagramService
                     $media['type'] = null;
                 }
 
-                $results[] = $this->formatInstagramMedia($media);
+                $results[$id] = $this->formatInstagramMedia($media);
 
             } catch (\Throwable $e) {
                 Log::error("Lỗi xử lý media {$id}: " . $e->getMessage());

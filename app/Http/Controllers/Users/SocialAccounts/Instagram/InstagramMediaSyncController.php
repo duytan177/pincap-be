@@ -21,7 +21,7 @@ class InstagramMediaSyncController extends Controller
             return response()->json(['message' => 'Instagram account not linked'], 404);
         }
 
-        $fbService = new FacebookInstagramService($socialInstagram->refresh_token);
+        $fbService = new FacebookInstagramService($socialInstagram->access_token);
 
         // Check existing media to avoid duplicates
         $allMediaSocialIds = Media::where('media_owner_id', $user->id)
@@ -35,7 +35,8 @@ class InstagramMediaSyncController extends Controller
         $results = [];
 
         foreach ($chunks as $chunk) {
-            $results += $fbService->getMultipleMediaDetailsUpdate($chunk);
+            $chunkResults = $fbService->getMultipleMediaDetailsUpdate($chunk);
+            $results = array_merge($results, $chunkResults);
             usleep(100000); // 0.1s delay to avoid hitting API limits
         }
 
@@ -45,6 +46,10 @@ class InstagramMediaSyncController extends Controller
         $records = [];
 
         foreach ($results as $media) {
+            // Skip errored items
+            if (isset($media['error'])) {
+                continue;
+            }
             $records[] = [
                 'media_social_id' => $media['media_social_id'],
                 'media_name' => $media['media_name'],
