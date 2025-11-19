@@ -230,7 +230,7 @@ class FacebookInstagramService
                 if (in_array($mediaType, ['IMAGE', 'VIDEO'])) {
                     $uploaded = $this->handleMediaUrl($media['media_url']);
                     $media['media_url'] = $uploaded['media_url'];
-                    $media['media_type'] = $uploaded['type'];
+                    $media['type'] = $uploaded['type'];
                 }
 
                 // --------------------- CAROUSEL ALBUM -------------------
@@ -243,10 +243,10 @@ class FacebookInstagramService
 
                     $uploadedChildren = $this->handleMediaUrlsWithConcurrency($childUrls, 3);
                     $media['media_url'] = array_column($uploadedChildren, 'media_url');
-                    $media['media_type'] = null;
+                    $media['type'] = null;
                 }
 
-                $results[$id] = $media;
+                $results[] = $this->formatInstagramMedia($media);
 
             } catch (\Throwable $e) {
                 Log::error("Lỗi xử lý media {$id}: " . $e->getMessage());
@@ -258,31 +258,23 @@ class FacebookInstagramService
         }
 
         return $results;
-        
+
     }
 
     /**
-     * 🧩 Format upload results for the final response
+     * Format Instagram media to return only required fields.
      *
-     * Rules:
-     * - If multiple files uploaded → return `type = null`
-     *   and `media_url` as a JSON string of all URLs.
+     * @param array $media
+     * @return array
      */
-    private function formatFinalResultMedia(array $results): array
+    private function formatInstagramMedia(array $media): array
     {
-        if (empty($results)) {
-            return [
-                'type' => null,
-                'media_url' => null,
-            ];
-        }
-
-        // ✅ Multiple files: collect all URLs into JSON array
-        $urls = array_column($results, 'media_url');
-
         return [
-            'type' => null,
-            'media_url' => json_encode($urls), // ["url1","url2","url3"]
+            'media_social_id' => $media['id'] ?? null,
+            'media_name' => $media['caption'] ?? null,
+            'type' => $media['type'] ?? null,
+            'media_url' => $media['media_url'] ?? null,
+            'permalink' => $media['permalink'] ?? null,
         ];
     }
 }

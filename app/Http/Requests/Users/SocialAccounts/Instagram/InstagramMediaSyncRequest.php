@@ -14,7 +14,7 @@ class InstagramMediaSyncRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'ids' => 'required|array',
+            'ids' => 'required|array|max:100',
             'ids.*' => 'required|string', // mỗi id phải là string
         ];
     }
