@@ -22,7 +22,7 @@ class SearchUserOrTagNameController extends Controller
         }
 
         $users = User::whereDoesntHave('blockedUsers', function ($query) use ($userId) {
-            $query->where('follower_id', $userId);
+            $query->where('followee_id', $userId);
         })->select("id", DB::raw("CONCAT(first_name, ' ', last_name) as name"), 'avatar')
             ->where("first_name", "like", $textSearch)
             ->orWhere("last_name", "like", $textSearch)

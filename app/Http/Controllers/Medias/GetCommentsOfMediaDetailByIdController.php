@@ -21,7 +21,7 @@ class GetCommentsOfMediaDetailByIdController extends Controller
             ->with(["feelings", "userComment.followers", "replies"])
             ->where("media_id", $mediaId)
             ->whereDoesntHave('userComment.blockedUsers', function ($query) use ($userId) {
-                $query->where('follower_id', $userId);
+                $query->where('followee_id', $userId);
             })
             ->paginateOrAll($request);
 

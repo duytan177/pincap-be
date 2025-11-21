@@ -22,12 +22,12 @@ class GetFollowerOrFollweeByIdController extends Controller
             $followRelationship->with("followers");
         }
 
+
         $followRelationship = $followRelationship
             ->whereDoesntHave('blockedUsers', function ($query) use ($userAuthId) {
-                $query->where('follower_id', $userAuthId);
+                $query->where('followee_id', $userAuthId);
             })
             ->paginateOrAll($request);
-
         return FollowCollection::make($followRelationship);
     }
 }

@@ -23,7 +23,7 @@ class SearchUsersController extends Controller
         }
 
         $users = User::whereDoesntHave('blockedUsers', function ($query) use ($userId) {
-            $query->where('follower_id', $userId);
+            $query->where('followee_id', $userId);
         })->withCount("followers")->where(function ($query) use ($textSearch) {
             $query->where("first_name", "like", $textSearch)
                 ->orWhere("last_name", "like", $textSearch)
