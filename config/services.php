@@ -59,5 +59,10 @@ return [
 
     'kafka' => [
         'kafka_brokers' => env('IP_SERVICE_URL', 'localhost') . ":" . env('KAFKA_BROKERS_PORT', 9092),
+    ],
+
+    "eslasticsearch" => [
+        "host" => env('ELASTICSEARCH_HOST', 'localhost:9200')
     ]
 ];
+
