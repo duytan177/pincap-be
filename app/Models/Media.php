@@ -78,6 +78,7 @@ class Media extends Model
             "is_comment" => "boolean",
             "safe_search_data" => "array",
             "is_policy_violation" => "boolean",
+            'media_url' => "array",
         ];
     }
 
