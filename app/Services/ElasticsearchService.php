@@ -16,7 +16,7 @@ class ElasticsearchService
     private function __construct()
     {
         $this->client = ClientBuilder::create()
-            ->setHosts([config('services.eslasticsearch.host')])
+            ->setHosts([config('services.elasticsearch.host')])
             ->build();
     }
 
@@ -48,5 +48,13 @@ class ElasticsearchService
         ]);
         return $response->asArray();
 
+    }
+
+    // 🔥 Bulk Update
+    public function bulkUpdate(array $body): array
+    {
+        return $this->client->bulk([
+            'body' => $body
+        ])->asArray();
     }
 }

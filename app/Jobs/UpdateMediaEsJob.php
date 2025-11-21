@@ -14,7 +14,7 @@ class UpdateMediaEsJob implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected array $mediaIds;
-    const INDEX = 'media_embeddings_test_v3';
+
     public function __construct(array $mediaIds)
     {
         $this->mediaIds = $mediaIds;
@@ -23,12 +23,30 @@ class UpdateMediaEsJob implements ShouldQueue
     public function handle()
     {
         $es = ElasticsearchService::getInstance();
+        $index = config('services.elasticsearch.index');
+
+        $paramUpdate = [
+            'is_deleted' => true,
+            'updated_at' => now()->toDateTimeString(),
+        ];
+
+        // 🔥 Build bulk body
+        $bulkBody = [];
 
         foreach ($this->mediaIds as $mediaId) {
-            $es->updateDocument(self::INDEX, $mediaId, [
-                'is_deleted' => true,
-                'updated_at' => now()->toDateTimeString(),
-            ]);
+            $bulkBody[] = [
+                'update' => [
+                    '_index' => $index,
+                    '_id'    => $mediaId,
+                ]
+            ];
+
+            $bulkBody[] = [
+                'doc' => $paramUpdate
+            ];
         }
+
+        // 🔥 Execute bulk update
+        $es->bulkUpdate($bulkBody);
     }
 }
