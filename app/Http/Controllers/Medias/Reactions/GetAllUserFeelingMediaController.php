@@ -26,7 +26,7 @@ class GetAllUserFeelingMediaController extends Controller
         $reactionUser = $reactionUser
             ->with("feelings")
             ->whereDoesntHave('blockedUsers', function ($query) use ($userId) {
-                $query->where('follower_id', $userId);
+                $query->where('followee_id', $userId);
             })
             ->paginateOrAll($request);
 

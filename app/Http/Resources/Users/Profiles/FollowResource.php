@@ -27,12 +27,18 @@ class FollowResource extends BaseResource
     {
         $data = $this->resource->only(self::$attributes);
         $relationship = $request->input("relationship", "followers");
-
+        $followRelationship = match ($relationship) {
+            'followers' => "follower_id",
+            'followees' => "followee_id",
+        };
         $userCurrent = $this->getUserFromToken($this->getBearerToken($request));
 
         if ($relationship === "followers" && $userCurrent && $userCurrent->getAttribute("id") != $this->resource->id) {
             $data['isFollowing'] = $this->resource->followers->contains('id', $userCurrent->getAttribute("id"));
         }
+
+        $data[$followRelationship] = $this->resource->$followRelationship;
+
         return $data;
     }
 }

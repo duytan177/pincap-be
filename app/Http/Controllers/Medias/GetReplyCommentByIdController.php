@@ -21,7 +21,7 @@ class GetReplyCommentByIdController extends Controller
         $replies = Reply::withCount("allFeelings")
             ->with(["feelings", "userComment.followers"])
             ->whereDoesntHave('userComment.blockedUsers', function ($query) use ($userId) {
-                $query->where('follower_id', $userId);
+                $query->where('followee_id', $userId);
             })
             ->where("comment_id", $commentId)->paginateOrAll($request);
 

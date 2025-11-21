@@ -28,7 +28,7 @@ class GetDetailFeelingMediaController extends Controller
             $query->with('userReaction');
         }
         $query->whereDoesntHave('userReaction.blockedUsers', function ($query) use ($userId) {
-            $query->where('follower_id', $userId);
+            $query->where('followee_id', $userId);
         });
         $reactionMedia = $query->paginateOrAll($request);
         return UserFeelingCollection::make($reactionMedia);

@@ -10,11 +10,13 @@ use App\Http\Requests\Medias\UpdateMediaRequest;
 use App\Http\Resources\Medias\Media\MediaResource;
 use App\Models\AlbumMedia;
 use App\Models\Media;
+use App\Services\KafkaProducerService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 
 class UpdateMediaController extends Controller
 {
+    public const TOPIC = "user_behavior";
     public function __invoke($mediaId, UpdateMediaRequest $request)
     {
         $userId = Auth::user()->id;
@@ -45,6 +47,17 @@ class UpdateMediaController extends Controller
 
         $media->updateOrFail($mediaData);
         if ($media->getAttribute("is_created")) {
+            $data = json_encode([
+                'media_id' => $media->getAttribute("id"),
+                "media_url" => $media->getAttribute("media_url"),
+                "media_name" => $media->getAttribute("media_name"),
+                "description" => $media->getAttribute("description"),
+                "tag_name" => $media->tags->pluck("tag_name")->implode(', '),
+                "user_id" => $media->getAttribute("media_owner_id"),
+                'timestamp' => now()->toISOString(),
+            ]);
+            (new KafkaProducerService(self::TOPIC))->send($data);
+
             event(new MediaCreatedEvent($media));
         }
         return response()->json(["message" => "Update media successfully", "media" => MediaResource::make($media)], 201);
