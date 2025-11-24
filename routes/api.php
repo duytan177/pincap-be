@@ -112,7 +112,7 @@ Route::middleware(["auth:api"])->group(function () {
     });
     Route::prefix("/instagram")->group(function () {
         Route::get("/medias", \App\Http\Controllers\Users\SocialAccounts\Instagram\GetMediaInstagramController::class);
-        Route::post("/medias/async", InstagramMediaSyncController::class);
+        Route::post("/medias/sync", InstagramMediaSyncController::class);
     });
 
     Route::prefix("/medias")->group(function () {

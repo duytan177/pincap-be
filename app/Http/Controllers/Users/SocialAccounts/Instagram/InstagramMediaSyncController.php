@@ -57,6 +57,7 @@ class InstagramMediaSyncController extends Controller
                 'media_url' => json_encode($media['media_url']),
                 'permalink' => $media['permalink'],
                 'media_owner_id' => $user->id,
+                'is_created' => true,
             ];
         }
 
