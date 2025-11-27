@@ -28,6 +28,7 @@ class MediaDetailResource extends BaseResource
         "reaction_user_count",
         "safe_search_data",
         "is_policy_violation",
+        "permalink"
     ];
 
     /**
