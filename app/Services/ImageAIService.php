@@ -104,7 +104,7 @@ class ImageAIService
             foreach ($data['files'] as $i => $file) {
                 $request = $request->attach(
                     "files[$i]",
-                    file_get_contents($file),
+                    $file->get(),
                     $file->getClientOriginalName()
                 );
             }

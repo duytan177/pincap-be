@@ -26,7 +26,7 @@ class CreateMediaByAIController extends Controller
             Log::info('Request Data', ['data' => $request->all()]);
 
             $imageUrl = $request->input("imageUrl");
-            $files = $request->input("files");
+            $files = $request->file("files");
 
             if (!$data["prompt"]) {
                 return response()->json(['error' => 'Prompt is required'], 400);
