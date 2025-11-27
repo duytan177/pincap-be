@@ -50,6 +50,7 @@ use App\Http\Controllers\Medias\Reactions\ToggleReactionReplyController;
 use App\Http\Controllers\Albums\GetUserInAlbumController;
 use App\Http\Controllers\Albums\UpdateMemberRoleController;
 use App\Http\Controllers\Albums\RemoveMemberFromAlbumController;
+use App\Http\Controllers\Medias\SearchMediaByImageController;
 use App\Http\Controllers\Notifications\DeleteNotificationByIdController;
 use App\Http\Controllers\Notifications\GetAllMeNotificationController;
 use App\Http\Controllers\Notifications\MarkReadAllNotificationController;
@@ -155,6 +156,9 @@ Route::middleware(["auth:api"])->group(function () {
                 Route::post("/reactions", ToggleReactionReplyController::class);
             });
         });
+
+        Route::post('/search-by-image', SearchMediaByImageController::class);
+
     });
 
     Route::prefix("/albums")->group(function () {
@@ -211,19 +215,19 @@ Route::group([], function () {
             Route::get("/url", \App\Http\Controllers\Users\SocialAccounts\Instagram\GetUrlRedirectController::class)->middleware(["auth:api"]);
             Route::get("/callback", \App\Http\Controllers\Users\SocialAccounts\Instagram\HandleCallbackController::class);
         });
-    //     Route::prefix("/profiles")->group(function () {
-    //         Route::get("/{userId}", GetProfileUserByIdController::class);
-    //     });
-    //     Route::prefix("/relationships")->group(function () {
-    //         Route::get("/{userId}", GetFollowerOrFollweeByIdController::class);
-    //     });
+        //     Route::prefix("/profiles")->group(function () {
+        //         Route::get("/{userId}", GetProfileUserByIdController::class);
+        //     });
+        //     Route::prefix("/relationships")->group(function () {
+        //         Route::get("/{userId}", GetFollowerOrFollweeByIdController::class);
+        //     });
 
-    //     Route::prefix("report-reasons")->group(function () {
-    //         Route::get("/", GetListReportReasonController::class);
-    //     });
+        //     Route::prefix("report-reasons")->group(function () {
+        //         Route::get("/", GetListReportReasonController::class);
+        //     });
 
-    //     Route::get("/search", SearchUserOrTagNameController::class);
-    //     Route::get('/find', SearchUsersController::class);
+        //     Route::get("/search", SearchUserOrTagNameController::class);
+        //     Route::get('/find', SearchUsersController::class);
     });
 
     // Route::prefix("/medias")->group(function () {
