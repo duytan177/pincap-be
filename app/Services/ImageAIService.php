@@ -41,7 +41,7 @@ class ImageAIService
 
 
         // Replace placeholders in user prompt (e.g. {name})
-        $this->userPrompt ="create lion robot";
+        $this->userPrompt = $this->replacePlaceholders($this->userPrompt, $data);
         Log::info('AI Service call', [
             'url' => $this->baseUrl,
             'user_prompt' => $this->userPrompt,

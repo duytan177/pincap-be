@@ -32,11 +32,11 @@ class CreateMediaByAIController extends Controller
                 return response()->json(['error' => 'Prompt is required'], 400);
             }
 
-            // if (empty($imageUrl) || empty($files)) {
-            //     $service = new ImageAIService("TEXT_TO_TEXT_FOR_TEXT_TO_IMAGE", "text-to-text");
-            //     $prompt = $service->call($data);
-            //     $data["prompt"] = $prompt;
-            // }
+            if (empty($imageUrl) || empty($files)) {
+                $service = new ImageAIService("TEXT_TO_TEXT_FOR_TEXT_TO_IMAGE", "text-to-text");
+                $prompt = $service->call($data);
+                $data["prompt"] = $prompt;
+            }
 
             $data["image_url"] = $imageUrl;
             $data["files"] = $files;
