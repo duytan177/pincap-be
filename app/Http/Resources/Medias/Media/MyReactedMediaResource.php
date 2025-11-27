@@ -21,6 +21,7 @@ class MyReactedMediaResource extends BaseResource
         "type",
         "safe_search_data",
         "is_policy_violation",
+        "permalink"
     ];
 
     /**
