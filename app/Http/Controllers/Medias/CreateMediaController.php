@@ -10,6 +10,7 @@ use App\Http\Requests\Medias\CreateMediaRequest;
 use App\Http\Resources\Medias\Media\MediaResource;
 use App\Models\Media;
 use App\Services\GoogleVisionService;
+use App\Services\KafkaProducerService;
 use App\Traits\AWSS3Trait;
 use Ramsey\Uuid\Guid\Guid;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -17,6 +18,8 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 class CreateMediaController extends Controller
 {
     use AWSS3Trait;
+
+    private const TOPIC = "user_behavior";
 
     public function __invoke(CreateMediaRequest $request)
     {
@@ -70,6 +73,16 @@ class CreateMediaController extends Controller
         }
 
         if ($mediaNew->getAttribute("is_created")) {
+            $data = json_encode([
+                'media_id' => $mediaNew->getAttribute("id"),
+                "media_url" => $mediaNew->getAttribute("media_url"),
+                "media_name" => $mediaNew->getAttribute("media_name"),
+                "description" => $mediaNew->getAttribute("description"),
+                "tag_name" => $mediaNew->tags->pluck("tag_name")->implode(', '),
+                "user_id" => $mediaNew->getAttribute("media_owner_id"),
+                'timestamp' => now()->toISOString(),
+            ]);
+            (new KafkaProducerService(self::TOPIC))->send($data);
             event(new MediaCreatedEvent($mediaNew));
         }
 
