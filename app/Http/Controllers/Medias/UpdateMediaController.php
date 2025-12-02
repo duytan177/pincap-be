@@ -46,7 +46,7 @@ class UpdateMediaController extends Controller
         }
 
         $media->updateOrFail($mediaData);
-        if ($media->getAttribute("is_created")) {
+        if ($media->getAttribute("is_created") || $media->wasChanged(['media_name', 'description'])) {
             $data = json_encode([
                 'media_id' => $media->getAttribute("id"),
                 "media_url" => $media->getAttribute("media_url"),
