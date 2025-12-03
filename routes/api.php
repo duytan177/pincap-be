@@ -69,6 +69,7 @@ use App\Http\Controllers\Users\Reports\ReportUserController;
 use App\Http\Controllers\Users\SearchUserOrTagNameController;
 use App\Http\Controllers\Users\SearchUsersController;
 use App\Http\Controllers\Users\SocialAccounts\Instagram\InstagramMediaSyncController;
+use App\Http\Controllers\Users\SocialAccounts\Instagram\UnlinkInstagramController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/health-check', function () {
@@ -114,6 +115,7 @@ Route::middleware(["auth:api"])->group(function () {
     Route::prefix("/instagram")->group(function () {
         Route::get("/medias", \App\Http\Controllers\Users\SocialAccounts\Instagram\GetMediaInstagramController::class);
         Route::post("/medias/sync", InstagramMediaSyncController::class);
+        Route::delete("/unlink", UnlinkInstagramController::class);
     });
 
     Route::prefix("/medias")->group(function () {
