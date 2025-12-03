@@ -46,7 +46,8 @@ class UpdateMediaController extends Controller
         }
 
         $media->updateOrFail($mediaData);
-        if ($media->getAttribute("is_created")) {
+        if ($media->getAttribute("is_created") || $media->wasChanged(['media_name', 'description'])) {
+            $media->refresh();
             $data = json_encode([
                 'media_id' => $media->getAttribute("id"),
                 "media_url" => $media->getAttribute("media_url"),
@@ -57,8 +58,9 @@ class UpdateMediaController extends Controller
                 'timestamp' => now()->toISOString(),
             ]);
             (new KafkaProducerService(self::TOPIC))->send($data);
-
-            event(new MediaCreatedEvent($media));
+            if ($media->getAttribute("is_created")) {
+                event(new MediaCreatedEvent($media));
+            }
         }
         return response()->json(["message" => "Update media successfully", "media" => MediaResource::make($media)], 201);
     }
