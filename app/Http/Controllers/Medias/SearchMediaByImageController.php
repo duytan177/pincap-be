@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Medias;
 
+use App\Enums\Album_Media\Privacy;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Medias\Media\MediaCollection;
 use App\Models\Media;
@@ -61,7 +62,7 @@ class SearchMediaByImageController extends Controller
         }
 
         // Query Media by IDs returned from Python API
-        $medias = Media::whereIn("id", $mediaIds)->get();
+        $medias = Media::whereIn("id", $mediaIds)->where("privacy", Privacy::PUBLIC)->get();
 
         return response()->json([
             "data" => MediaCollection::make($medias),

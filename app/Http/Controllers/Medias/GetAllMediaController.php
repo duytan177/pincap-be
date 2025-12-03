@@ -32,7 +32,7 @@ class GetAllMediaController extends Controller
             if ($media_es) {
                 $results = $es->searchEmbedding($index, $media_es['embedding'], null, null, 0.8, 0, 10000);
                 $mediaIds = $es->formatMediaIds($results);
-                $medias = Media::whereIn("id", $mediaIds);
+                $medias = Media::whereIn("id", $mediaIds)->where("privacy", Privacy::PUBLIC);
                 $medias = $this->applyBlockedUsersFilter(
                     $medias,
                     blockedUserIds: $this->getBlockedUserIds($request)
