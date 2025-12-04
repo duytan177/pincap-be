@@ -38,7 +38,13 @@ class GetAllMediaController extends Controller
             if ($media_es) {
                 $results = $es->searchEmbedding($index, $media_es['embedding'], null, null, 0.85, 0, 10000);
                 $mediaIds = $es->formatMediaIds($results);
-                $medias = Media::whereIn("id", $mediaIds)->where("privacy", Privacy::PUBLIC);
+                $medias = Media::whereIn('id', $mediaIds)
+                    ->where('id', '!=', $media->getAttribute("id"))
+                    ->when(
+                        $media->getAttribute("media_owner_id") !== $userId,
+                        fn($q) => $q->where('privacy', Privacy::PUBLIC)
+                    );
+
                 $medias = $this->applyBlockedUsersFilter(
                     $medias,
                     blockedUserIds: $this->getBlockedUserIds($request)
@@ -54,7 +60,6 @@ class GetAllMediaController extends Controller
                 return new MediaCollection($medias->paginateOrAll($request));
             }
         }
-
 
         $searches = [];
         if (!empty($query)) {
