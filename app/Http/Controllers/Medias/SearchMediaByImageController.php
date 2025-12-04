@@ -37,7 +37,7 @@ class SearchMediaByImageController extends Controller
         $from = ($page - 1) * $perPage;
 
         // Call MediaIntegrateService to search media by image
-        $result = $this->mediaIntegrateService->searchByImage($userId, $file, $from, $perPage);
+        $result = $this->mediaIntegrateService->searchByImage($userId, $file, $from);
 
         if ($result['error']) {
             return response()->json([
