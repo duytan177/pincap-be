@@ -61,18 +61,6 @@ class GetAllMediaController extends Controller
             }
         }
 
-
-        // $data =json_encode([
-        //     'media_id' => $media->getAttribute("id"),
-        //     "media_url" => $media->getAttribute("media_url"),
-        //     "media_name" => $media->getAttribute("media_name"),
-        //     "description" => $media->getAttribute("description"),
-        //     "tag_name" => $media->tags->pluck("tag_name")->implode(', '),
-        //     "user_id" => $media->getAttribute("media_owner_id"),
-        //     'timestamp' => now()->toISOString(),
-        // ]);
-        // (new KafkaProducerService(topic: "user_behavior"))->send($data);
-
         $searches = [];
         if (!empty($query)) {
             $searches = [
