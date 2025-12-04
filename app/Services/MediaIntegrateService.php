@@ -91,6 +91,28 @@ class MediaIntegrateService
     }
 
     /**
+     * Search media by image using Python API
+     *
+     * @param string|null $userId ID of the user performing the search
+     * @param UploadedFile $file Image file to search
+     * @param int $from Offset for pagination
+     * @param int $size Number of items per page
+     * @return array API response
+     */
+    public function searchMediaByText(?string $userId, string $text, int $from = 0, int $size = 10): array
+    {
+        $url = config('ai_services.base_url') . config("ai_services.endpoint.search_by_text");
+
+        return $this->callApi($url, [
+            'user_id' => $userId,
+            'from_' => $from,
+            'size' => $size,
+            "text" => $text
+        ], method: 'POST');
+    }
+
+
+    /**
      * Generic method for calling any custom API
      *
      * @param string $url API endpoint
