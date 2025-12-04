@@ -6,10 +6,14 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Users\SocialAccounts\Instagram\InstagramMediaSyncRequest;
 use App\Models\Media;
 use App\Services\FacebookInstagramService;
+use App\Services\KafkaProducerService;
+use Ramsey\Uuid\Uuid;
 
 class InstagramMediaSyncController extends Controller
 {
     const CHUNK = 20;
+    public const TOPIC = "user_behavior";
+
     public function __invoke(InstagramMediaSyncRequest $request)
     {
         $user = $request->user();
@@ -44,32 +48,60 @@ class InstagramMediaSyncController extends Controller
         // FORMAT DATA FOR UPSERT
         // ---------------------------
         $records = [];
+        $events = [];
 
-        foreach ($results as $media) {
-            // Skip errored items
-            if (isset($media['error'])) {
+        foreach ($results as $item) {
+
+            if (isset($item['error']))
                 continue;
-            }
-            $records[] = [
-                'media_social_id' => $media['media_social_id'],
-                'media_name' => $media['media_name'],
-                'type' => $media['type'],
-                'media_url' => json_encode($media['media_url']),
-                'permalink' => $media['permalink'],
+
+            $uuid = (string) Uuid::uuid4()->toString();
+
+            $record = [
+                'id' => $uuid,
+                'media_social_id' => $item['media_social_id'],
+                'media_name' => $item['media_name'],
+                'type' => $item['type'],
+                'media_url' => json_encode($item['media_url']),
+                'permalink' => $item['permalink'],
                 'media_owner_id' => $user->id,
                 'is_created' => true,
             ];
-        }
 
+            $records[] = $record;
+
+            // Tạo event để gửi sau khi DB ok
+            $events[] = [
+                'media_id' => $uuid,
+                'media_url' => $record['media_url'],
+                'media_name' => $record['media_name'],
+                'description' => null,
+                'tag_name' => null,
+                'user_id' => $user->id,
+                'timestamp' => now()->toISOString(),
+            ];
+        }
         // ---------------------------
         // UPSERT
         // ---------------------------
-        Media::upsert(
-            $records,
-            ['media_social_id'], // unique column
-            ['media_name', 'type', 'media_url', 'permalink', 'media_owner_id', 'updated_at']
-        );
+        try {
+            Media::upsert(
+                $records,
+                ['media_social_id'], // unique
+                ['media_name', 'type', 'media_url', 'permalink', 'media_owner_id', 'updated_at']
+            );
+        } catch (\Throwable $e) {
+            return response()->json([
+                "message" => "Upsert failed",
+                "error" => $e->getMessage(),
+            ], 500);
+        }
+        // ---------------------------
+        $kafka = new KafkaProducerService(self::TOPIC);
 
+        foreach ($events as $ev) {
+            $kafka->send(json_encode($ev));
+        }
         // Return sync success message
         return response()->json([
             'message' => 'Sync success',
