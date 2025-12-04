@@ -9,6 +9,7 @@ use App\Http\Resources\Medias\Media\MediaCollection;
 use App\Models\Media;
 use App\Services\ElasticsearchService;
 use App\Services\KafkaProducerService;
+use App\Services\MediaIntegrateService;
 use App\Traits\OrderableTrait;
 use App\Traits\SharedTrait;
 use Illuminate\Http\Request;
@@ -16,13 +17,18 @@ use Illuminate\Http\Request;
 class GetAllMediaController extends Controller
 {
     use SharedTrait, OrderableTrait;
+    protected MediaIntegrateService $mediaIntegrateService;
 
+    public function __construct(MediaIntegrateService $mediaIntegrateService)
+    {
+        $this->mediaIntegrateService = $mediaIntegrateService;
+    }
     public function __invoke(Request $request)
     {
         $query = $request->input("query");
         $mediaType = $request->input("type");
         $mediaId = $request->input("media_id");
-
+        $userId = $request->user()->getAttribute("id");
         $media = Media::with(relations: ["tags"])->find($mediaId);
         $es = ElasticsearchService::getInstance();
         $index = config('services.elasticsearch.index');
@@ -30,7 +36,7 @@ class GetAllMediaController extends Controller
         if ($media) {
             $media_es = $es->getMediaById($index, $media->getAttribute("id"));
             if ($media_es) {
-                $results = $es->searchEmbedding($index, $media_es['embedding'], null, null, 0.8, 0, 10000);
+                $results = $es->searchEmbedding($index, $media_es['embedding'], null, null, 0.85, 0, 10000);
                 $mediaIds = $es->formatMediaIds($results);
                 $medias = Media::whereIn("id", $mediaIds)->where("privacy", Privacy::PUBLIC);
                 $medias = $this->applyBlockedUsersFilter(
@@ -38,7 +44,7 @@ class GetAllMediaController extends Controller
                     blockedUserIds: $this->getBlockedUserIds($request)
                 );
                 if ($this->getBearerToken($request)) {
-                    $userId = $request->user()->getAttribute("id");
+
                     $medias = $medias->with([
                         "reactions" => function ($query) use ($userId) {
                             $query->where("user_id", $userId)->limit(1);
@@ -49,23 +55,67 @@ class GetAllMediaController extends Controller
             }
         }
 
-        $searches = [];
-        if (!empty($query)) {
-            $searches = [
-                "title" => $query,
-                "description" => $query,
-                "user_name" => $query,
-                "tag_name" => $query
-            ];
+
+        if ($query) {
+            // Pagination parameters
+            $page = (int) $request->input("page", 1);
+            $perPage = (int) $request->input("per_page", 20);
+            $from = ($page - 1) * $perPage;
+
+            // Call MediaIntegrateService to search media by text
+            $result = $this->mediaIntegrateService->searchMediaByText($userId, $query, $from, 10000);
+
+            if ($result['error']) {
+                return response()->json([
+                    "error" => true,
+                    "message" => $result['message'],
+                    "detail" => $result['detail']
+                ], 500);
+            }
+
+            $data = $result['data'];
+            $mediaIds = $data["media_ids"] ?? [];
+            $total = $data["total"] ?? 0;
+
+            if (empty($mediaIds)) {
+                return response()->json([
+                    "data" => [],
+                    "current_page" => $page,
+                    "last_page" => 0,
+                    "per_page" => $perPage,
+                    "total" => $total
+                ]);
+            }
+
+            // Query Media by IDs returned from Python API
+            $medias = Media::whereIn("id", $mediaIds)->where("privacy", Privacy::PUBLIC)->get();
+
+            return response()->json([
+                "data" => MediaCollection::make($medias),
+                "current_page" => $page,
+                "last_page" => ceil($total / $perPage),
+                "per_page" => $perPage,
+                "total" => $total
+            ]);
         }
 
-        if (MediaType::hasValue($mediaType)) {
-            $searches += [
-                "type" => $mediaType
-            ];
-        }
+        // $searches = [];
+        // if (!empty($query)) {
+        //     $searches = [
+        //         "title" => $query,
+        //         "description" => $query,
+        //         "user_name" => $query,
+        //         "tag_name" => $query
+        //     ];
+        // }
+
+        // if (MediaType::hasValue($mediaType)) {
+        //     $searches += [
+        //         "type" => $mediaType
+        //     ];
+        // }
         $order = $this->getAttributeOrder($request->input(key: "order_key"), $request->input("order_type"));
-        $medias = Media::getList($searches, true, Privacy::PUBLIC , order: $order);
+        $medias = Media::getList([], true, Privacy::PUBLIC , order: $order);
         $medias = $this->applyBlockedUsersFilter(
             $medias,
             blockedUserIds: $this->getBlockedUserIds($request)

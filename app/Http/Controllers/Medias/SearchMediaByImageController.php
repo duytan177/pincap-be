@@ -33,7 +33,7 @@ class SearchMediaByImageController extends Controller
 
         // Pagination parameters
         $page = (int) $request->input("page", 1);
-        $perPage = (int) $request->input("per_page", 10);
+        $perPage = (int) $request->input("per_page", 20);
         $from = ($page - 1) * $perPage;
 
         // Call MediaIntegrateService to search media by image
