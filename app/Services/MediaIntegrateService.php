@@ -86,7 +86,7 @@ class MediaIntegrateService
         return $this->callApi($url, [
             'user_id' => $userId,
             'from_' => $from,
-            'size' => $size
+            // 'size' => $size
         ], $file, 'file', 'POST');
     }
 
@@ -106,7 +106,7 @@ class MediaIntegrateService
         return $this->callApi($url, [
             'user_id' => $userId,
             'from_' => $from,
-            'size' => $size,
+            // 'size' => $size,
             "text" => $text
         ], method: 'POST');
     }
