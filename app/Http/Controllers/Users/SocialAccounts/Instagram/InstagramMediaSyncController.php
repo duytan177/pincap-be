@@ -93,7 +93,6 @@ class InstagramMediaSyncController extends Controller
         } catch (\Throwable $e) {
             return response()->json([
                 "message" => "Upsert failed",
-                "error" => $e->getMessage(),
             ], 500);
         }
         // ---------------------------
