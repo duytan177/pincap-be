@@ -88,15 +88,9 @@ class GetAllMediaController extends Controller
             }
 
             // Query Media by IDs returned from Python API
-            $medias = Media::whereIn("id", $mediaIds)->where("privacy", Privacy::PUBLIC)->get();
+            $medias = Media::whereIn("id", $mediaIds)->where("privacy", Privacy::PUBLIC);
 
-            return response()->json([
-                "data" => MediaCollection::make($medias),
-                "current_page" => $page,
-                "last_page" => ceil($total / $perPage),
-                "per_page" => $perPage,
-                "total" => $total
-            ]);
+            return new MediaCollection($medias->paginateOrAll($request));
         }
 
         // $searches = [];
