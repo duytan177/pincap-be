@@ -56,7 +56,37 @@ class GetAllMediaController extends Controller
         }
 
 
-        if ($query) {
+        $searches = [];
+        if (!empty($query)) {
+            $searches = [
+                "title" => $query,
+                "description" => $query,
+                "user_name" => $query,
+                "tag_name" => $query
+            ];
+        }
+
+        if (MediaType::hasValue($mediaType)) {
+            $searches += [
+                "type" => $mediaType
+            ];
+        }
+        $order = $this->getAttributeOrder($request->input(key: "order_key"), $request->input("order_type"));
+        $medias = Media::getList($searches, true, Privacy::PUBLIC , order: $order);
+        $medias = $this->applyBlockedUsersFilter(
+            $medias,
+            blockedUserIds: $this->getBlockedUserIds($request)
+        );
+
+        if ($this->getBearerToken($request)) {
+            $medias = $medias->with([
+                "reactions" => function ($query) use ($userId) {
+                    $query->where("user_id", $userId)->limit(1);
+                }
+            ]);
+        }
+
+        if (!empty($query)) {
             // Pagination parameters
             $page = (int) $request->input("page", 1);
             $perPage = (int) $request->input("per_page", 20);
@@ -64,7 +94,6 @@ class GetAllMediaController extends Controller
 
             // Call MediaIntegrateService to search media by text
             $result = $this->mediaIntegrateService->searchMediaByText($userId, $query, $from, 10000);
-
             if ($result['error']) {
                 return response()->json([
                     "error" => true,
@@ -75,55 +104,10 @@ class GetAllMediaController extends Controller
 
             $data = $result['data'];
             $mediaIds = $data["media_ids"] ?? [];
-            $total = $data["total"] ?? 0;
-
-            if (empty($mediaIds)) {
-                return response()->json([
-                    "data" => [],
-                    "current_page" => $page,
-                    "last_page" => 0,
-                    "per_page" => $perPage,
-                    "total" => $total
-                ]);
+            if (!empty($mediaIds)) {
+                $medias = $medias->orWhere("id", $mediaIds);
             }
-
-            // Query Media by IDs returned from Python API
-            $medias = Media::whereIn("id", $mediaIds)->where("privacy", Privacy::PUBLIC);
-
-            return new MediaCollection($medias->paginateOrAll($request));
         }
-
-        // $searches = [];
-        // if (!empty($query)) {
-        //     $searches = [
-        //         "title" => $query,
-        //         "description" => $query,
-        //         "user_name" => $query,
-        //         "tag_name" => $query
-        //     ];
-        // }
-
-        // if (MediaType::hasValue($mediaType)) {
-        //     $searches += [
-        //         "type" => $mediaType
-        //     ];
-        // }
-        $order = $this->getAttributeOrder($request->input(key: "order_key"), $request->input("order_type"));
-        $medias = Media::getList([], true, Privacy::PUBLIC , order: $order);
-        $medias = $this->applyBlockedUsersFilter(
-            $medias,
-            blockedUserIds: $this->getBlockedUserIds($request)
-        );
-
-        if ($this->getBearerToken($request)) {
-            $userId = $request->user()->getAttribute("id");
-            $medias = $medias->with([
-                "reactions" => function ($query) use ($userId) {
-                    $query->where("user_id", $userId)->limit(1);
-                }
-            ]);
-        }
-
 
         $medias = $medias->paginateOrAll($request);
 
