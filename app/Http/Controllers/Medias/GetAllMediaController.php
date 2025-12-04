@@ -33,10 +33,15 @@ class GetAllMediaController extends Controller
         $es = ElasticsearchService::getInstance();
         $index = config('services.elasticsearch.index');
 
+        // Pagination parameters
+        $page = (int) $request->input("page", 1);
+        $perPage = (int) $request->input("per_page", 20);
+        $from = ($page - 1) * $perPage;
+
         if ($media) {
             $media_es = $es->getMediaById($index, $media->getAttribute("id"));
             if ($media_es) {
-                $results = $es->searchEmbedding($index, $media_es['embedding'], null, null, 0.85, 0, 10000);
+                $results = $es->searchEmbedding($index, $media_es['embedding'], null, null, 0.85, 0, $perPage);
                 $mediaIds = $es->formatMediaIds($results);
                 $medias = Media::whereIn('id', $mediaIds)
                     ->where('id', '!=', $media->getAttribute("id"))
@@ -92,13 +97,9 @@ class GetAllMediaController extends Controller
         }
 
         if (!empty($query)) {
-            // Pagination parameters
-            $page = (int) $request->input("page", 1);
-            $perPage = (int) $request->input("per_page", 20);
-            $from = ($page - 1) * $perPage;
 
             // Call MediaIntegrateService to search media by text
-            $result = $this->mediaIntegrateService->searchMediaByText($userId, $query, $from, 10000);
+            $result = $this->mediaIntegrateService->searchMediaByText($userId, $query, $from, $perPage);
             if ($result['error']) {
                 return response()->json([
                     "error" => true,
