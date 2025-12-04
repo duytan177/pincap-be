@@ -4,9 +4,10 @@ namespace App\Http\Controllers\Users\SocialAccounts\Instagram;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Users\SocialAccounts\Instagram\InstagramMediaSyncRequest;
+use App\Jobs\SendInstagramMediaEventsJob;
 use App\Models\Media;
 use App\Services\FacebookInstagramService;
-use App\Services\KafkaProducerService;
+use Illuminate\Support\Facades\Log;
 use Ramsey\Uuid\Uuid;
 
 class InstagramMediaSyncController extends Controller
@@ -90,17 +91,14 @@ class InstagramMediaSyncController extends Controller
                 ['media_social_id'], // unique
                 ['media_name', 'type', 'media_url', 'permalink', 'media_owner_id', 'updated_at']
             );
+            SendInstagramMediaEventsJob::dispatch($events);
         } catch (\Throwable $e) {
+            Log::error('Failed to send media sync events to Kafka', ['error' => $e->getMessage()]);
             return response()->json([
                 "message" => "Upsert failed",
             ], 500);
         }
-        // ---------------------------
-        $kafka = new KafkaProducerService(self::TOPIC);
 
-        foreach ($events as $ev) {
-            $kafka->send(json_encode($ev));
-        }
         // Return sync success message
         return response()->json([
             'message' => 'Sync success',
