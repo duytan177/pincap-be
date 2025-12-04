@@ -13,7 +13,8 @@ return [
         'paths' => [
             'login' => '/login',
             'register' => '/register',
-            'forgot_password' => '/forgot-password'
+            'forgot_password' => '/forgot-password',
+            'instagram_sync' => '/instagram/sync'
         ],
     ],
 
