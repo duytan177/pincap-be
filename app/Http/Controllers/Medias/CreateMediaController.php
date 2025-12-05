@@ -72,7 +72,7 @@ class CreateMediaController extends Controller
             MediaHandle::attachTagtoMedia($mediaData["tags_name"], $mediaId, $userId);
         }
 
-        if ($mediaNew->getAttribute("is_created") || (!$mediaNew->getAttribute("is_policy_violation") && $mediaNew->getAttribute("deleted_at") === null)) {
+        if ($mediaNew->getAttribute("is_created") && (!$mediaNew->getAttribute("is_policy_violation") && $mediaNew->getAttribute("deleted_at") === null)) {
             $data = json_encode([
                 'media_id' => $mediaNew->getAttribute("id"),
                 "media_url" => $mediaNew->getAttribute("media_url"),
