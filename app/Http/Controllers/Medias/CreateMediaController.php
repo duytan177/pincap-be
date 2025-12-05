@@ -111,7 +111,7 @@ class CreateMediaController extends Controller
 
         return [
             'type' => null,
-            'media_url' => json_encode($urls), // ["url1","url2","url3"]
+            'media_url' => $urls, // ["url1","url2","url3"]
         ];
     }
 
