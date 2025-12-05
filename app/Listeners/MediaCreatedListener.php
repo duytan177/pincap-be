@@ -44,8 +44,8 @@ class MediaCreatedListener implements ShouldQueue
         foreach ($followerIds as $followerId) {
             $notifications[] = [
                 "id" => Uuid::uuid4()->toString(),
-                "title" => $media->getAttribute("media_name"),
-                "content" => $media->getAttribute("description"),
+                "title" => "Title: " + $media->getAttribute("media_name"),
+                "content" => "Content: " + $media->getAttribute("description"),
                 "link" => $link,
                 "sender_id" => $userId,
                 "receiver_id" => $followerId,
