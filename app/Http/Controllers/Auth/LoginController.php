@@ -17,7 +17,7 @@ class LoginController extends Controller
         $user = User::where('email', $credentials['email'])->first();
         if ($user) {
             // User register by Google => Not have password
-            if ($user->getAttribute("password") !== null && $user->getAttribute("google_id") !== null) {
+            if ($user->getAttribute("google_id") !== null && $user->getAttribute("password") === null) {
                 throw AuthException::invalidCredential();
             }
 
