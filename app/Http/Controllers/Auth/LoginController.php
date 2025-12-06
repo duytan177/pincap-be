@@ -15,10 +15,17 @@ class LoginController extends Controller
         $credentials = $request->validated();
 
         $user = User::where('email', $credentials['email'])->first();
-        if ($user && !$user->hasVerifiedEmail()) {
-            throw AuthException::emailNotVerified();
-        }
+        if ($user) {
+            // User register by Google => Not have password
+            if ($user->getAttribute("password") !== null && $user->getAttribute("google_id") !== null) {
+                throw AuthException::invalidCredential();
+            }
 
+            //  Email Unverified
+            if (!$user->hasVerifiedEmail()) {
+                throw AuthException::emailNotVerified();
+            }
+        }
         if (!($token = JWTAuth::attempt($credentials))) {
             throw AuthException::invalidCredential();
         }
