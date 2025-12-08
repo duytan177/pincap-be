@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Medias;
 
-use App\Enums\Album_Media\MediaType;
 use App\Events\MediaCreatedEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Medias\Shared\MediaHandle;
