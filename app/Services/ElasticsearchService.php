@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use Elastic\Elasticsearch\ClientBuilder;
-
+use Illuminate\Support\Facades\Log;
 
 class ElasticsearchService
 {
@@ -58,6 +58,88 @@ class ElasticsearchService
         ])->asArray();
     }
 
+    public function getDocumentById(string $index, string $id): ?array
+    {
+        try {
+            $response = $this->client->get([
+                'index' => $index,
+                'id' => $id,
+            ]);
+
+            return $response['_source'] ?? null;
+
+        } catch (\Exception $e) {
+            Log::error("Elasticsearch getDocumentById error: " . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * KNN search — return raw ES data (no formatting)
+     */
+    public function searchKNN(
+        string $index,
+        array $embedding,
+        int $page = 1,
+        int $perPage = 20,
+    ) {
+
+        $from = ($page - 1) * $perPage;
+        $k = $from + $perPage;
+        $numCandidates = max($perPage, $k);
+        $params = [
+            'index' => $index,
+            'body' => [
+                // "from" => $from,
+                // "size" => $perPage,
+                "query" => [
+                    "knn" => [
+                        "field" => "embedding",
+                        "query_vector" => $embedding,
+                        "k" => 1000,
+                        "num_candidates" => 5000
+                    ]
+                ]
+            ]
+        ];
+
+        return $this->client->search($params);
+    }
+
+    public function formatEsResult($rawEsResult)
+    {
+        if (!isset($rawEsResult['hits']['hits'])) {
+            return [];
+        }
+
+        $data = [];
+
+        foreach ($rawEsResult['hits']['hits'] as $hit) {
+            //
+            $data[] = $hit['_source'] ?? [];
+        }
+
+        return $data;
+    }
+
+
+    public function formatEsResultWithScore($rawEsResult)
+    {
+        if (!isset($rawEsResult['hits']['hits'])) {
+            return [];
+        }
+
+        $data = [];
+
+        foreach ($rawEsResult['hits']['hits'] as $hit) {
+            $data[] = [
+                'score' => $hit['_score'] ?? null,
+                'data' => $hit['_source'] ?? []
+            ];
+        }
+
+        return $data;
+    }
     /**
      * 🔹 Lấy media theo media_id
      *
@@ -91,7 +173,7 @@ class ElasticsearchService
         return $res['hits']['hits'][0]['_source'];
     }
     /**
-     * 🔹 Search media theo embedding vector 
+     * Search media theo embedding vector
      *
      * @param string $index
      * @param array $queryVector
@@ -101,7 +183,6 @@ class ElasticsearchService
      * @param int|null $from
      * @param int|null $size
      * @param array|null $sourceFields
-     * @return array
      */
     public function searchEmbedding(
         string $index,
@@ -112,7 +193,7 @@ class ElasticsearchService
         ?int $from = 0,
         ?int $size = 20,
         ?array $sourceFields = null
-    ): array {
+    ) {
         $body = ['query' => ['bool' => []]];
 
         if (!empty($filters)) {
@@ -151,7 +232,7 @@ class ElasticsearchService
             'body' => $body
         ]);
 
-        return $res->asArray();
+        return $res;
     }
 
     /**
@@ -162,18 +243,15 @@ class ElasticsearchService
      */
     public function formatMediaIds(array $esResult): array
     {
-        $mediaIds = [];
+        $ids = [];
 
-        if (!isset($esResult['hits']['hits'])) {
-            return $mediaIds;
-        }
-
-        foreach ($esResult['hits']['hits'] as $hit) {
-            if (isset($hit['_source']['media_id'])) {
-                $mediaIds[] = $hit['_source']['media_id'];
+        foreach ($esResult as $item) {
+            if (isset($item['media_id'])) {
+                // convert string to int
+                $ids[] = $item['media_id'];
             }
         }
 
-        return $mediaIds;
+        return $ids;
     }
 }

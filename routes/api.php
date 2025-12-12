@@ -111,6 +111,8 @@ Route::middleware(["auth:api"])->group(function () {
 
         Route::get("/search", SearchUserOrTagNameController::class);
         Route::get('/find', SearchUsersController::class);
+
+        Route::post("track", \App\Http\Controllers\Users\TrackEventController::class);
     });
     Route::prefix("/instagram")->group(function () {
         Route::get("/medias", \App\Http\Controllers\Users\SocialAccounts\Instagram\GetMediaInstagramController::class);

@@ -41,7 +41,7 @@ class GetAllMediaController extends Controller
         if ($media) {
             $media_es = $es->getMediaById($index, $media->getAttribute("id"));
             if ($media_es) {
-                $results = $es->searchEmbedding($index, $media_es['embedding'], null, null, 0.85, $from);
+                $results = $es->formatEsResult($es->searchEmbedding($index, $media_es['embedding'], null, null, 0.85, $from));
                 $mediaIds = $es->formatMediaIds($results);
                 $medias = Media::whereIn('id', $mediaIds)
                     ->where('id', '!=', $media->getAttribute("id"))
