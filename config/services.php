@@ -63,7 +63,8 @@ return [
 
     "elasticsearch" => [
         "host" => env('ELASTICSEARCH_HOST', 'localhost:9200'),
-        "index" => env('ELASTICSEARCH_INDEX', 'test')
+        "index" => env('ELASTICSEARCH_INDEX', 'test'),
+        "user_index" => env('ELASTICSEARCH_USER_INDEX', 'users'),
     ]
 ];
 
