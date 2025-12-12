@@ -30,7 +30,7 @@ class TrackEventController extends Controller
             'user_id' => $event->getAttribute('user_id'),
             'media_id' => $event->getAttribute('media_id'),
             'event_type' => $event->getAttribute('event_type'),
-            'metadata' => $event->get('metadata'),
+            'metadata' => $event->getAttribute('metadata'),
             'created_at' => $event->getAttribute('created_at')->toDateTimeString(),
         ]);
 
