@@ -8,8 +8,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\Medias\Media\MediaCollection;
 use App\Models\Media;
 use App\Services\ElasticsearchService;
-use App\Services\KafkaProducerService;
 use App\Services\MediaIntegrateService;
+use App\Services\RedisService;
 use App\Traits\OrderableTrait;
 use App\Traits\SharedTrait;
 use Illuminate\Http\Request;
@@ -18,10 +18,12 @@ class GetAllMediaController extends Controller
 {
     use SharedTrait, OrderableTrait;
     protected MediaIntegrateService $mediaIntegrateService;
+    protected RedisService $redisService;
 
-    public function __construct(MediaIntegrateService $mediaIntegrateService)
+    public function __construct(MediaIntegrateService $mediaIntegrateService, RedisService $redisService)
     {
         $this->mediaIntegrateService = $mediaIntegrateService;
+        $this->redisService = $redisService;
     }
     public function __invoke(Request $request)
     {
@@ -32,6 +34,7 @@ class GetAllMediaController extends Controller
         $media = Media::with(relations: ["tags"])->find($mediaId);
         $es = ElasticsearchService::getInstance();
         $index = config('services.elasticsearch.index');
+        $index_user = config('services.elasticsearch.user_index');
 
         // Pagination parameters
         $page = (int) $request->input("page", 1);
@@ -83,6 +86,19 @@ class GetAllMediaController extends Controller
         }
         $order = $this->getAttributeOrder($request->input(key: "order_key"), $request->input("order_type"));
         $medias = Media::getList($searches, true, Privacy::PUBLIC , order: $order);
+
+
+        $doc = $es->getDocumentById($index_user, $userId);
+        if ($doc) {
+            $embedding = $doc['embedding'];
+            $mediaPopular = $es->formatEsResult($es->searchKNN($index, $embedding, $page, $perPage));
+            $mediaPopularIds = $es->formatMediaIds(esResult: $mediaPopular);
+
+            if (!empty($mediaPopularIds)) {
+                $medias = $medias->whereIn("id", $mediaPopularIds);
+            }
+        }
+
         $medias = $this->applyBlockedUsersFilter(
             $medias,
             blockedUserIds: $this->getBlockedUserIds($request)
