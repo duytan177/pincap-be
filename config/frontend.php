@@ -6,6 +6,7 @@ return [
             'login' => '/login',
             'register' => '/register',
             'forgot_password' => '/forgot-password',
+            'instagram_sync' => '/instagram/sync'
         ],
     ],
     'app' => [
@@ -14,7 +15,6 @@ return [
             'login' => '/login',
             'register' => '/register',
             'forgot_password' => '/forgot-password',
-            'instagram_sync' => '/instagram/sync'
         ],
     ],
 
