@@ -81,7 +81,7 @@ class HandleCallbackController extends Controller
             DB::commit();
 
             // return responseWithMessage("integration instagram successfully");
-            $domainFELogin = config( "frontend.app.domain") . config("frontend.app.paths.instagram_sync") . '?status=success';
+            $domainFELogin = config( "frontend.web.domain") . config("frontend.web.paths.instagram_sync") . '?status=success';
 
             return redirect()->away($domainFELogin);
 
