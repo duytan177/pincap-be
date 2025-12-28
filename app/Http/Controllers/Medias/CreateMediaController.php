@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Medias;
 
 use App\Events\MediaCreatedEvent;
+use App\Exceptions\MediaException;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Medias\Shared\MediaHandle;
 use App\Http\Requests\Medias\CreateMediaRequest;
@@ -55,6 +56,11 @@ class CreateMediaController extends Controller
         }
 
         $mediaNew = Media::create($mediaData);
+
+        if ($mediaNew->getAttribute("is_policy_violation")) {
+            throw MediaException::mediaPolicyViolation();
+        }
+
         $mediaId = $mediaNew->getAttribute("id");
 
         if (isset($mediaData["album_id"])) {

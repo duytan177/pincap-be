@@ -20,4 +20,9 @@ class MediaException extends BaseException
     {
         return self::code("You cannot remove medias that you did not add to this album or owner album", [], 403);
     }
+
+    public static function mediaPolicyViolation()
+    {
+        return self::code("Media violates policy and not create media", [], 403);
+    }
 }
