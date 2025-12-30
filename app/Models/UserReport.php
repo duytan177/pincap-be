@@ -8,10 +8,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
+use App\Traits\HasPaginateOrAll;
+use App\Traits\OrderableTrait;
 
 class UserReport extends Model
 {
-    use HasFactory, HasUuids, Notifiable, SoftDeletes;
+    use HasFactory, HasUuids, Notifiable, SoftDeletes, HasPaginateOrAll, OrderableTrait;
 
     protected $table = 'user_reports';
     protected $primaryKey = "id";
@@ -30,5 +32,20 @@ class UserReport extends Model
     public function getStateAttribute($value)
     {
         return $value == '0' ? StateReport::getKey(0) : StateReport::getKey(1);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+
+    public function reporter()
+    {
+        return $this->belongsTo(User::class, 'user_report_id', 'id');
+    }
+
+    public function reasonReport()
+    {
+        return $this->belongsTo(ReportReason::class, 'reason_report_id', 'id');
     }
 }
