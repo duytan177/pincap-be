@@ -91,7 +91,7 @@ class ElasticsearchService
             'index' => $index,
             'body' => [
                 // "from" => $from,
-                // "size" => $perPage,
+                "size" => 1000,
                 "query" => [
                     "knn" => [
                         "field" => "embedding",

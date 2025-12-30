@@ -92,10 +92,10 @@ class GetAllMediaController extends Controller
         if ($doc) {
             $embedding = $doc['embedding'];
             $mediaPopular = $es->formatEsResult($es->searchKNN($index, $embedding, $page, $perPage));
-            $mediaPopularIds = $es->formatMediaIds(esResult: $mediaPopular);
+            $mediaPopularIds = $es->formatMediaIds( $mediaPopular);
 
             if (!empty($mediaPopularIds)) {
-                $medias = $medias->whereIn("id", $mediaPopularIds);
+                $medias = $medias->whereIn("id", $mediaPopularIds)->withoutGlobalScope("order");
             }
         }
 
