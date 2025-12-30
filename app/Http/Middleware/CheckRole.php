@@ -23,8 +23,7 @@ class CheckRole
 
         // Get raw role value from DB (bypass accessor)
         $userRole = $user->getRawOriginal("role");
-
-        if ($userRole === Role::ADMIN || $userRole === "0") {
+        if ($userRole === Role::ADMIN || $userRole === "0" || $userRole === "ADMIN") {
             return $next($request);
         }
 
