@@ -70,6 +70,29 @@ use App\Http\Controllers\Users\SearchUserOrTagNameController;
 use App\Http\Controllers\Users\SearchUsersController;
 use App\Http\Controllers\Users\SocialAccounts\Instagram\InstagramMediaSyncController;
 use App\Http\Controllers\Users\SocialAccounts\Instagram\UnlinkInstagramController;
+use App\Http\Controllers\Admin\Users\GetAdminUsersController;
+use App\Http\Controllers\Admin\Users\CreateAdminUserController;
+use App\Http\Controllers\Admin\Users\UpdateAdminUserController;
+use App\Http\Controllers\Admin\Users\DeleteAdminUserController;
+use App\Http\Controllers\Admin\Users\RestoreAdminUserController;
+use App\Http\Controllers\Admin\Users\ForceDeleteAdminUserController;
+use App\Http\Controllers\Admin\UserReports\GetAdminUserReportsController;
+use App\Http\Controllers\Admin\UserReports\UpdateAdminUserReportController;
+use App\Http\Controllers\Admin\UserReports\DeleteAdminUserReportController;
+use App\Http\Controllers\Admin\UserReports\RestoreAdminUserReportController;
+use App\Http\Controllers\Admin\UserReports\ForceDeleteAdminUserReportController;
+use App\Http\Controllers\Admin\MediaReports\GetAdminMediaReportsController;
+use App\Http\Controllers\Admin\MediaReports\UpdateAdminMediaReportController;
+use App\Http\Controllers\Admin\MediaReports\DeleteAdminMediaReportController;
+use App\Http\Controllers\Admin\MediaReports\RestoreAdminMediaReportController;
+use App\Http\Controllers\Admin\MediaReports\ForceDeleteAdminMediaReportController;
+use App\Http\Controllers\Admin\ReportReasons\GetAdminReportReasonsController;
+use App\Http\Controllers\Admin\ReportReasons\CreateAdminReportReasonController;
+use App\Http\Controllers\Admin\ReportReasons\UpdateAdminReportReasonController;
+use App\Http\Controllers\Admin\ReportReasons\DeleteAdminReportReasonController;
+use App\Http\Controllers\Admin\ReportReasons\RestoreAdminReportReasonController;
+use App\Http\Controllers\Admin\ReportReasons\ForceDeleteAdminReportReasonController;
+use App\Http\Middleware\CheckRole;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/health-check', function () {
@@ -197,6 +220,49 @@ Route::middleware(["auth:api"])->group(function () {
 
     Route::prefix("/tags")->group(function () {
         Route::get("/", GetAllTagController::class);
+    });
+
+    // Admin routes
+    Route::middleware([CheckRole::class])
+        ->prefix("/admin")
+        ->group(function () {
+            // Users CRUD
+            Route::prefix("/users")->group(function () {
+                Route::get("/", GetAdminUsersController::class);
+                Route::post("/", CreateAdminUserController::class);
+                Route::put("/{userId}", UpdateAdminUserController::class);
+                Route::delete("/{userId}", DeleteAdminUserController::class);
+                Route::post("/{userId}/restore", RestoreAdminUserController::class);
+                Route::delete("/{userId}/force", ForceDeleteAdminUserController::class);
+            });
+
+            // User Reports CRUD
+            Route::prefix("/user-reports")->group(function () {
+                Route::get("/", GetAdminUserReportsController::class);
+                Route::put("/{reportId}", UpdateAdminUserReportController::class);
+                Route::delete("/{reportId}", DeleteAdminUserReportController::class);
+                Route::post("/{reportId}/restore", RestoreAdminUserReportController::class);
+                Route::delete("/{reportId}/force", ForceDeleteAdminUserReportController::class);
+            });
+
+            // Media Reports CRUD
+            Route::prefix("/media-reports")->group(function () {
+                Route::get("/", GetAdminMediaReportsController::class);
+                Route::put("/{reportId}", UpdateAdminMediaReportController::class);
+                Route::delete("/{reportId}", DeleteAdminMediaReportController::class);
+                Route::post("/{reportId}/restore", RestoreAdminMediaReportController::class);
+                Route::delete("/{reportId}/force", ForceDeleteAdminMediaReportController::class);
+            });
+
+            // Report Reasons CRUD
+            Route::prefix("/report-reasons")->group(function () {
+                Route::get("/", GetAdminReportReasonsController::class);
+                Route::post("/", CreateAdminReportReasonController::class);
+                Route::put("/{reasonId}", UpdateAdminReportReasonController::class);
+                Route::delete("/{reasonId}", DeleteAdminReportReasonController::class);
+                Route::post("/{reasonId}/restore", RestoreAdminReportReasonController::class);
+                Route::delete("/{reasonId}/force", ForceDeleteAdminReportReasonController::class);
+            });
     });
 });
 

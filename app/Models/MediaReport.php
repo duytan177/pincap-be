@@ -11,12 +11,14 @@ use Illuminate\Notifications\Notifiable;
 use App\Models\User;
 use App\Models\Media;
 use App\Models\ReportReason;
+use App\Traits\HasPaginateOrAll;
+use App\Traits\OrderableTrait;
 
 class MediaReport extends Model
 {
-    use HasFactory,HasUuids,Notifiable,SoftDeletes;
+    use HasFactory, HasUuids, Notifiable, SoftDeletes, HasPaginateOrAll, OrderableTrait;
 
-    protected $table='report_media';
+    protected $table = 'report_media';
     protected $primaryKey = "id";
     protected $fillable = [
         'id',
@@ -26,17 +28,18 @@ class MediaReport extends Model
         'media_id',
         'other_reasons',
     ];
-    protected $hidden=[
+    protected $hidden = [
 
     ];
 
     public function getStateAttribute($value)
     {
-        return $value=='0'?StateReport::getKey(0):StateReport::getKey(1);
+        return $value == '0' ? StateReport::getKey(0) : StateReport::getKey(1);
     }
+
     public function reasonReport()
     {
-        return $this->belongsTo(ReportReason::class, 'report_reason_id', 'id');
+        return $this->belongsTo(ReportReason::class, 'reason_report_id', 'id');
     }
 
     public function userReport()
