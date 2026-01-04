@@ -26,7 +26,7 @@ class MediaIntegrateService
         string $method = 'POST'
     ): array {
         try {
-            $request = Http::timeout(30);
+            $request = Http::timeout(60);
 
             // Attach file if provided
             if ($file) {
@@ -111,6 +111,21 @@ class MediaIntegrateService
         ], method: 'POST');
     }
 
+
+    /**
+     * Generate metadata for media by media_id
+     *
+     * @param string $mediaId ID of the media
+     * @return array API response
+     */
+    public function generateMetadata(string $mediaId): array
+    {
+        $url = config('ai_services.base_url') . config("ai_services.endpoint.generate_metadata");
+
+        return $this->callApi($url, [
+            'media_id' => $mediaId,
+        ], method: 'POST');
+    }
 
     /**
      * Generic method for calling any custom API
