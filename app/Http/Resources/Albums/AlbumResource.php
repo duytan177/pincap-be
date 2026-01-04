@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Albums;
 
 use App\Components\Resources\BaseResource;
+use App\Http\Resources\Users\Information\OwnerUserResource;
 use Illuminate\Http\Request;
 
 class AlbumResource extends BaseResource
@@ -27,6 +28,14 @@ class AlbumResource extends BaseResource
     public function toArray(Request $request): array
     {
         $data = $this->resource->only(self::$attributes);
+
+        // Add ownerUser information
+        if ($this->resource->relationLoaded('userOwner') && $this->resource->userOwner->isNotEmpty()) {
+            $ownerUser = $this->resource->userOwner->first();
+            $data['ownerUser'] = OwnerUserResource::make($ownerUser);
+        } else {
+            $data['ownerUser'] = null;
+        }
 
         return $data;
     }

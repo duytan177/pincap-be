@@ -34,11 +34,29 @@ class GetMyAlbumRoleMemberController extends Controller
 
         $albums = Album::getList($searches, order: $order);
 
-        $albums = $albums->withCount("medias")->whereHas("members", function ($query) use ($userId) {
-            $query->where("user_id", $userId);
-        })->whereDoesntHave('members.blockedUsers', function ($query) use ($userId) {
-            $query->where('followee_id', $userId);
-        })->paginateOrAll($request);
+        $albums = $albums->withCount("medias")
+            ->with([
+                'userOwner' => function ($query) {
+                    $query->withCount('followers');
+                }
+            ])
+            ->whereHas("members", function ($query) use ($userId) {
+                $query->where("user_id", $userId);
+            })->whereDoesntHave('members.blockedUsers', function ($query) use ($userId) {
+                $query->where('followee_id', $userId);
+            })->paginateOrAll($request);
+
+        // Get list of user IDs that current user is following (to avoid N+1 queries for isFollowing check)
+        $followingUserIds = [];
+        if ($userId) {
+            $currentUser = $request->user();
+            if ($currentUser) {
+                $followingUserIds = $currentUser->followees()->pluck('users.id')->toArray();
+            }
+        }
+
+        // Merge following user IDs into request so resources can access them
+        $request->merge(['following_user_ids' => $followingUserIds]);
 
         return AlbumCollection::make($albums);
     }
