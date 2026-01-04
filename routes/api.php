@@ -51,6 +51,7 @@ use App\Http\Controllers\Albums\GetUserInAlbumController;
 use App\Http\Controllers\Albums\UpdateMemberRoleController;
 use App\Http\Controllers\Albums\RemoveMemberFromAlbumController;
 use App\Http\Controllers\Medias\SearchMediaByImageController;
+use App\Http\Controllers\Medias\GenerateMediaMetadataController;
 use App\Http\Controllers\Notifications\DeleteNotificationByIdController;
 use App\Http\Controllers\Notifications\GetAllMeNotificationController;
 use App\Http\Controllers\Notifications\MarkReadAllNotificationController;
@@ -185,6 +186,7 @@ Route::middleware(["auth:api"])->group(function () {
         });
 
         Route::post('/search-by-image', SearchMediaByImageController::class);
+        Route::post('/generate-metadata', GenerateMediaMetadataController::class);
 
     });
 
