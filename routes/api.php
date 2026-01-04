@@ -93,6 +93,7 @@ use App\Http\Controllers\Admin\ReportReasons\UpdateAdminReportReasonController;
 use App\Http\Controllers\Admin\ReportReasons\DeleteAdminReportReasonController;
 use App\Http\Controllers\Admin\ReportReasons\RestoreAdminReportReasonController;
 use App\Http\Controllers\Admin\ReportReasons\ForceDeleteAdminReportReasonController;
+use App\Http\Controllers\Admin\AdminLoginController;
 use App\Http\Middleware\CheckRole;
 use Illuminate\Support\Facades\Route;
 
@@ -224,48 +225,6 @@ Route::middleware(["auth:api"])->group(function () {
         Route::get("/", GetAllTagController::class);
     });
 
-    // Admin routes
-    Route::middleware([CheckRole::class])
-        ->prefix("/admin")
-        ->group(function () {
-            // Users CRUD
-            Route::prefix("/users")->group(function () {
-                Route::get("/", GetAdminUsersController::class);
-                Route::post("/", CreateAdminUserController::class);
-                Route::put("/{userId}", UpdateAdminUserController::class);
-                Route::delete("/{userId}", DeleteAdminUserController::class);
-                Route::post("/{userId}/restore", RestoreAdminUserController::class);
-                Route::delete("/{userId}/force", ForceDeleteAdminUserController::class);
-            });
-
-            // User Reports CRUD
-            Route::prefix("/user-reports")->group(function () {
-                Route::get("/", GetAdminUserReportsController::class);
-                Route::put("/{reportId}", UpdateAdminUserReportController::class);
-                Route::delete("/{reportId}", DeleteAdminUserReportController::class);
-                Route::post("/{reportId}/restore", RestoreAdminUserReportController::class);
-                Route::delete("/{reportId}/force", ForceDeleteAdminUserReportController::class);
-            });
-
-            // Media Reports CRUD
-            Route::prefix("/media-reports")->group(function () {
-                Route::get("/", GetAdminMediaReportsController::class);
-                Route::put("/{reportId}", UpdateAdminMediaReportController::class);
-                Route::delete("/{reportId}", DeleteAdminMediaReportController::class);
-                Route::post("/{reportId}/restore", RestoreAdminMediaReportController::class);
-                Route::delete("/{reportId}/force", ForceDeleteAdminMediaReportController::class);
-            });
-
-            // Report Reasons CRUD
-            Route::prefix("/report-reasons")->group(function () {
-                Route::get("/", GetAdminReportReasonsController::class);
-                Route::post("/", CreateAdminReportReasonController::class);
-                Route::put("/{reasonId}", UpdateAdminReportReasonController::class);
-                Route::delete("/{reasonId}", DeleteAdminReportReasonController::class);
-                Route::post("/{reasonId}/restore", RestoreAdminReportReasonController::class);
-                Route::delete("/{reasonId}/force", ForceDeleteAdminReportReasonController::class);
-            });
-    });
 });
 
 Route::group([], function () {
@@ -330,4 +289,55 @@ Route::group([], function () {
     // Route::prefix("/tags")->group(function () {
     //     Route::get("/", GetAllTagController::class);
     // });
+});
+
+Route::prefix('/admin')->group(function () {
+    Route::post('/auth/login', AdminLoginController::class);
+
+    // Admin routes
+    Route::middleware(["auth:api", CheckRole::class])
+    ->group(function () {
+
+        Route::prefix("/auth")->group(function () {
+            Route::post("/logout", LogoutController::class);
+        });
+        // Users CRUD
+        Route::prefix("/users")->group(function () {
+            Route::get("/", GetAdminUsersController::class);
+            Route::post("/", CreateAdminUserController::class);
+            Route::put("/{userId}", UpdateAdminUserController::class);
+            Route::delete("/{userId}", DeleteAdminUserController::class);
+            Route::post("/{userId}/restore", RestoreAdminUserController::class);
+            Route::delete("/{userId}/force", ForceDeleteAdminUserController::class);
+        });
+
+        // User Reports CRUD
+        Route::prefix("/user-reports")->group(function () {
+            Route::get("/", GetAdminUserReportsController::class);
+            Route::put("/{reportId}", UpdateAdminUserReportController::class);
+            Route::delete("/{reportId}", DeleteAdminUserReportController::class);
+            Route::post("/{reportId}/restore", RestoreAdminUserReportController::class);
+            Route::delete("/{reportId}/force", ForceDeleteAdminUserReportController::class);
+        });
+
+        // Media Reports CRUD
+        Route::prefix("/media-reports")->group(function () {
+            Route::get("/", GetAdminMediaReportsController::class);
+            Route::put("/{reportId}", UpdateAdminMediaReportController::class);
+            Route::delete("/{reportId}", DeleteAdminMediaReportController::class);
+            Route::post("/{reportId}/restore", RestoreAdminMediaReportController::class);
+            Route::delete("/{reportId}/force", ForceDeleteAdminMediaReportController::class);
+        });
+
+        // Report Reasons CRUD
+        Route::prefix("/report-reasons")->group(function () {
+            Route::get("/", GetAdminReportReasonsController::class);
+            Route::post("/", CreateAdminReportReasonController::class);
+            Route::put("/{reasonId}", UpdateAdminReportReasonController::class);
+            Route::delete("/{reasonId}", DeleteAdminReportReasonController::class);
+            Route::post("/{reasonId}/restore", RestoreAdminReportReasonController::class);
+            Route::delete("/{reasonId}/force", ForceDeleteAdminReportReasonController::class);
+        });
+    });
+
 });
