@@ -3,11 +3,10 @@
 namespace App\Http\Resources\Users\Information;
 
 use App\Components\Resources\BaseResource;
-use App\Http\Resources\Medias\Media\MediaResource;
 use App\Traits\SharedTrait;
 use Illuminate\Http\Request;
 
-class UserInfoResource extends BaseResource
+class OwnerUserResource extends BaseResource
 {
     use SharedTrait;
 
@@ -32,16 +31,6 @@ class UserInfoResource extends BaseResource
             ]
         );
 
-        // If album_id exists then have field status
-        if ($this->resource->getAttributes() && array_key_exists('status', $this->resource->getAttributes())) {
-            $data['status'] = $this->resource->status;
-        }
-
-        // If album_id exists then have field status
-        if ($this->resource->getAttributes() && array_key_exists('album_role', $this->resource->getAttributes())) {
-            $data['album_role'] = $this->resource->album_role;
-        }
-
         // Check if current user is following this user
         $currentUser = $request->user();
         
@@ -53,13 +42,7 @@ class UserInfoResource extends BaseResource
             $data['isFollowing'] = false;
         }
 
-        // Add top 4 latest medias of the user
-        if ($this->resource->relationLoaded('medias')) {
-            $data['medias'] = MediaResource::collection($this->resource->medias);
-        } else {
-            $data['medias'] = [];
-        }
-
         return $data;
     }
 }
+
