@@ -49,7 +49,7 @@ class GetMyAlbumRoleMemberController extends Controller
         // Get list of user IDs that current user is following (to avoid N+1 queries for isFollowing check)
         $followingUserIds = [];
         if ($userId) {
-            $currentUser = \App\Models\User::find($userId);
+            $currentUser = $request->user();
             if ($currentUser) {
                 $followingUserIds = $currentUser->followees()->pluck('users.id')->toArray();
             }
