@@ -27,17 +27,23 @@ class FollowResource extends BaseResource
     {
         $data = $this->resource->only(self::$attributes);
         $relationship = $request->input("relationship", "followers");
-        $followRelationship = match ($relationship) {
-            'followers' => "follower_id",
-            'followees' => "followee_id",
-        };
         $userCurrent = $this->getUserFromToken($this->getBearerToken($request));
+        $isMyProfile = $request->input("is_my_profile", false);
 
-        if ($relationship === "followers" && $userCurrent && $userCurrent->getAttribute("id") != $this->resource->id) {
-            $data['isFollowing'] = $this->resource->followers->contains('id', $userCurrent->getAttribute("id"));
+        // Nếu là followees trong my profile → isFollowing = true (vì đây là những người user hiện tại đang follow)
+        if ($isMyProfile && $relationship === "followees" && $userCurrent) {
+            $data['isFollowing'] = true;
+        } 
+        // Nếu là followers trong my profile → check xem user hiện tại có follow user được lấy ra không
+        elseif ($isMyProfile && $relationship === "followers" && $userCurrent && $userCurrent->getAttribute("id") != $this->resource->id) {
+            $data['isFollowing'] = $userCurrent->followees()->where('followee_id', $this->resource->id)->exists();
         }
-
-        $data[$followRelationship] = $this->resource->$followRelationship;
+        // Nếu xem profile người khác → luôn check xem user đang login có follow user được lấy ra không
+        elseif (!$isMyProfile && $userCurrent && $userCurrent->getAttribute("id") != $this->resource->id) {
+            $data['isFollowing'] = $userCurrent->followees()->where('followee_id', $this->resource->id)->exists();
+        } else {
+            $data['isFollowing'] = false;
+        }
 
         return $data;
     }
