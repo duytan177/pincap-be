@@ -95,7 +95,10 @@ class GetAllMediaController extends Controller
             $mediaPopularIds = $es->formatMediaIds( $mediaPopular);
 
             if (!empty($mediaPopularIds)) {
-                $medias = $medias->whereIn("id", $mediaPopularIds)->withoutGlobalScope("order");
+                $placeholders = implode(',', array_fill(0, count($mediaPopularIds), '?'));
+
+                $medias = $medias->whereIn("id", $mediaPopularIds)->withoutGlobalScope("order")
+                   ->orderByRaw("FIELD(id, $placeholders)", $mediaPopularIds);
             }
         }
 
