@@ -20,4 +20,9 @@ class AuthException extends BaseException
     {
         return self::code("Token has expired", [], 401);
     }
+
+    public static function notAdmin()
+    {
+        return self::code("You are not authorized to access admin panel", [], 403);
+    }
 }
