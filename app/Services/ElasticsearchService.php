@@ -58,6 +58,27 @@ class ElasticsearchService
         ])->asArray();
     }
 
+    /**
+     * Delete document by ID
+     *
+     * @param string $index
+     * @param string $id
+     * @return array
+     */
+    public function deleteDocument(string $index, string $id): array
+    {
+        try {
+            $response = $this->client->delete([
+                'index' => $index,
+                'id' => $id,
+            ]);
+            return $response->asArray();
+        } catch (\Exception $e) {
+            Log::error("Elasticsearch deleteDocument error: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
     public function getDocumentById(string $index, string $id): ?array
     {
         try {
