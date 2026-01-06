@@ -93,6 +93,9 @@ use App\Http\Controllers\Admin\ReportReasons\UpdateAdminReportReasonController;
 use App\Http\Controllers\Admin\ReportReasons\DeleteAdminReportReasonController;
 use App\Http\Controllers\Admin\ReportReasons\RestoreAdminReportReasonController;
 use App\Http\Controllers\Admin\ReportReasons\ForceDeleteAdminReportReasonController;
+use App\Http\Controllers\Admin\Medias\GetAdminMediasController;
+use App\Http\Controllers\Admin\Medias\UpdateAdminMediaController;
+use App\Http\Controllers\Admin\Medias\ForceDeleteAdminMediaController;
 use App\Http\Controllers\Admin\AdminLoginController;
 use App\Http\Middleware\CheckRole;
 use Illuminate\Support\Facades\Route;
@@ -337,6 +340,13 @@ Route::prefix('/admin')->group(function () {
             Route::delete("/{reasonId}", DeleteAdminReportReasonController::class);
             Route::post("/{reasonId}/restore", RestoreAdminReportReasonController::class);
             Route::delete("/{reasonId}/force", ForceDeleteAdminReportReasonController::class);
+        });
+
+        // Medias CRUD
+        Route::prefix("/medias")->group(function () {
+            Route::get("/", GetAdminMediasController::class);
+            Route::put("/{mediaId}", UpdateAdminMediaController::class);
+            Route::delete("/{mediaId}/force", ForceDeleteAdminMediaController::class);
         });
     });
 
