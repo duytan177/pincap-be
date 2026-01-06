@@ -22,8 +22,8 @@ class CreateAdminUserRequest extends FormRequest
             'password' => ['required', 'string', 'min:8'],
             'phone' => ['nullable', 'string', 'max:20'],
             'role' => ['nullable', Rule::in(Role::getValues())],
-            'avatar' => ['nullable', 'string'],
-            'background' => ['nullable', 'string'],
+            'avatar' => ['nullable', 'image', 'max:25600'],
+            'background' => ['nullable', 'image', 'max:25600'],
         ];
     }
 }

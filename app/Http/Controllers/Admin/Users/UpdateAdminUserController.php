@@ -7,10 +7,15 @@ use App\Http\Requests\Admin\Users\UpdateAdminUserRequest;
 use App\Http\Resources\Admin\Users\AdminUserResource;
 use App\Models\User;
 use App\Exceptions\Admin\AdminException;
+use App\Traits\AWSS3Trait;
 use Illuminate\Support\Facades\Hash;
 
 class UpdateAdminUserController extends Controller
 {
+    use AWSS3Trait;
+
+    const AVATAR = 'avatar';
+    const BACKGROUND = 'background';
     public function __invoke(UpdateAdminUserRequest $request, string $userId)
     {
         $user = User::withoutGlobalScopes()
@@ -57,6 +62,15 @@ class UpdateAdminUserController extends Controller
         // Hash password if provided
         if (isset($data['password'])) {
             $data['password'] = Hash::make($data['password']);
+        }
+
+        // Handle file uploads for avatar and background
+        if (isset($data[self::AVATAR])) {
+            $data[self::AVATAR] = $this->UploadToS3($data[self::AVATAR], self::AVATAR);
+        }
+
+        if (isset($data[self::BACKGROUND])) {
+            $data[self::BACKGROUND] = $this->UploadToS3($data[self::BACKGROUND], self::BACKGROUND);
         }
 
         $user->update($data);
