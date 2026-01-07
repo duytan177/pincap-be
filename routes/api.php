@@ -96,6 +96,9 @@ use App\Http\Controllers\Admin\ReportReasons\ForceDeleteAdminReportReasonControl
 use App\Http\Controllers\Admin\Medias\GetAdminMediasController;
 use App\Http\Controllers\Admin\Medias\UpdateAdminMediaController;
 use App\Http\Controllers\Admin\Medias\ForceDeleteAdminMediaController;
+use App\Http\Controllers\Admin\Albums\GetAdminAlbumsController;
+use App\Http\Controllers\Admin\Albums\UpdateAdminAlbumController;
+use App\Http\Controllers\Admin\Albums\ForceDeleteAdminAlbumController;
 use App\Http\Controllers\Admin\AdminLoginController;
 use App\Http\Middleware\CheckRole;
 use Illuminate\Support\Facades\Route;
@@ -347,6 +350,13 @@ Route::prefix('/admin')->group(function () {
             Route::get("/", GetAdminMediasController::class);
             Route::put("/{mediaId}", UpdateAdminMediaController::class);
             Route::delete("/{mediaId}/force", ForceDeleteAdminMediaController::class);
+        });
+
+        // Albums CRUD
+        Route::prefix("/albums")->group(function () {
+            Route::get("/", GetAdminAlbumsController::class);
+            Route::put("/{albumId}", UpdateAdminAlbumController::class);
+            Route::delete("/{albumId}/force", ForceDeleteAdminAlbumController::class);
         });
     });
 
