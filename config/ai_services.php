@@ -8,5 +8,6 @@
             'search_by_image' => 'api/v1/medias/search_by_image',
             'search_by_text' => 'api/v1/medias/search_media_by_text',
             'generate_metadata' => 'api/v1/medias/generate-metadata',
+            'chatbot' => 'api/v1/chatbot',
         ],
     ];

@@ -59,6 +59,7 @@ use App\Http\Controllers\Notifications\MarkReadByIdNotificationController;
 use App\Http\Controllers\Notifications\PusherController;
 use App\Http\Controllers\Tags\GetAllTagController;
 use App\Http\Controllers\Users\Reports\GetListReportReasonController;
+use App\Http\Controllers\Chatbot\ChatbotController;
 use App\Http\Controllers\Users\Profiles\GetMyFollowerOrFolloweeController;
 use App\Http\Controllers\Users\Profiles\GetMyProfileController;
 use App\Http\Controllers\Users\Profiles\GetProfileUserByIdController;
@@ -229,6 +230,10 @@ Route::middleware(["auth:api"])->group(function () {
 
     Route::prefix("/tags")->group(function () {
         Route::get("/", GetAllTagController::class);
+    });
+
+    Route::prefix("/chatbot")->group(function () {
+        Route::post("/", ChatbotController::class);
     });
 
 });
