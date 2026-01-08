@@ -53,10 +53,14 @@ class CreateAdminUserController extends Controller
         // Handle file uploads for avatar and background
         if (isset($data[self::AVATAR])) {
             $data[self::AVATAR] = $this->UploadToS3($data[self::AVATAR], self::AVATAR);
+        } else {
+            $data[self::AVATAR] = config('common.avatar_default');
         }
 
         if (isset($data[self::BACKGROUND])) {
             $data[self::BACKGROUND] = $this->UploadToS3($data[self::BACKGROUND], self::BACKGROUND);
+        } else {
+            $data[self::BACKGROUND] = config('common.background_default');
         }
 
         $user = User::create($data);

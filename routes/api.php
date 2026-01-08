@@ -100,6 +100,7 @@ use App\Http\Controllers\Admin\Medias\ForceDeleteAdminMediaController;
 use App\Http\Controllers\Admin\Albums\GetAdminAlbumsController;
 use App\Http\Controllers\Admin\Albums\UpdateAdminAlbumController;
 use App\Http\Controllers\Admin\Albums\ForceDeleteAdminAlbumController;
+use App\Http\Controllers\Admin\Dashboard\GetDashboardStatsController;
 use App\Http\Controllers\Admin\AdminLoginController;
 use App\Http\Middleware\CheckRole;
 use Illuminate\Support\Facades\Route;
@@ -312,6 +313,10 @@ Route::prefix('/admin')->group(function () {
         Route::prefix("/auth")->group(function () {
             Route::post("/logout", LogoutController::class);
         });
+
+        // Dashboard Stats
+        Route::get("/dashboard/stats", GetDashboardStatsController::class);
+
         // Users CRUD
         Route::prefix("/users")->group(function () {
             Route::get("/", GetAdminUsersController::class);

@@ -24,7 +24,7 @@ class ChatbotRequest extends FormRequest
         return [
             'message' => 'required|string|max:5000',
             'conversation_history' => 'nullable|array',
-            'conversation_history.*.role' => 'required_with:conversation_history|string|in:user,assistant',
+            'conversation_history.*.role' => 'required_with:conversation_history|string|in:user,model',
             'conversation_history.*.content' => 'required_with:conversation_history|string',
             'suggested_media_ids' => 'nullable|array',
             'suggested_media_ids.*' => 'string|uuid|exists:medias,id',
@@ -43,7 +43,7 @@ class ChatbotRequest extends FormRequest
             'message.required' => 'Message is required',
             'message.max' => 'Message cannot exceed 5000 characters',
             'conversation_history.array' => 'Conversation history must be an array',
-            'conversation_history.*.role.in' => 'Conversation history role must be either "user" or "assistant"',
+            'conversation_history.*.role.in' => 'Conversation history role must be either "user" or "model"',
             'suggested_media_ids.array' => 'Suggested media IDs must be an array',
             'suggested_media_ids.*.uuid' => 'Each suggested media ID must be a valid UUID',
             'suggested_media_ids.*.exists' => 'One or more suggested media IDs do not exist',
