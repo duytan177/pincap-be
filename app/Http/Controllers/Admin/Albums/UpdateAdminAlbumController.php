@@ -21,13 +21,19 @@ class UpdateAdminAlbumController extends Controller
             throw AlbumException::albumNotFound();
         }
 
-        // Check if album is deleted
-        if (!$album->trashed()) {
-            throw AlbumException::albumNotDeleted();
+        // Only allow updating album_name and description
+        $albumData = $request->validated();
+        
+        // Update only allowed fields
+        if (isset($albumData['album_name'])) {
+            $album->album_name = $albumData['album_name'];
         }
-
-        // Restore the album (set deleted_at to null)
-        $album->restore();
+        
+        if (isset($albumData['description'])) {
+            $album->description = $albumData['description'];
+        }
+        
+        $album->save();
 
         // Refresh medias count
         $album->loadCount('medias');

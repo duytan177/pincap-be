@@ -14,7 +14,8 @@ class UpdateAdminAlbumRequest extends FormRequest
     public function rules(): array
     {
         return [
-            // No validation needed - this endpoint only restores album (sets deleted_at to null)
+            'album_name' => 'nullable|string',
+            'description' => 'nullable|string',
         ];
     }
 }

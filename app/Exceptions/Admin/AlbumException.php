@@ -15,5 +15,10 @@ class AlbumException extends BaseException
     {
         return self::code("Album is not deleted", [], 400);
     }
+
+    public static function albumAlreadyDeleted()
+    {
+        return self::code("Album is already deleted", [], 400);
+    }
 }
 
