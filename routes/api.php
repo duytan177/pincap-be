@@ -101,6 +101,8 @@ use App\Http\Controllers\Admin\Medias\RestoreAdminMediaController;
 use App\Http\Controllers\Admin\Medias\ForceDeleteAdminMediaController;
 use App\Http\Controllers\Admin\Albums\GetAdminAlbumsController;
 use App\Http\Controllers\Admin\Albums\UpdateAdminAlbumController;
+use App\Http\Controllers\Admin\Albums\DeleteAdminAlbumController;
+use App\Http\Controllers\Admin\Albums\RestoreAdminAlbumController;
 use App\Http\Controllers\Admin\Albums\ForceDeleteAdminAlbumController;
 use App\Http\Controllers\Admin\Dashboard\GetDashboardStatsController;
 use App\Http\Controllers\Admin\AdminLoginController;
@@ -370,6 +372,8 @@ Route::prefix('/admin')->group(function () {
         Route::prefix("/albums")->group(function () {
             Route::get("/", GetAdminAlbumsController::class);
             Route::put("/{albumId}", UpdateAdminAlbumController::class);
+            Route::delete("/{albumId}", DeleteAdminAlbumController::class);
+            Route::post("/{albumId}/restore", RestoreAdminAlbumController::class);
             Route::delete("/{albumId}/force", ForceDeleteAdminAlbumController::class);
         });
     });
