@@ -96,6 +96,8 @@ use App\Http\Controllers\Admin\ReportReasons\RestoreAdminReportReasonController;
 use App\Http\Controllers\Admin\ReportReasons\ForceDeleteAdminReportReasonController;
 use App\Http\Controllers\Admin\Medias\GetAdminMediasController;
 use App\Http\Controllers\Admin\Medias\UpdateAdminMediaController;
+use App\Http\Controllers\Admin\Medias\DeleteAdminMediaController;
+use App\Http\Controllers\Admin\Medias\RestoreAdminMediaController;
 use App\Http\Controllers\Admin\Medias\ForceDeleteAdminMediaController;
 use App\Http\Controllers\Admin\Albums\GetAdminAlbumsController;
 use App\Http\Controllers\Admin\Albums\UpdateAdminAlbumController;
@@ -359,6 +361,8 @@ Route::prefix('/admin')->group(function () {
         Route::prefix("/medias")->group(function () {
             Route::get("/", GetAdminMediasController::class);
             Route::put("/{mediaId}", UpdateAdminMediaController::class);
+            Route::delete("/{mediaId}", DeleteAdminMediaController::class);
+            Route::post("/{mediaId}/restore", RestoreAdminMediaController::class);
             Route::delete("/{mediaId}/force", ForceDeleteAdminMediaController::class);
         });
 

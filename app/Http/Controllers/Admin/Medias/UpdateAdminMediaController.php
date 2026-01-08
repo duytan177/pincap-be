@@ -23,22 +23,45 @@ class UpdateAdminMediaController extends Controller
             throw MediaException::mediaNotFound();
         }
 
-        // Check if media is deleted
-        if (!$media->trashed()) {
-            throw MediaException::mediaNotDeleted();
+        // Only allow updating media_name, description, and privacy
+        $mediaData = $request->validated();
+        
+        // Update only allowed fields
+        if (isset($mediaData['media_name'])) {
+            $media->media_name = $mediaData['media_name'];
         }
+        
+        if (isset($mediaData['description'])) {
+            $media->description = $mediaData['description'];
+        }
+        
+        if (isset($mediaData['privacy'])) {
+            $media->privacy = $mediaData['privacy'];
+        }
+        
+        $media->save();
 
-        // Restore the media (set deleted_at to null)
-        $media->restore();
-
-        // Update Elasticsearch document to make it visible again
+        // Update Elasticsearch document
         try {
             $es = ElasticsearchService::getInstance();
             $index = config('services.elasticsearch.index');
-            $es->updateDocument($index, $mediaId, [
-                'is_deleted' => false,
+            $updateData = [
                 'updated_at' => now()->toDateTimeString(),
-            ]);
+            ];
+            
+            if (isset($mediaData['media_name'])) {
+                $updateData['media_name'] = $mediaData['media_name'];
+            }
+            
+            if (isset($mediaData['description'])) {
+                $updateData['description'] = $mediaData['description'];
+            }
+            
+            if (isset($mediaData['privacy'])) {
+                $updateData['privacy'] = $mediaData['privacy'];
+            }
+            
+            $es->updateDocument($index, $mediaId, $updateData);
         } catch (\Exception $e) {
             // Log error but don't fail the request if ES update fails
             Log::error("Failed to update media in Elasticsearch: " . $e->getMessage(), [

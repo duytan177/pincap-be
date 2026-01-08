@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Admin\Medias;
 
+use App\Enums\Album_Media\Privacy;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateAdminMediaRequest extends FormRequest
 {
@@ -14,7 +16,9 @@ class UpdateAdminMediaRequest extends FormRequest
     public function rules(): array
     {
         return [
-            // No validation needed - this endpoint only restores media (sets deleted_at to null)
+            'media_name' => 'nullable|string',
+            'description' => 'nullable|string',
+            'privacy' => ['nullable', Rule::in(Privacy::getValues())],
         ];
     }
 }

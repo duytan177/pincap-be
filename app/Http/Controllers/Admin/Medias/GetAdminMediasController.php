@@ -57,7 +57,7 @@ class GetAdminMediasController extends Controller
             if ($isViolation) {
                 // Find media where at least one field (racy, adult, medical, violence) has value "POSSIBLE"
                 // Check each field in all array elements
-                $query->where(function ($q) {
+                $query->orWhere(function ($q) {
                     $q->whereRaw("JSON_CONTAINS(JSON_EXTRACT(safe_search_data, '$[*].racy'), '\"POSSIBLE\"')")
                         ->orWhereRaw("JSON_CONTAINS(JSON_EXTRACT(safe_search_data, '$[*].adult'), '\"POSSIBLE\"')")
                         ->orWhereRaw("JSON_CONTAINS(JSON_EXTRACT(safe_search_data, '$[*].medical'), '\"POSSIBLE\"')")

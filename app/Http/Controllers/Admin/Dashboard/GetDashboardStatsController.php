@@ -17,7 +17,7 @@ class GetDashboardStatsController extends Controller
         // Count media with policy violation: is_policy_violation = true AND at least one field (racy, adult, medical, violence) has value "POSSIBLE"
         $totalMediaPolicyViolation = Media::withoutGlobalScopes()
             ->where('is_policy_violation', true)
-            ->where(function ($q) {
+            ->orWhere(function ($q) {
                 $q->whereRaw("JSON_CONTAINS(JSON_EXTRACT(safe_search_data, '$[*].racy'), '\"POSSIBLE\"')")
                     ->orWhereRaw("JSON_CONTAINS(JSON_EXTRACT(safe_search_data, '$[*].adult'), '\"POSSIBLE\"')")
                     ->orWhereRaw("JSON_CONTAINS(JSON_EXTRACT(safe_search_data, '$[*].medical'), '\"POSSIBLE\"')")
