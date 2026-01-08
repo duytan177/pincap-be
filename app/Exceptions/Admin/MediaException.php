@@ -15,5 +15,10 @@ class MediaException extends BaseException
     {
         return self::code("Media is not deleted", [], 400);
     }
+
+    public static function mediaAlreadyDeleted()
+    {
+        return self::code("Media is already deleted", [], 400);
+    }
 }
 
