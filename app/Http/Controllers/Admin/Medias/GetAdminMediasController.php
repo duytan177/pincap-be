@@ -49,9 +49,21 @@ class GetAdminMediasController extends Controller
             $query->where('is_comment', $request->boolean('is_comment'));
         }
 
-        // Filter by is_policy_violation
+        // Filter by is_policy_violation - check safe_search_data for POSSIBLE values
         if ($request->has('is_policy_violation')) {
-            $query->where('is_policy_violation', $request->boolean('is_policy_violation'));
+            $isViolation = $request->boolean('is_policy_violation');
+            $query->where('is_policy_violation', $isViolation);
+            
+            if ($isViolation) {
+                // Find media where at least one field (racy, adult, medical, violence) has value "POSSIBLE"
+                // Check each field in all array elements
+                $query->where(function ($q) {
+                    $q->whereRaw("JSON_CONTAINS(JSON_EXTRACT(safe_search_data, '$[*].racy'), '\"POSSIBLE\"')")
+                        ->orWhereRaw("JSON_CONTAINS(JSON_EXTRACT(safe_search_data, '$[*].adult'), '\"POSSIBLE\"')")
+                        ->orWhereRaw("JSON_CONTAINS(JSON_EXTRACT(safe_search_data, '$[*].medical'), '\"POSSIBLE\"')")
+                        ->orWhereRaw("JSON_CONTAINS(JSON_EXTRACT(safe_search_data, '$[*].violence'), '\"POSSIBLE\"')");
+                });
+            }
         }
 
         // Filter by media_owner_id
