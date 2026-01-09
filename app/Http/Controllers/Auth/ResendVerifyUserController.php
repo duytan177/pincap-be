@@ -12,7 +12,7 @@ class ResendVerifyUserController extends Controller
     public function __invoke(ResendVerifyUserRequest $request)
     {
         $email = $request->input("email");
-        $user = User::where("email", $email)->firstOrFail();
+        $user = User::withoutGlobalScopes()->where("email", $email)->firstOrFail();
 
         AuthHelper::sendEmailVerify($user);
         return responseWithMessage("Resend verify email for user");

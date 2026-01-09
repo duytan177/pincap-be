@@ -16,7 +16,7 @@ class VerifyUserController extends Controller
     {
         $this->currentTime = Carbon::now()->toDateTimeString();
 
-        $user = User::where('verification_token', $token)
+        $user = User::withoutGlobalScope("verified")->where('verification_token', $token)
             ->where('verification_token_expires_at', '>', $this->currentTime)
             ->whereNull("email_verified_at")->first();
 
