@@ -141,10 +141,10 @@ class CreateMediaController extends Controller
     private function checkPolicyViolation(array $annotations): bool
     {
         $violationLevels = ['LIKELY', 'VERY_LIKELY'];
-        $labelSpoof = "spoof"; // just to initialize
+        $excludedLabels = ["spoof", "racy"];
         foreach ($annotations as $annotation) {
             foreach ($annotation as $label => $level) {
-                if ($label != $labelSpoof && in_array(strtoupper($level), $violationLevels, true)) {
+                if (!in_array(strtolower($label), $excludedLabels, true) && in_array(strtoupper($level), $violationLevels, true)) {
                     return true;
                 }
             }
