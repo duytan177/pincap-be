@@ -51,15 +51,82 @@ trait AWSS3Trait
         return $sanitized;
     }
 
+    /**
+     * Lấy đuôi file từ MIME type
+     *
+     * @param string $mimeType
+     * @return string
+     */
+    private function getExtensionFromMimeType(string $mimeType): string
+    {
+        $mimeToExtension = [
+            // Images
+            'image/jpeg' => 'jpg',
+            'image/jpg' => 'jpg',
+            'image/png' => 'png',
+            'image/gif' => 'gif',
+            'image/webp' => 'webp',
+            'image/bmp' => 'bmp',
+            'image/svg+xml' => 'svg',
+            'image/tiff' => 'tiff',
+            'image/x-icon' => 'ico',
+            // Videos
+            'video/mp4' => 'mp4',
+            'video/mpeg' => 'mpeg',
+            'video/quicktime' => 'mov',
+            'video/x-msvideo' => 'avi',
+            'video/x-ms-wmv' => 'wmv',
+            'video/webm' => 'webm',
+            'video/ogg' => 'ogv',
+            'video/x-flv' => 'flv',
+            'video/3gpp' => '3gp',
+            'video/x-matroska' => 'mkv',
+        ];
+
+        // Lấy extension từ map, nếu không có thì extract từ MIME type
+        if (isset($mimeToExtension[$mimeType])) {
+            return $mimeToExtension[$mimeType];
+        }
+
+        // Fallback: extract extension từ MIME type (ví dụ: image/jpeg -> jpeg)
+        $parts = explode('/', $mimeType);
+        if (count($parts) === 2) {
+            $subtype = $parts[1];
+            // Xử lý các trường hợp đặc biệt
+            if (str_contains($subtype, '+')) {
+                $subtype = explode('+', $subtype)[0];
+            }
+            if (str_contains($subtype, 'x-')) {
+                $subtype = str_replace('x-', '', $subtype);
+            }
+            return $subtype;
+        }
+
+        // Default fallback
+        return 'bin';
+    }
+
     public function uploadToS3($file, $type)
     {
         if (!isset($this->s3Client)) {
             $this->initS3Client();
         }
 
+        // Lấy MIME type từ file metadata (chính xác hơn tên file)
+        $mimeType = $file->getMimeType();
+        $extension = $this->getExtensionFromMimeType($mimeType);
+
         $originalName = $file->getClientOriginalName();
         $sanitizedName = $this->sanitizeFileName($originalName);
-        $fileName = time() . "-" . $sanitizedName;
+
+        // Lấy tên file không có đuôi
+        $pathInfo = pathinfo($sanitizedName);
+        $baseName = $pathInfo['filename'] ?? $sanitizedName;
+        
+        // Luôn sử dụng đuôi file từ MIME type để đảm bảo chính xác
+        $finalFileName = $baseName . '.' . $extension;
+
+        $fileName = time() . "-" . $finalFileName;
         $mediaFolder = config("common.folders_s3.$type");
         $filePath = $mediaFolder . "/" . $fileName;
 
@@ -209,14 +276,25 @@ trait AWSS3Trait
 
     // ========================== UPLOAD URL ==========================
 
-    private function uploadUrlToS3(string $url, string $type): string
+    private function uploadUrlToS3(string $url, string $type, string $mimeType = ''): string
     {
         if (!isset($this->s3Client))
             $this->initS3Client();
 
+        // Lấy đuôi file từ MIME type (chính xác hơn tên file từ URL)
+        $extension = !empty($mimeType) ? $this->getExtensionFromMimeType($mimeType) : 'bin';
+
         $originalName = basename(parse_url($url, PHP_URL_PATH));
         $sanitizedName = $this->sanitizeFileName($originalName);
-        $fileName = time() . '-' . $sanitizedName;
+
+        // Lấy tên file không có đuôi
+        $pathInfo = pathinfo($sanitizedName);
+        $baseName = $pathInfo['filename'] ?? $sanitizedName;
+        
+        // Luôn sử dụng đuôi file từ MIME type để đảm bảo chính xác
+        $finalFileName = $baseName . '.' . $extension;
+
+        $fileName = time() . '-' . $finalFileName;
         $mediaFolder = config("common.folders_s3.$type");
         $filePath = "$mediaFolder/$fileName";
 
@@ -247,7 +325,7 @@ trait AWSS3Trait
             $mimeType = $mimeType[0];
         }
         [$type, $mediaType] = $this->getTypeMedia($mimeType);
-        $mediaUrl = $this->uploadUrlToS3($url, $mediaType);
+        $mediaUrl = $this->uploadUrlToS3($url, $mediaType, $mimeType);
 
         return [
             'type' => $type,
