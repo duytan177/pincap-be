@@ -52,17 +52,28 @@ class AddMediasToAlbumController extends Controller
             $firstMedia = Media::find($firstMediaId);
             if ($firstMedia && !empty($firstMedia->media_url)) {
                 $mediaUrl = $firstMedia->media_url;
+                $imageCoverUrl = null;
 
-                // If media_url is a JSON array string, pick the first element; otherwise use as-is
+                // Extract first URL if media_url is an array (JSON string or PHP array)
                 if (is_string($mediaUrl)) {
                     $decoded = json_decode($mediaUrl, true);
                     if (json_last_error() === JSON_ERROR_NONE && is_array($decoded) && !empty($decoded)) {
-                        $mediaUrl = $decoded[0];
+                        // If it's a JSON array, get the first element (must be a string)
+                        $imageCoverUrl = is_string($decoded[0]) ? $decoded[0] : null;
+                    } else {
+                        // If it's a plain string URL, use it directly
+                        $imageCoverUrl = $mediaUrl;
                     }
+                } elseif (is_array($mediaUrl) && !empty($mediaUrl)) {
+                    // If it's already a PHP array, get the first element (must be a string)
+                    $imageCoverUrl = is_string($mediaUrl[0]) ? $mediaUrl[0] : null;
                 }
 
-                $album->image_cover = $mediaUrl;
-                $album->save();
+                // Only set image_cover if we have a valid URL string
+                if ($imageCoverUrl) {
+                    $album->image_cover = $imageCoverUrl;
+                    $album->save();
+                }
             }
         }
 
