@@ -36,22 +36,27 @@ class CreateMediaController extends Controller
             }
         }
 
-        // Google Vision Safe Search Detection
-        if (config("services.google_vision.enable")) {
+        // Google Vision Safe Search Detection - chỉ check cho ảnh, bỏ qua video
+        if (config("services.google_vision.enable") && isset($mediaData["media"])) {
+            // Kiểm tra xem có ảnh nào không (không phải video)
+            $hasImage = collect($mediaData["media"])
+                ->contains(fn($file) => str_starts_with($file->getMimeType(), 'image/'));
 
-            $base64Images = $this->covertMediaImageToBase64($mediaData["media"] ?? []);
-            $visionService = new GoogleVisionService();
-            $annotations = $visionService->detectSafeSearch($base64Images);
+            if ($hasImage) {
+                $base64Images = $this->covertMediaImageToBase64($mediaData["media"]);
+                $visionService = new GoogleVisionService();
+                $annotations = $visionService->detectSafeSearch($base64Images);
 
-            // check policy violation
-            $isViolation = $this->checkPolicyViolation($annotations);
+                // check policy violation
+                $isViolation = $this->checkPolicyViolation($annotations);
 
-            $mediaData["safe_search_data"] = $annotations;
-            $mediaData["is_policy_violation"] = $isViolation;
+                $mediaData["safe_search_data"] = $annotations;
+                $mediaData["is_policy_violation"] = $isViolation;
 
-            // Mark media as deleted if it violates policy
-            if ($isViolation) {
-                $mediaData["deleted_at"] = now();
+                // Mark media as deleted if it violates policy
+                if ($isViolation) {
+                    $mediaData["deleted_at"] = now();
+                }
             }
         }
 
