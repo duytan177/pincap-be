@@ -22,6 +22,7 @@ class ChatbotService
      * @param array|null $conversationHistory Conversation history
      * @param array|null $suggestedMediaIds Suggested media IDs
      * @param string|null $fileUrl File URL
+     * @param string|null $token JWT token
      * @return array Chatbot response
      */
     public function processMessage(
@@ -29,7 +30,8 @@ class ChatbotService
         string $userId,
         ?array $conversationHistory = null,
         ?array $suggestedMediaIds = null,
-        ?string $fileUrl = null
+        ?string $fileUrl = null,
+        ?string $token = null
     ): array {
         try {
             $payload = [
@@ -47,6 +49,10 @@ class ChatbotService
 
             if ($fileUrl !== null) {
                 $payload['file_url'] = $fileUrl;
+            }
+
+            if ($token !== null) {
+                $payload['token'] = $token;
             }
 
             Log::info('Chatbot API Request', [

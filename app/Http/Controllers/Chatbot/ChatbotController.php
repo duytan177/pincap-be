@@ -33,13 +33,15 @@ class ChatbotController extends Controller
     public function __invoke(ChatbotRequest $request): JsonResponse
     {
         $userId = JWTAuth::user()->getAttribute("id");
+        $token = $request->bearerToken();
         
         $result = $this->chatbotService->processMessage(
             userMessage: $request->input('message'),
             userId: $userId,
             conversationHistory: $request->input('conversation_history'),
             suggestedMediaIds: $request->input('suggested_media_ids'),
-            fileUrl: $request->input('file_url')
+            fileUrl: $request->input('file_url'),
+            token: $token
         );
 
         if ($result['error']) {
