@@ -23,7 +23,7 @@ class UpdateAdminMediaController extends Controller
             throw MediaException::mediaNotFound();
         }
 
-        // Only allow updating media_name, description, and privacy
+        // Only allow updating media_name, description, privacy, and is_policy_violation
         $mediaData = $request->validated();
         
         // Update only allowed fields
@@ -37,6 +37,15 @@ class UpdateAdminMediaController extends Controller
         
         if (isset($mediaData['privacy'])) {
             $media->privacy = $mediaData['privacy'];
+        }
+        
+        if (isset($mediaData['is_policy_violation'])) {
+            $media->is_policy_violation = $mediaData['is_policy_violation'];
+            
+            // If is_policy_violation is false, set safe_search_data to null
+            if ($mediaData['is_policy_violation'] === false) {
+                $media->safe_search_data = null;
+            }
         }
         
         $media->save();
@@ -59,6 +68,15 @@ class UpdateAdminMediaController extends Controller
             
             if (isset($mediaData['privacy'])) {
                 $updateData['privacy'] = $mediaData['privacy'];
+            }
+            
+            if (isset($mediaData['is_policy_violation'])) {
+                $updateData['is_policy_violation'] = $mediaData['is_policy_violation'];
+                
+                // If is_policy_violation is false, set safe_search_data to null in ES
+                if ($mediaData['is_policy_violation'] === false) {
+                    $updateData['safe_search_data'] = null;
+                }
             }
             
             $es->updateDocument($index, $mediaId, $updateData);
