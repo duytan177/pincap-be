@@ -33,13 +33,33 @@ trait AWSS3Trait
         ]);
     }
 
+    /**
+     * Sanitize tên file: thay thế ký tự đặc biệt bằng "_"
+     *
+     * @param string $fileName
+     * @return string
+     */
+    private function sanitizeFileName(string $fileName): string
+    {
+        // Giữ lại chữ cái, số, dấu chấm, dấu gạch ngang, dấu gạch dưới
+        // Thay thế tất cả ký tự đặc biệt khác bằng "_"
+        $sanitized = preg_replace('/[^a-zA-Z0-9._-]/', '_', $fileName);
+        
+        // Loại bỏ nhiều dấu gạch dưới liên tiếp thành một
+        $sanitized = preg_replace('/_+/', '_', $sanitized);
+        
+        return $sanitized;
+    }
+
     public function uploadToS3($file, $type)
     {
         if (!isset($this->s3Client)) {
             $this->initS3Client();
         }
 
-        $fileName = time() . "-" . $file->getClientOriginalName();
+        $originalName = $file->getClientOriginalName();
+        $sanitizedName = $this->sanitizeFileName($originalName);
+        $fileName = time() . "-" . $sanitizedName;
         $mediaFolder = config("common.folders_s3.$type");
         $filePath = $mediaFolder . "/" . $fileName;
 
@@ -194,7 +214,9 @@ trait AWSS3Trait
         if (!isset($this->s3Client))
             $this->initS3Client();
 
-        $fileName = time() . '-' . basename(parse_url($url, PHP_URL_PATH));
+        $originalName = basename(parse_url($url, PHP_URL_PATH));
+        $sanitizedName = $this->sanitizeFileName($originalName);
+        $fileName = time() . '-' . $sanitizedName;
         $mediaFolder = config("common.folders_s3.$type");
         $filePath = "$mediaFolder/$fileName";
 
