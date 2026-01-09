@@ -49,6 +49,6 @@ class RemoveMediasFromAlbumController extends Controller
             throw MediaException::deleteFaired();
         }
 
-        return responseWithMessage("Remove medias from albums successfully");
+        return responseWithMessage("Remove medias from album successfully");
     }
 }
