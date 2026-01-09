@@ -66,6 +66,6 @@ class AddMediasToAlbumController extends Controller
             }
         }
 
-        return responseWithMessage("Add medias to albums successfully");
+        return responseWithMessage("Add medias to album successfully");
     }
 }

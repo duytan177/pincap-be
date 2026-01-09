@@ -19,6 +19,7 @@ class UpdateAdminMediaRequest extends FormRequest
             'media_name' => 'nullable|string',
             'description' => 'nullable|string',
             'privacy' => ['nullable', Rule::in(Privacy::getValues())],
+            'is_policy_violation' => 'nullable|boolean',
         ];
     }
 }
