@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Medias\Media;
 
 use App\Components\Resources\BaseResource;
+use App\Services\S3PresignedUrlService;
 use App\Traits\SharedTrait;
 use Illuminate\Http\Request;
 
@@ -32,6 +33,11 @@ class MyReactedMediaResource extends BaseResource
     public function toArray(Request $request): array
     {
         $data = $this->resource->only(self::$attributes);
+
+        // Convert media_url to presigned URLs
+        if (isset($data['media_url'])) {
+            $data['media_url'] = S3PresignedUrlService::convert($data['media_url']);
+        }
 
         return $data;
     }

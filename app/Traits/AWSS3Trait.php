@@ -175,6 +175,115 @@ trait AWSS3Trait
         }
     }
 
+    /**
+     * Extract file path từ S3 URL
+     *
+     * @param string $s3Url Full S3 URL
+     * @return string|null File path trong bucket hoặc null nếu không phải S3 URL
+     */
+    private function extractPathFromS3Url(string $s3Url): ?string
+    {
+        // Decode URL để xử lý các ký tự đặc biệt và khoảng trắng (giống logic trong deleteFromS3)
+        $decodedUrl = urldecode($s3Url);
+        $parsedUrl = parse_url($decodedUrl);
+        
+        if (!isset($parsedUrl['path'])) {
+            return null;
+        }
+
+        $path = $parsedUrl['path'];
+        
+        // Decode path một lần nữa để đảm bảo xử lý đúng các ký tự đặc biệt
+        // (có thể có double encoding)
+        $path = urldecode($path);
+        
+        // Remove leading slash
+        $path = ltrim($path, '/');
+        
+        // Tìm vị trí "Medias/" trong path (giống logic trong DownloadMediaController)
+        $mediasPos = strpos($path, 'Medias/');
+        if ($mediasPos !== false) {
+            // Lấy path từ vị trí "Medias/" trở đi
+            $path = substr($path, $mediasPos);
+        } else {
+            // Nếu không tìm thấy "Medias/", có thể là path không đúng format
+            // Trả về path gốc (sau khi remove leading slash)
+            // Hoặc có thể return null nếu muốn strict hơn
+        }
+        
+        return $path;
+    }
+
+    /**
+     * Convert một S3 URL sang presigned URL
+     *
+     * @param string $s3Url Full S3 URL
+     * @param int $expires Thời gian hết hạn (giây), mặc định 3600 = 1 giờ
+     * @return string Presigned URL hoặc URL gốc nếu không phải S3 URL
+     */
+    public function convertS3UrlToPresigned(string $s3Url, int $expires = 3600): string
+    {
+        // Kiểm tra xem có phải S3 URL không
+        if (!preg_match('/\.s3\.|s3\.amazonaws\.com/', $s3Url)) {
+            return $s3Url; // Trả về URL gốc nếu không phải S3 URL
+        }
+
+        $filePath = $this->extractPathFromS3Url($s3Url);
+        
+        if (!$filePath) {
+            Log::warning("⚠️ Không thể extract path từ S3 URL: {$s3Url}");
+            return $s3Url; // Trả về URL gốc nếu không extract được path
+        }
+
+        try {
+            $presignedUrl = $this->getPresignedUrl($filePath, $expires);
+            Log::debug("✅ Convert S3 URL thành công: {$s3Url} -> {$filePath}");
+            return $presignedUrl;
+        } catch (\Exception $e) {
+            Log::error("❌ Convert S3 URL to presigned lỗi: {$s3Url} | Path: {$filePath} | Error: " . $e->getMessage());
+            return $s3Url; // Trả về URL gốc nếu có lỗi
+        }
+    }
+
+    /**
+     * Convert media_url (có thể là string, array, hoặc JSON string) sang presigned URLs
+     *
+     * @param mixed $mediaUrl Có thể là string, array, hoặc JSON string
+     * @param int $expires Thời gian hết hạn (giây), mặc định 3600 = 1 giờ
+     * @return mixed Cùng format với input nhưng đã convert sang presigned URLs
+     */
+    public function convertMediaUrlToPresigned($mediaUrl, int $expires = 3600)
+    {
+        if (empty($mediaUrl)) {
+            return $mediaUrl;
+        }
+
+        // Nếu là JSON string (array), decode trước
+        if (is_string($mediaUrl) && (str_starts_with($mediaUrl, '[') || str_starts_with($mediaUrl, '"'))) {
+            $decoded = json_decode($mediaUrl, true);
+            if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                $mediaUrl = $decoded;
+            }
+        }
+
+        // Nếu là array, convert từng phần tử
+        if (is_array($mediaUrl)) {
+            return array_map(function ($url) use ($expires) {
+                if (is_string($url)) {
+                    return $this->convertS3UrlToPresigned($url, $expires);
+                }
+                return $url;
+            }, $mediaUrl);
+        }
+
+        // Nếu là string, convert trực tiếp
+        if (is_string($mediaUrl)) {
+            return $this->convertS3UrlToPresigned($mediaUrl, $expires);
+        }
+
+        return $mediaUrl;
+    }
+
     public function deleteFromS3($fileUrl)
     {
         if (!isset($this->s3Client)) {

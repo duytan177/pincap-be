@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Admin\MediaReports;
 
 use App\Components\Resources\BaseResource;
+use App\Services\S3PresignedUrlService;
 
 class AdminMediaReportResource extends BaseResource
 {
@@ -28,10 +29,11 @@ class AdminMediaReportResource extends BaseResource
                 ];
             }),
             'report_media' => $this->whenLoaded('reportMedia', function () {
+                $mediaUrl = $this->reportMedia->getAttribute('media_url');
                 return [
                     'id' => $this->reportMedia->getAttribute('id'),
                     'media_name' => $this->reportMedia->getAttribute('media_name'),
-                    'media_url' => $this->reportMedia->getAttribute('media_url'),
+                    'media_url' => $mediaUrl ? S3PresignedUrlService::convert($mediaUrl) : null,
                 ];
             }),
             'reason_report' => $this->whenLoaded('reasonReport', function () {

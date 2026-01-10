@@ -3,15 +3,18 @@
 namespace App\Http\Resources\Admin\Medias;
 
 use App\Components\Resources\BaseResource;
+use App\Services\S3PresignedUrlService;
 
 class AdminMediaResource extends BaseResource
 {
     public function toArray($request): array
     {
+        $mediaUrl = $this->getAttribute('media_url');
+        
         return [
             'id' => $this->getAttribute('id'),
             'media_name' => $this->getAttribute('media_name'),
-            'media_url' => $this->getAttribute('media_url'),
+            'media_url' => $mediaUrl ? S3PresignedUrlService::convert($mediaUrl) : null,
             'description' => $this->getAttribute('description'),
             'type' => $this->getAttribute('type'),
             'privacy' => $this->getAttribute('privacy'),

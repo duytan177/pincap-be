@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Tags;
 
 use App\Components\Resources\BaseResource;
+use App\Services\S3PresignedUrlService;
 use Illuminate\Http\Request;
 
 class TagResource extends BaseResource
@@ -22,7 +23,8 @@ class TagResource extends BaseResource
         $data = $this->resource->only(self::$attributes);
 
         if (!filter_var($request->input('tag_flg'), FILTER_VALIDATE_BOOLEAN)) {
-            $data["latestMediaUrl"] = $this->resource->latestMedia[0]->getAttribute("media_url");
+            $mediaUrl = $this->resource->latestMedia[0]->getAttribute("media_url");
+            $data["latestMediaUrl"] = $mediaUrl ? S3PresignedUrlService::convert($mediaUrl) : null;
         }
 
         return $data;

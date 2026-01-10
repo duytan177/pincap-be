@@ -8,6 +8,7 @@ use App\Http\Resources\Medias\Comments\CommentResource;
 use App\Http\Resources\Tags\TagCollection;
 use App\Http\Resources\Users\Profiles\FollowResource;
 use App\Models\User;
+use App\Services\S3PresignedUrlService;
 use App\Traits\SharedTrait;
 use Illuminate\Http\Request;
 
@@ -39,6 +40,11 @@ class MediaDetailResource extends BaseResource
     public function toArray(Request $request): array
     {
         $data = $this->resource->only(self::$attributes);
+
+        // Convert media_url to presigned URLs
+        if (isset($data['media_url'])) {
+            $data['media_url'] = S3PresignedUrlService::convert($data['media_url']);
+        }
 
         $user = User::withCount('followers')->find($this->resource->media_owner_id);
 
